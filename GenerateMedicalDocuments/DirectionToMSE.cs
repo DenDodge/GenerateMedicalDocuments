@@ -4,31 +4,35 @@ using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 
 namespace GenerateMedicalDocuments
 {
+    /// <summary>
+    /// Класс для создания и сохранения документа "Направление на медико-социальную экспертизу".
+    /// </summary>
     public class DirectionToMSE
     {
-        #region Private Fields
-
-        private DirectionToMSEDocument documentModel;
-
-        #endregion
-
-        #region Constructors
-
-        public DirectionToMSE(DirectionToMSEDocument document)
+        /// <summary>
+        /// Получить XML документ "Направление на медико-социальную экспертизу" по модели документа.
+        /// </summary>
+        /// <param name="documentModel">Модель документа.</param>
+        /// <returns>XML документ "Направление на медико-социальную экспертизу" по модели документа.</returns>
+        public XDocument GetDirectionTOMSEDocumentXML(DirectionToMSEDocumentModel documentModel)
         {
-            this.documentModel = document;
+            if (documentModel == null)
+            {
+                return null;
+            }
+
+            XDocument document = CreatingXMLDocumentHelper.GetXMLDocument(documentModel);
+            return document;
         }
 
-        #endregion
-
         /// <summary>
-        /// Создать XML документ "Направление на медико-социальную экспертизу".
+        /// Сохранить XML файл.
         /// </summary>
-        public void CreateDirectionTOMSEDocumentXML(string documentSavePatch)
+        /// <param name="xmlDocument">XML файл.</param>
+        /// <param name="saveFilePatch">Путь сохранения файла.</param>
+        public void SaveDocument(XDocument xmlDocument, string saveFilePatch)
         {
-            XDocument xmlDocument = new XDocument();
-            GenerateXMLHelpers.GetXMLDocument(xmlDocument, documentModel);
-            GenerateXMLHelpers.SaveDocument(xmlDocument, documentSavePatch);
+            xmlDocument.Save(saveFilePatch);
         }
     }
 }
