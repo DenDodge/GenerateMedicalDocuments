@@ -14,11 +14,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// [0..1] Номер лицензии на осуществление медицинской деятельности. Обязательно указывать при внесении данных о индивидуальном предпринимателе.
         /// </summary>
-        public LicenseModel License { get; set; }
+        public LicenseModel License { get; set; } = null;
         /// <summary>
-        /// [1..1] Реквизиты организации.
+        /// Для направившей на МСЭ - [1..1] Реквизиты организации.
         /// </summary>
-        public PropsOrganizationModel Props { get; set; }
+        public PropsOrganizationModel Props { get; set; } = null;
         /// <summary>
         /// [1..1] Наименование организации.
         /// </summary>

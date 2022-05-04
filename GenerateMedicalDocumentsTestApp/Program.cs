@@ -114,7 +114,7 @@ namespace GenerateMedicalDocumentsTestApp
                         Contacts = new List<TelecomModel>()
                         {
                             { new TelecomModel() { Value = "+79161234567", Use = "MC" } },
-                            { new TelecomModel() { Value = "bogekat@mail.ru"} }
+                            { new TelecomModel() { Value = "bogekat@mail.ru" } }
                         },
                         PatientData = new PeopleDataModel()
                         {
@@ -181,8 +181,8 @@ namespace GenerateMedicalDocumentsTestApp
                             },
                             Contacts = new List<TelecomModel>()
                             {
-                                { new TelecomModel() { Value = "+79161234576", Use = "MC"} },
-                                { new TelecomModel() { Value = "bogelen@mail.ru"} }
+                                { new TelecomModel() { Value = "+79161234576", Use = "MC" } },
+                                { new TelecomModel() { Value = "bogelen@mail.ru" } }
                             },
                             Name = new NameModel()
                             {
@@ -212,7 +212,83 @@ namespace GenerateMedicalDocumentsTestApp
                             },
                             Contacts = new List<TelecomModel>()
                             {
-                                { new TelecomModel() { Value = "74957503971", Use = "WP"} },
+                                { new TelecomModel() { Value = "74957503971", Use = "WP" } },
+                                { new TelecomModel() { Value = "https://gp180.mos.ru/" } }
+                            },
+                            Address = new AddressModel()
+                            {
+                                StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                                StateCode = new TypeModel()
+                                {
+                                    Code = "77",
+                                    CodeSystemVersion = "6.3",
+                                    DisplayName = "г. Москва"
+                                },
+                                PostalCode = 123592,
+                                AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                                HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                            }
+                        }
+                    }
+                },
+                Author = new AuthorDataModel()
+                {
+                    SignatureDate = new DateTime(2021, 06, 20, 12, 20, 00),
+                    Author = new AuthorModel()
+                    {
+                        ID = new IDType()
+                        {
+                            Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.70",
+                            Extension = "2341"
+                        },
+                        SNILS = "32165477709",
+                        Position = new TypeModel()
+                        {
+                            Code = "122",
+                            CodeSystemVersion = "7.5",
+                            DisplayName = "врач-хирург"
+                        },
+                        ActualAddress = new AddressModel()
+                        {
+                            StreetAddressLine = "г Москва, Ленинградский пр-кт, д 78 к 3, кв 12",
+                            StateCode = new TypeModel()
+                            {
+                                Code = "77",
+                                CodeSystemVersion = "6.3",
+                                DisplayName = "г. Москва"
+                            },
+                            PostalCode = 125315,
+                            AOGUID = new Guid("9c3e9392-0324-4d21-9cf5-70076f1b5e15"),
+                            HOUSEGUID = new Guid("417432da-c526-4158-aa01-fb083797ac5e")
+                        },
+                        ContactPhoneNumber = new TelecomModel()
+                        {
+                            Value = "+74954241311"
+                        },
+                        Contacts = new List<TelecomModel>()
+                        {
+                            { new TelecomModel() { Use = "WP", Value = "+79261234588"} },
+                            { new TelecomModel() { Value = "a.privalov@oblhosp.volgograd.ru" } },
+                            { new TelecomModel() { Value = "74954241311" } }
+                        },
+                        Name = new NameModel()
+                        {
+                            Family = "Привалов",
+                            Given = "Александр",
+                            Patronymic = "Иванович"
+                        },
+                        RepresentedOrganization = new OrganizationModel()
+                        {
+                            ID = "1.2.643.5.1.13.13.12.2.77.7973",
+                            Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
+                            ContactPhoneNumber = new TelecomModel()
+                            {
+                                Use = "WP",
+                                Value = "+74957503971"
+                            },
+                            Contacts = new List<TelecomModel>()
+                            {
+                                { new TelecomModel() { Use = "WP", Value = "74957503971" } },
                                 { new TelecomModel() { Value = "https://gp180.mos.ru/"} }
                             },
                             Address = new AddressModel()
@@ -228,6 +304,157 @@ namespace GenerateMedicalDocumentsTestApp
                                 AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
                                 HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
                             }
+                        }
+                    }
+                },
+                RepresentedCustodianOrganization = new OrganizationModel()
+                {
+                    ID = "1.2.643.5.1.13.13.12.2.77.7973",
+                    Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
+                    ContactPhoneNumber = new TelecomModel()
+                    {
+                        Use = "WP",
+                        Value = "+74957503971"
+                    },
+                    Address = new AddressModel()
+                    {
+                        StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                        StateCode = new TypeModel()
+                        {
+                            Code = "77",
+                            CodeSystemVersion = "6.3",
+                            DisplayName = "г. Москва"
+                        },
+                        PostalCode = 123592,
+                        AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                        HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                    }
+                },
+                LegalAuthenticator = new LegalAuthenticatorModel()
+                {
+                    SignatureDate = new DateTime(2021, 06, 20, 16, 10, 00),
+                    AssignedEntity = new AuthorModel()
+                    {
+                        ID = new IDType()
+                        {
+                            Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.70",
+                            Extension = "2341"
+                        },
+                        SNILS = "88599674111",
+                        Position = new TypeModel()
+                        {
+                            Code = "7",
+                            CodeSystemVersion = "7.5",
+                            DisplayName = "Заведующий отделением"
+                        },
+                        ActualAddress = new AddressModel()
+                        {
+                            StreetAddressLine = "г Москва, Мичуринский пр-кт, д 16, кв 9",
+                            StateCode = new TypeModel()
+                            {
+                                Code = "77",
+                                CodeSystemVersion = "6.3",
+                                DisplayName = "г. Москва"
+                            },
+                            PostalCode = 119192,
+                            AOGUID = new Guid("0f072841-643f-4081-baf0-b16760fede91"),
+                            HOUSEGUID = new Guid("4f22318c-43a4-4040-872d-6d0b88bbe000")
+                        },
+                        ContactPhoneNumber = new TelecomModel()
+                        {
+                            Value = "+74954244567"
+                        },
+                        Contacts = new List<TelecomModel>()
+                        {
+                            { new TelecomModel() { Use = "MC", Value = "+79031234588" } },
+                            { new TelecomModel() { Value = "steaf@gmail.com" } },
+                            { new TelecomModel() { Value = "74954244567"} }
+                        },
+                        Name = new NameModel()
+                        {
+                            Family = "Степанов",
+                            Given = "Андрей",
+                            Patronymic = "Фёдорович"
+                        },
+                        RepresentedOrganization = new OrganizationModel()
+                        {
+                            ID = "1.2.643.5.1.13.13.12.2.77.7973",
+                            Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
+                            ContactPhoneNumber = new TelecomModel()
+                            {
+                                Use = "WP",
+                                Value = "+74957503971"
+                            },
+                            Contacts = new List<TelecomModel>()
+                            {
+                                { new TelecomModel() { Use = "WP", Value = "74957503971" } },
+                                { new TelecomModel() { Value = "https://gp180.mos.ru/"} }
+                            },
+                            Address = new AddressModel()
+                            {
+                                StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                                StateCode = new TypeModel()
+                                {
+                                    Code = "77",
+                                    CodeSystemVersion = "6.3",
+                                    DisplayName = "г. Москва"
+                                },
+                                PostalCode = 123592,
+                                AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                                HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                            }
+                        }
+                    }
+                },
+                Participant = new ParticipantModel()
+                {
+                    Code = new TypeModel()
+                    {
+                        Code = "1",
+                        CodeSystemVersion = "5.1",
+                        DisplayName = "ОМС"
+                    },
+                    DocInfo = new BasisDocumentModel()
+                    {
+                         IdentityDocType = new TypeModel()
+                         {
+                             Code = "1",
+                             CodeSystemVersion = "1.1",
+                             DisplayName = "Полис ОМС"
+                         },
+                         InsurancePolicyType = new TypeModel()
+                         {
+                             Code = "1",
+                             CodeSystemVersion = "1.3",
+                             DisplayName = "Полис ОМС старого образца"
+                         },
+                         Series = "ЧБ",
+                         Number = 1334602,
+                         INN = 213546789,
+                         StartDateDocument = new DateTime(2019, 05, 01),
+                         FinishDateDocument = new DateTime(2029, 05, 02)
+                    },
+                    ScopingOrganization = new OrganizationModel()
+                    {
+                        ID = "77013",
+                        Name = "ООО \"СК \"ИНГОССТРАХ-М\"",
+                        ContactPhoneNumber = new TelecomModel()
+                        {
+                            Use = "WP",
+                            Value = "+74957295571"
+                        },
+                        Address = new AddressModel()
+                        {
+                            StreetAddressLine = "г Москва, ул Рочдельская, д 15 стр 35",
+                            StateCode = new TypeModel()
+                            {
+                                Code = "77",
+                                CodeSystemVersion = "6.3",
+                                DisplayName = "г. Москва"
+                            },
+                            PostalCode = 123376,
+                            AOGUID = new Guid("6bfbfcbb-87a7-4674-a8e5-bf5f1bbfbf92"),
+                            HOUSEGUID = new Guid("0b33a0e1-3427-409a-a3b7-e57716819f38")
                         }
                     }
                 }
