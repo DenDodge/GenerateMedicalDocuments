@@ -62,6 +62,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             clinicalDocumentElement.Add(GenerateInformationRecipientElement());
             clinicalDocumentElement.Add(GenerateLegalAuthenticatorElement(documentModel.LegalAuthenticator));
             clinicalDocumentElement.Add(GenerateParticipantElement(documentModel.Participant));
+            clinicalDocumentElement.Add(GenerateDocumentationOfElement(documentModel.ServiceEvent));
 
             return clinicalDocumentElement;
         }
@@ -310,6 +311,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "addr".</returns>
         private static XElement GenerateAddrElement(AddressModel addressModel)
         {
+            if (addressModel == null)
+            {
+                return null;
+            }
             XElement addrElement = new XElement(xmlnsNamespace + "addr");
 
             if (addressModel.Type != null)
@@ -650,17 +655,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "assigned*".</returns>
         private static XElement GenerateAssignedElement(AuthorModel authorModel, string elementName)
         {
-            XElement assignedAuthorElement = new XElement(xmlnsNamespace + elementName);
+            XElement assignedElement = new XElement(xmlnsNamespace + elementName);
 
             XElement idElement = new XElement(xmlnsNamespace + "id",
                 new XAttribute("root", authorModel.ID.Root),
                 new XAttribute("extension", authorModel.ID.Extension));
-            assignedAuthorElement.Add(idElement);
+            assignedElement.Add(idElement);
 
             XElement snilsElement = new XElement(xmlnsNamespace + "id",
                 new XAttribute("root", "1.2.643.100.3"),
                 new XAttribute("extension", authorModel.SNILS));
-            assignedAuthorElement.Add(snilsElement);
+            assignedElement.Add(snilsElement);
 
             XElement codeElement = new XElement(xmlnsNamespace + "code",
                 GetTypeElementAttributes(
@@ -669,27 +674,35 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     codeValue: authorModel.Position.Code,
                     codeSystemVersionValue: authorModel.Position.CodeSystemVersion,
                     displayNameValue: authorModel.Position.DisplayName));
-            assignedAuthorElement.Add(codeElement);
+            assignedElement.Add(codeElement);
 
-            assignedAuthorElement.Add(GenerateAddrElement(authorModel.ActualAddress));
+            if (authorModel.ActualAddress != null)
+            {
+                assignedElement.Add(GenerateAddrElement(authorModel.ActualAddress));
+            }
+
+            if (authorModel.Address != null)
+            {
+                assignedElement.Add(GenerateAddrElement(authorModel.Address));
+            }
 
             if (authorModel.ContactPhoneNumber != null)
             {
-                assignedAuthorElement.Add(GenerateTelecomElement(authorModel.ContactPhoneNumber));
+                assignedElement.Add(GenerateTelecomElement(authorModel.ContactPhoneNumber));
             }
 
             if (authorModel.Contacts != null)
             {
-                assignedAuthorElement.Add(GenerateTelecomElements(authorModel.Contacts));
+                assignedElement.Add(GenerateTelecomElements(authorModel.Contacts));
             }
 
             XElement assignedPersonElement = new XElement(xmlnsNamespace + "assignedPerson");
             assignedPersonElement.Add(GenerateNameElement(authorModel.Name));
-            assignedAuthorElement.Add(assignedPersonElement);
+            assignedElement.Add(assignedPersonElement);
 
-            assignedAuthorElement.Add(GenerateOrganizationElement(authorModel.RepresentedOrganization, "representedOrganization", "ORG"));
+            assignedElement.Add(GenerateOrganizationElement(authorModel.RepresentedOrganization, "representedOrganization", "ORG"));
 
-            return assignedAuthorElement;
+            return assignedElement;
         }
 
         /// <summary>
@@ -756,6 +769,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             return authorElement;
         }
 
+        /// <summary>
+        /// Создает элемент "participant".
+        /// </summary>
+        /// <param name="participantModel">Модель сведений об источнике оплаты.</param>
+        /// <returns>Элемент "participant".</returns>
         private static XElement GenerateParticipantElement(ParticipantModel participantModel)
         {
             XElement participantElement = new XElement(xmlnsNamespace + "participant",
@@ -781,6 +799,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             return participantElement;
         }
 
+        /// <summary>
+        /// Создать элемент "DocInfo".
+        /// </summary>
+        /// <param name="basisDocumentModel">Модель документа-основания.</param>
+        /// <returns>Элемент "DocInfo".</returns>
         private static XElement GenerateBasisDocumentElement(BasisDocumentModel basisDocumentModel)
         {
             XElement docInfoElement = new XElement(identityNamespace + "DocInfo");
@@ -820,21 +843,125 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 basisDocumentModel.INN);
             docInfoElement.Add(INNElement);
 
-            XElement effectiveTimeElement = new XElement(identityNamespace + "effectiveTime");
-
-            XElement lowElement = new XElement(identityNamespace + "low",
-                new XAttribute(xsiNamespace + "type", "TS"),
-                new XAttribute("value", basisDocumentModel.StartDateDocument.ToString("yyyyMMdd")));
-            effectiveTimeElement.Add(lowElement);
-
-            XElement highElement = new XElement(identityNamespace + "high",
-                new XAttribute(xsiNamespace + "type", "TS"),
-                new XAttribute("value", basisDocumentModel.FinishDateDocument.ToString("yyyyMMdd")));
-            effectiveTimeElement.Add(highElement);
-
-            docInfoElement.Add(effectiveTimeElement);
+            docInfoElement.Add(GenerateEffectiveTimeElement(basisDocumentModel.StartDateDocument, basisDocumentModel.FinishDateDocument, identityNamespace));
 
             return docInfoElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "effectiveTime".
+        /// </summary>
+        /// <param name="startDate">Дата начала.</param>
+        /// <param name="finishDate">Дата окончания.</param>
+        /// <param name="isUseTime">Используется время.</param>
+        /// <returns>Элемент "effectiveTime".</returns>
+        private static XElement GenerateEffectiveTimeElement(DateTime startDate, DateTime finishDate, XNamespace namespaceValue, bool isUseTime = false)
+        {
+            string startDateString;
+            string finishDateString;
+            if (isUseTime)
+            {
+                startDateString = startDate.ToString("yyyyMMddHHmm+0300");
+                finishDateString = finishDate.ToString("yyyyMMddHHmm+0300");
+            }
+            else
+            {
+                startDateString = startDate.ToString("yyyyMMdd");
+                finishDateString = finishDate.ToString("yyyyMMdd");
+            }
+
+            XElement effectiveTimeElement = new XElement(namespaceValue + "effectiveTime");
+
+            XElement lowElement = new XElement(namespaceValue + "low");
+            if (!isUseTime)
+            {
+                XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
+                lowElement.Add(typeAttribute);
+            }
+            XAttribute lowValueAttribute = new XAttribute("value", startDateString);
+            lowElement.Add(lowValueAttribute);
+            effectiveTimeElement.Add(lowElement);
+
+            XElement highElement = new XElement(namespaceValue + "high");
+            if (!isUseTime)
+            {
+                XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
+                highElement.Add(typeAttribute);
+            }
+            XAttribute highValueAttribute = new XAttribute("value", finishDateString);
+            highElement.Add(highValueAttribute);
+            effectiveTimeElement.Add(highElement);
+
+            return effectiveTimeElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "documentationOf".
+        /// </summary>
+        /// <param name="serviceEventModel">Модель сведений о документируемом событии.</param>
+        /// <returns></returns>
+        private static XElement GenerateDocumentationOfElement(ServiceEventModel serviceEventModel)
+        {
+            XElement documentationOfElement = new XElement(xmlnsNamespace + "documentationOf");
+            XElement serviceEventElement = new XElement(xmlnsNamespace + "serviceEvent");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: serviceEventModel.Code.Code,
+                    codeSystemVersionValue: serviceEventModel.Code.CodeSystemVersion,
+                    displayNameValue: serviceEventModel.Code.DisplayName,
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.726",
+                    codeSystemNameValue: "Типы документированных событий"));
+            serviceEventElement.Add(codeElement);
+
+            serviceEventElement.Add(GenerateEffectiveTimeElement(serviceEventModel.StartServiceDate, serviceEventModel.FinishServiceDate, xmlnsNamespace, true));
+
+            XElement serviceFormElement = new XElement(medServiceNamespace + "serviceForm",
+                GetTypeElementAttributes(
+                    codeValue: serviceEventModel.ServiceForm.Code,
+                    codeSystemVersionValue: serviceEventModel.ServiceForm.CodeSystemVersion,
+                    displayNameValue: serviceEventModel.ServiceForm.DisplayName,
+                    codeSystemValue: "1.2.643.5.1.13.13.11.1551",
+                    codeSystemNameValue: "Формы оказания медицинской помощи"));
+            serviceEventElement.Add(serviceFormElement);
+
+            XElement serviceTypeElement = new XElement(medServiceNamespace + "serviceType",
+                GetTypeElementAttributes(
+                    codeValue: serviceEventModel.ServiceType.Code,
+                    codeSystemVersionValue: serviceEventModel.ServiceType.CodeSystemVersion,
+                    displayNameValue: serviceEventModel.ServiceType.DisplayName,
+                    codeSystemValue: "1.2.643.5.1.13.13.11.1034",
+                    codeSystemNameValue: "Виды медицинской помощи"));
+            serviceEventElement.Add(serviceTypeElement);
+
+            XElement serviceCondElement = new XElement(medServiceNamespace + "serviceCond",
+                GetTypeElementAttributes(
+                    codeValue: serviceEventModel.ServiceCond.Code,
+                    codeSystemVersionValue: serviceEventModel.ServiceCond.CodeSystemVersion,
+                    displayNameValue: serviceEventModel.ServiceCond.DisplayName,
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.322",
+                    codeSystemNameValue: "Условия оказания медицинской помощи"));
+            serviceEventElement.Add(serviceCondElement);
+
+            serviceEventElement.Add(GeneratePerformerElement(serviceEventModel.Performer, "PPRF"));
+            
+            foreach(var performer in serviceEventModel.OtherPerformers)
+            {
+                serviceEventElement.Add(GeneratePerformerElement(performer, "SPRF"));
+            }
+
+            documentationOfElement.Add(serviceEventElement);
+            return documentationOfElement;
+        }
+
+        private static XElement GeneratePerformerElement(PerformerModel performerModel, string typeCodeValue)
+        {
+            XElement performerElement = new XElement(xmlnsNamespace + "performer",
+                new XAttribute("typeCode", typeCodeValue));
+
+            performerElement.Add(GenerateAssignedElement(performerModel, "assignedEntity"));
+
+            return performerElement;
         }
 
         #endregion

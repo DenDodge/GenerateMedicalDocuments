@@ -43,5 +43,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// [1..1] СВЕДЕНИЯ ОБ ИСТОЧНИКЕ ОПЛАТЫ.
         /// </summary>
         public ParticipantModel Participant { get; set; }
+        /// <summary>
+        /// [1..1] Проведённая врачебная комиссия.
+        /// </summary>
+        public ServiceEventModel ServiceEvent { get; set; }
     }
 }
