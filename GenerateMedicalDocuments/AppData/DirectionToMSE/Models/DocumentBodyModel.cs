@@ -1,0 +1,13 @@
+﻿namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
+{
+    /// <summary>
+    /// Модель тела документа.
+    /// </summary>
+    public class DocumentBodyModel
+    {
+        /// <summary>
+        /// [1..1] СЕКЦИЯ: НАПРАВЛЕН.
+        /// </summary>
+        public SentSectionModel SentSection { get; set; }
+    }
+}

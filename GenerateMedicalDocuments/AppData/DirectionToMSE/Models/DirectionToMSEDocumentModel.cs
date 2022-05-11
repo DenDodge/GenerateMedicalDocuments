@@ -47,5 +47,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// [1..1] Проведённая врачебная комиссия.
         /// </summary>
         public ServiceEventModel ServiceEvent { get; set; }
+        /// <summary>
+        /// [1..1] ТЕЛО ДОКУМЕНТА.
+        /// </summary>
+        public DocumentBodyModel DocumentBody { get; set; }
     }
 }

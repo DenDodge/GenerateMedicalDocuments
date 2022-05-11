@@ -63,6 +63,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             clinicalDocumentElement.Add(GenerateLegalAuthenticatorElement(documentModel.LegalAuthenticator));
             clinicalDocumentElement.Add(GenerateParticipantElement(documentModel.Participant));
             clinicalDocumentElement.Add(GenerateDocumentationOfElement(documentModel.ServiceEvent));
+            clinicalDocumentElement.Add(GenerateBodyDocumentElement(documentModel.DocumentBody));
 
             return clinicalDocumentElement;
         }
@@ -954,6 +955,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             return documentationOfElement;
         }
 
+        /// <summary>
+        /// Создает элемент "performer".
+        /// </summary>
+        /// <param name="performerModel">Модель члена врачебной комиссии.</param>
+        /// <param name="typeCodeValue">Тип кода.</param>
+        /// <returns>Элемент "performer".</returns>
         private static XElement GeneratePerformerElement(PerformerModel performerModel, string typeCodeValue)
         {
             XElement performerElement = new XElement(xmlnsNamespace + "performer",
@@ -962,6 +969,77 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             performerElement.Add(GenerateAssignedElement(performerModel, "assignedEntity"));
 
             return performerElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "component" с наполнением (тело документа).
+        /// </summary>
+        /// <param name="documentBodyModel">Модель тела докумнта.</param>
+        /// <returns>Элемент "component" с наполнением (тело документа).</returns>
+        private static XElement GenerateBodyDocumentElement(DocumentBodyModel documentBodyModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement structuredBodyElement = new XElement(xmlnsNamespace + "structuredBody");
+
+            structuredBodyElement.Add(GenerateSetSectionElement(documentBodyModel.SentSection));
+            
+            componentElement.Add(structuredBodyElement);
+            return componentElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "component" с наполнением секции "Направление".
+        /// </summary>
+        /// <param name="sentSectionModel">Модель секции "Направление".</param>
+        /// <returns>Элемент "component" с наполнением секции "Направление".</returns>
+        private static XElement GenerateSetSectionElement(SentSectionModel sentSectionModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: sentSectionModel.Code.Code,
+                    codeSystemVersionValue: sentSectionModel.Code.CodeSystemVersion,
+                    displayNameValue: sentSectionModel.Code.DisplayName,
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.197",
+                    codeSystemNameValue: "Секции электронных медицинских документов"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "НАПРАВЛЕНИЕ");
+            sectionElement.Add(titleElement);
+
+            sectionElement.Add(GenerateParagraphsElements(sentSectionModel.Paragraphs));
+
+            componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "text" с наполнением секции "Напарвление".
+        /// </summary>
+        /// <param name="paragraphs">Список параграфов.</param>
+        /// <returns>Элемент "text" с наполнением секции "Напарвление".</returns>
+        private static XElement GenerateParagraphsElements(List<ParagraphModel> paragraphs)
+        {
+            XElement textElement = new XElement(xmlnsNamespace + "text");
+
+            foreach (var paragraph in paragraphs)
+            {
+                XElement paragraphElement = new XElement(xmlnsNamespace + "paragraph");
+
+                XElement captionElement = new XElement(xmlnsNamespace + "caption", paragraph.Caption);
+                XElement contentElement = new XElement(xmlnsNamespace + "content", paragraph.Content);
+                paragraphElement.Add(captionElement);
+                paragraphElement.Add(contentElement);
+
+                textElement.Add(paragraphElement);
+
+                XElement newLineElement = new XElement(xmlnsNamespace + "br");
+                textElement.Add(newLineElement);
+            }
+
+            return textElement;
         }
 
         #endregion

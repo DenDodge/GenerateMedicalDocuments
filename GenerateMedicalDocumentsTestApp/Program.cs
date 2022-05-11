@@ -635,6 +635,186 @@ namespace GenerateMedicalDocumentsTestApp
                             }
                         }
                     }
+                },
+                DocumentBody = new DocumentBodyModel()
+                {
+                    SentSection = new SentSectionModel()
+                    {
+                        Code = new TypeModel()
+                        {
+                            Code = "SCOPORG",
+                            CodeSystemVersion = "1.18",
+                            DisplayName = "Цель направления и медицинская организация, куда направлен"
+                        },
+                        Paragraphs = new List<ParagraphModel>()
+                        {
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Гражданин направляется на медико-социальную экспертизу",
+                                    Content = "повторно"
+                                }
+                            },
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Цель направления",
+                                    Content = "для разработки индивидуальной программы реабилитации инвалида"
+                                }
+                            },
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Протокол врачебной комиссии медицинской организации, содержащий решение о направлении гражданина на медико-социальную экспертизу",
+                                    Content = "№ 123 от 20 мая 2018 г."
+                                }
+                            },
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Гражданин по состоянию здоровья не может явиться в бюро (главное бюро, Федеральное бюро) медико-социальной экспертизы",
+                                    Content = "медико-социальную экспертизу необходимо проводить на дому"
+                                }
+                            },
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Нуждаемость в оказании паллиативной медицинской помощи",
+                                    Content = "гражданин нуждается в паллиативной медицинской помощи"
+                                }
+                            },
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Нахождение на лечении в стационаре в связи с операцией по ампутации  (реампутации)  конечности (конечностей), нуждающийся в первичном протезировании",
+                                    Content = "гражданин не нуждается в первичном протезировании"
+                                }
+                            },
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Дата выдачи гражданину направления на медико-социальную экспертизу медицинской организацией",
+                                    Content = "20 июня 2018 г."
+                                }
+                            },
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Гражданство",
+                                    Content = "гражданин Российской Федерации"
+                                }
+                            },
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Гражданин находится",
+                                    Content = "текст"
+                                }
+                            },
+                            {
+                                new ParagraphModel()
+                                {
+                                    Caption = "Отношения к воинской обязанности",
+                                    Content = "гражданин, не состоящий на воинском учёте"
+                                }
+                            }
+                        },
+                        TargetSent = new TargetSentModel()
+                        {
+                            SentType = new TypeModel()
+                            {
+                                Code = "34",
+                                CodeSystemVersion = "4.45",
+                                DisplayName = "Направление на медико-социальную экспертизу"
+                            },
+                            PerformerOrganization = new OrganizationModel()
+                            {
+                                ID = "1.2.643.5.1.13.13.12.2.77.1270",
+                                Name = "ФКУ \"ГБ МСЭ ФМБА России\"",
+                                ContactPhoneNumber = new TelecomModel()
+                                {
+                                    Use = "WP",
+                                    Value = "+74957545117"
+                                },
+                                Address = new AddressModel()
+                                {
+                                    StreetAddressLine = "г Москва, ул Гамалеи, д 13",
+                                    StateCode = new TypeModel()
+                                    {
+                                        Code = "77",
+                                        CodeSystemVersion = "6.3",
+                                        DisplayName = "г. Москва"
+                                    },
+                                    PostalCode = 123098,
+                                    AOGUID = new Guid("57cda4e0-989a-4727-964d-4ef890272bf5"),
+                                    HOUSEGUID = new Guid("c9d59fb9-91f2-4229-b8a9-55fe602c3c26")
+                                }
+                            },
+                            TargetSentType = new TypeModel()
+                            {
+                                Code = "10",
+                                CodeSystemVersion = "1.5",
+                                DisplayName = "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)"
+                            },
+                            TargetSentOrder = new TypeModel()
+                            {
+                                Code = "2",
+                                CodeSystemVersion = "2.1",
+                                DisplayName = "Повторный"
+                            },
+                            Protocol = new TypeModel()
+                            {
+                                Code = "4059",
+                                CodeSystemVersion = "1.69",
+                                DisplayName = "Протокол врачебной комиссии"
+                            },
+                            ProtocolDate = new DateTime(2021, 05, 20, 16, 10, 00),
+                            ProtocolNumber = "123",
+                            IsAtHome = true,
+                            IsPalleativeMedicalHelp = true,
+                            NeedPrimaryProsthetics = true,
+                            SentDate = new DateTime(2021, 06, 20, 16, 10, 00)
+                        },
+                        Сitizenship = new TypeModel()
+                        {
+                            Code = "1",
+                            CodeSystemVersion = "2.1",
+                            DisplayName = "Гражданин Российской Федерации"
+                        },
+                        PatientLocationCode = new TypeModel()
+                        {
+                            Code = "4",
+                            CodeSystemVersion = "1.1",
+                            DisplayName = "Иная организация"
+                        },
+                        PatientLocation = new OrganizationModel()
+                        {
+                            ID = "1.2.643.5.1.13.13.12.2.77.7973",
+                            Props = new PropsOrganizationModel()
+                            {
+                                OGRN = "1037734008575"
+                            },
+                            Address = new AddressModel()
+                            {
+                                StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                                StateCode = new TypeModel()
+                                {
+                                    Code = "77",
+                                    CodeSystemVersion = "6.3",
+                                    DisplayName = "г. Москва"
+                                },
+                                PostalCode = 123592,
+                                AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                                HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                            }
+                        },
+                        MilitaryDuty = new TypeModel()
+                        {
+                            Code = "4",
+                            CodeSystemVersion = "1.2",
+                            DisplayName = "Гражданин, не состоящий на воинском учёте"
+                        }
+                    }
                 }
             };
 
