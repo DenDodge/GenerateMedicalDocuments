@@ -22,19 +22,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// [1..1] Порядок обращения.
         /// </summary>
-        public TypeModel TargetSentOrder { get; set; }
+        public TypeModel SentOrder { get; set; }
         /// <summary>
-        /// [1..1] Кодирование даты и номера протокола врачебной комиссии.
+        /// [1..1] Дата и номер протокола врачебной комиссии.
         /// </summary>
-        public TypeModel Protocol { get; set; }
-        /// <summary>
-        /// [1..1] Дата протокола врачебной комиссии.
-        /// </summary>
-        public DateTime ProtocolDate { get; set; }
-        /// <summary>
-        /// [1..1] Номер протокола врачебной комиссии.
-        /// </summary>
-        public string ProtocolNumber { get; set; }
+        public ProtocolModel Protocol { get; set; }
         /// <summary>
         /// [1..1] Экспертиза проводится на дому.
         /// </summary>

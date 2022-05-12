@@ -756,23 +756,26 @@ namespace GenerateMedicalDocumentsTestApp
                                 CodeSystemVersion = "1.5",
                                 DisplayName = "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)"
                             },
-                            TargetSentOrder = new TypeModel()
+                            SentOrder = new TypeModel()
                             {
                                 Code = "2",
                                 CodeSystemVersion = "2.1",
                                 DisplayName = "Повторный"
                             },
-                            Protocol = new TypeModel()
+                            Protocol = new ProtocolModel()
                             {
-                                Code = "4059",
-                                CodeSystemVersion = "1.69",
-                                DisplayName = "Протокол врачебной комиссии"
+                                Protocol = new TypeModel()
+                                {
+                                    Code = "4059",
+                                    CodeSystemVersion = "1.69",
+                                    DisplayName = "Протокол врачебной комиссии"
+                                },
+                                ProtocolDate = new DateTime(2021, 05, 20, 16, 10, 00),
+                                ProtocolNumber = "123"
                             },
-                            ProtocolDate = new DateTime(2021, 05, 20, 16, 10, 00),
-                            ProtocolNumber = "123",
                             IsAtHome = true,
                             IsPalleativeMedicalHelp = true,
-                            NeedPrimaryProsthetics = true,
+                            NeedPrimaryProsthetics = false,
                             SentDate = new DateTime(2021, 06, 20, 16, 10, 00)
                         },
                         Сitizenship = new TypeModel()

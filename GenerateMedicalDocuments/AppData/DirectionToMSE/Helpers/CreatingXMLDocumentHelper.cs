@@ -981,7 +981,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement structuredBodyElement = new XElement(xmlnsNamespace + "structuredBody");
 
-            structuredBodyElement.Add(GenerateSetSectionElement(documentBodyModel.SentSection));
+            structuredBodyElement.Add(GenerateSentSectionElement(documentBodyModel.SentSection));
             
             componentElement.Add(structuredBodyElement);
             return componentElement;
@@ -992,7 +992,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         /// <param name="sentSectionModel">Модель секции "Направление".</param>
         /// <returns>Элемент "component" с наполнением секции "Направление".</returns>
-        private static XElement GenerateSetSectionElement(SentSectionModel sentSectionModel)
+        private static XElement GenerateSentSectionElement(SentSectionModel sentSectionModel)
         {
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
@@ -1010,6 +1010,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             sectionElement.Add(titleElement);
 
             sectionElement.Add(GenerateParagraphsElements(sentSectionModel.Paragraphs));
+
+            sectionElement.Add(GenerateTargetSentElement(sentSectionModel.TargetSent));
 
             componentElement.Add(sectionElement);
             return componentElement;
@@ -1040,6 +1042,213 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             }
 
             return textElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "entry" с наполнением секции "Кодирование цели направления и медицинской организации, куда направлен пациент".
+        /// </summary>
+        /// <param name="targetSentModel">Модель кодирования цели направления.</param>
+        /// <returns>Элемент "entry" с наполнением секции "Кодирование цели направления и медицинской организации, куда направлен пациент".</returns>
+        private static XElement GenerateTargetSentElement(TargetSentModel targetSentModel)
+        {
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+
+            entryElement.Add(GenerateActElement(targetSentModel));
+
+            return entryElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "act" с наполнением дочерних элементов.
+        /// </summary>
+        /// <param name="targetSentModel">Модель кодирования цели направления.</param>
+        /// <returns>Элемент "act" с наполнением дочерних элементов.</returns>
+        private static XElement GenerateActElement(TargetSentModel targetSentModel)
+        {
+            XElement actElement = new XElement(xmlnsNamespace + "act",
+                new XAttribute("classCode", "ACT"),
+                new XAttribute("moodCode", "RQO"));
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: "34",
+                    codeSystemValue: "1.2.643.5.1.13.13.11.1522",
+                    codeSystemVersionValue: "4.45",
+                    codeSystemNameValue: "Виды медицинской документации",
+                    displayNameValue: "Направление на медико-социальную экспертизу"));
+            actElement.Add(codeElement);
+
+            XElement statusCodeElement = new XElement(xmlnsNamespace + "statusCode",
+                new XAttribute("code", "active"));
+            actElement.Add(statusCodeElement);
+
+            XElement performerElement = new XElement(xmlnsNamespace + "performer");
+            XElement assignedEntityElement = new XElement(xmlnsNamespace + "assignedEntity");
+
+            XElement idElement = new XElement(xmlnsNamespace + "id",
+                new XAttribute("nullFlavor", "NI"));
+            assignedEntityElement.Add(idElement);
+
+            assignedEntityElement.Add(GenerateOrganizationElement(targetSentModel.PerformerOrganization, "representedOrganization"));
+
+            performerElement.Add(assignedEntityElement);
+            actElement.Add(performerElement);
+
+            actElement.Add(GenerateEntryRelationshipElements(
+                targetSentModel.TargetSentType,
+                targetSentModel.SentOrder,
+                targetSentModel.Protocol,
+                targetSentModel.IsAtHome,
+                targetSentModel.IsPalleativeMedicalHelp,
+                targetSentModel.NeedPrimaryProsthetics,
+                targetSentModel.SentDate));
+
+            return actElement;
+        }
+
+        /// <summary>
+        /// Создает списков элементов "entryRelationship".
+        /// </summary>
+        /// <param name="targetSentType">Цель направления.</param>
+        /// <param name="sentOrder">Порядок обращения.</param>
+        /// <param name="protocol">Протокол врачебной комиссии.</param>
+        /// <param name="isAtHome">Экспертиза проводится на дому.</param>
+        /// <param name="isPalleativeMedicalHelp">Нуждаемость в оказании паллиативной медицинской помощи.</param>
+        /// <param name="needPrimaryProsthetics">Нуждаемость в первичном протезировании.</param>
+        /// <param name="sentDate">Дата выдачи направления.</param>
+        /// <returns>Список элементов "entryRelationship".</returns>
+        private static List<XElement> GenerateEntryRelationshipElements(
+            TypeModel targetSentType = null,
+            TypeModel sentOrder = null,
+            ProtocolModel protocol = null,
+            bool? isAtHome = null,
+            bool? isPalleativeMedicalHelp = null,
+            bool? needPrimaryProsthetics = null,
+            DateTime? sentDate = null)
+        {
+            List<XElement> entryRelationshipElements = new List<XElement>();
+
+            if (targetSentType != null)
+            {
+                entryRelationshipElements.Add(GenerateEntryRelationshipElement(
+                    "sentTarget",
+                    targetSentType));
+            }
+            if (sentOrder != null)
+            {
+                entryRelationshipElements.Add(GenerateEntryRelationshipElement(
+                    "sentOrder",
+                    sentOrder));
+            }
+            if (protocol != null)
+            {
+                entryRelationshipElements.Add(GenerateEntryRelationshipElement(
+                    "sentProtocol",
+                    protocol.Protocol,
+                    protocol.ProtocolNumber,
+                    protocol.ProtocolDate));
+            }
+            if (isAtHome != null)
+            {
+                entryRelationshipElements.Add(GenerateEntryRelationshipElement(
+                    "sentLocation",
+                    value: isAtHome.ToString()));
+            }
+            if (isPalleativeMedicalHelp != null)
+            {
+                entryRelationshipElements.Add(GenerateEntryRelationshipElement(
+                    "sentPolitiveHelp",
+                    value: isPalleativeMedicalHelp.ToString()));
+            }
+            if (needPrimaryProsthetics != null)
+            {
+                entryRelationshipElements.Add(GenerateEntryRelationshipElement(
+                    "sentPrimaryProsthetics",
+                    value: needPrimaryProsthetics.ToString()));
+            }
+            if (sentDate != null)
+            {
+                entryRelationshipElements.Add(GenerateEntryRelationshipElement(
+                    "sentDate",
+                    value: sentDate?.ToString("yyyyMMddHHmm+0300")));
+            }
+
+            return entryRelationshipElements;
+        }
+
+        /// <summary>
+        /// Создает элемент "entryRelationship".
+        /// </summary>
+        /// <param name="entryRelationshipElementName">Наименование типа элемента.</param>
+        /// <param name="code">Значения элемента "code".</param>
+        /// <param name="value">Значения элемента "value".</param>
+        /// <param name="effectiveTime">Значения элемента "effectiveTime".</param>
+        /// <returns>Элемент "entryRelationship".</returns>
+        private static XElement GenerateEntryRelationshipElement(
+            string entryRelationshipElementName,
+            TypeModel code = null,
+            string value = null,
+            DateTime? effectiveTime = null)
+        {
+            var codeAttributes = GetEntryRelationshipElementCodeValue(entryRelationshipElementName).Value;
+            if (code != null)
+            {
+                codeAttributes.codeValue = code.Code;
+                codeAttributes.codeSystemVersionValue = code.CodeSystemVersion;
+                codeAttributes.displayNameValue = code.DisplayName;
+            }
+
+            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
+                new XAttribute("typeCode", "SUBJ"),
+                new XAttribute("inversionInd", "true"));
+
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: codeAttributes.codeValue,
+                    codeSystemValue: codeAttributes.codeSystemValue,
+                    codeSystemVersionValue: codeAttributes.codeSystemVersionValue,
+                    codeSystemNameValue: codeAttributes.codeSystemNameValue,
+                    displayNameValue: codeAttributes.displayNameValue));
+            observationElement.Add(codeElement);
+
+            if (effectiveTime != null)
+            {
+                XElement effectiveTimeElement = new XElement(xmlnsNamespace + "effectiveTime",
+                    new XAttribute("value", effectiveTime?.ToString("yyyMMddHHmm+0300")));
+                observationElement.Add(effectiveTimeElement);
+            }
+            if (value != null)
+            {
+                XElement valueElement = new XElement(xmlnsNamespace + "value");
+                if (entryRelationshipElementName == "sentProtocol")
+                {
+                    XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "ST");
+                    valueElement.Add(typeAttribute, value);
+                }
+                else
+                if (entryRelationshipElementName == "sentDate")
+                {
+                    XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
+                    valueElement.Add(typeAttribute);
+                    XAttribute valueAttribute = new XAttribute("value", value);
+                    valueElement.Add(valueAttribute);
+                }
+                else
+                {
+                    XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "BL");
+                    valueElement.Add(typeAttribute);
+                    XAttribute valueAttribute = new XAttribute("value", value.ToLower());
+                    valueElement.Add(valueAttribute);
+                }
+                observationElement.Add(valueElement);
+            }
+
+            entryRelationshipElement.Add(observationElement);
+            return entryRelationshipElement;
         }
 
         #endregion
@@ -1177,6 +1386,46 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 return authorityDocumentTypeValue;
             }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Получить значения "code" элемента "entryRelationship".
+        /// </summary>
+        /// <param name="entryRelationshipElementName">Наименование элемента "entryRelationship".</param>
+        /// <returns>Значения "code" элемента "entryRelationship".</returns>
+        private static (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue)? GetEntryRelationshipElementCodeValue(string entryRelationshipElementName)
+        {
+            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentTarget =
+                ("10", "1.2.643.5.1.13.13.99.2.147", "1.5", "Цели направления на медико-социальную экспертизу", "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)");
+            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentOrder =
+                ("2", "1.2.643.5.1.13.13.11.1007", "2.1", "Вид случая госпитализации или обращения (первичный, повторный)", "Повторный");
+            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentProtocol =
+                ("4059", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Протокол врачебной комиссии");
+            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentLocation =
+                ("4060", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Медико-социальную экспертизу необходимо проводить на дому (Отметка)");
+            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentPolitiveHelp =
+                ("4061", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Нуждаемость в оказании паллиативной медицинской помощи");
+            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentPrimaryProsthetics =
+               ("7012", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Нуждаемость в первичном протезировании");
+            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentDate =
+               ("4062", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Дата выдачи направления на МСЭ");
+
+            if (entryRelationshipElementName == "sentTarget")
+                return sentTarget;
+            if (entryRelationshipElementName == "sentOrder")
+                return sentOrder;
+            if (entryRelationshipElementName == "sentProtocol")
+                return sentProtocol;
+            if (entryRelationshipElementName == "sentLocation")
+                return sentLocation;
+            if (entryRelationshipElementName == "sentPolitiveHelp")
+                return sentPolitiveHelp;
+            if (entryRelationshipElementName == "sentPrimaryProsthetics")
+                return sentPrimaryProsthetics;
+            if (entryRelationshipElementName == "sentDate")
+                return sentDate;
 
             return null;
         }
