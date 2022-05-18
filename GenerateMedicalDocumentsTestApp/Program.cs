@@ -646,7 +646,7 @@ namespace GenerateMedicalDocumentsTestApp
                             CodeSystemVersion = "1.18",
                             DisplayName = "Цель направления и медицинская организация, куда направлен"
                         },
-                        Paragraphs = new List<ParagraphModel>()
+                        SentParagraphs = new List<ParagraphModel>()
                         {
                             {
                                 new ParagraphModel()
@@ -816,6 +816,47 @@ namespace GenerateMedicalDocumentsTestApp
                             Code = "4",
                             CodeSystemVersion = "1.2",
                             DisplayName = "Гражданин, не состоящий на воинском учёте"
+                        }
+                    },
+                    WorkplaceSection = new WorkplaceSectionModel()
+                    {
+                        WorkPlaceParagraphs = new List<ParagraphModel>
+                        {
+                            new ParagraphModel { Caption = "Основная профессия", Content = "текст" },
+                            new ParagraphModel { Caption = "Квалификация", Content = "текст" },
+                            new ParagraphModel { Caption = "Стаж", Content = "текст" },
+                            new ParagraphModel { Caption = "Выполняемая работа", Content = "текст" },
+                            new ParagraphModel { Caption = "Условия труда", Content = "текст" },
+                            new ParagraphModel { Caption = "Место работы", Content = "текст" },
+                            new ParagraphModel { Caption = "Адрес места работы.", Content = "текст" },
+                        },
+                        WorkActivity = new WorkActivityModel()
+                        {
+                            Workpalace = new OrganizationModel()
+                            {
+                                Address = new AddressModel()
+                                {
+                                    StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                                    StateCode = new TypeModel()
+                                    {
+                                        Code = "77",
+                                        CodeSystemVersion = "6.3",
+                                        DisplayName = "г. Москва"
+                                    },
+                                    PostalCode = 123592,
+                                    AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                                    HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                                },
+                                Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1"
+                            },
+                            MainProfession = "Основная профессия (специальность, должность)",
+                            Qualification = "Квалификация (класс, разряд, категория, звание)",
+                            WorkExperience = "Стаж работы",
+                            WorkPerformeds = new List<(string Profession, string Speciality, string Position)>()
+                            {
+                                ("Профессия", "Специальность", "Должность")
+                            },
+                            Conditions = "Условия и характер выполняемого труда"
                         }
                     }
                 }

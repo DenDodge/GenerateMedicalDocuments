@@ -544,18 +544,21 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 organizationElement.Add(classCodeAttribute);
             }
 
-            if(rootValue == null)
+            if (organizationModel.ID != null)
             {
-                XElement idElement = new XElement(xmlnsNamespace + "id",
-                    new XAttribute("root", organizationModel.ID));
-                organizationElement.Add(idElement);
-            }
-            else
-            {
-                XElement idElement = new XElement(xmlnsNamespace + "id",
-                    new XAttribute("root", rootValue),
-                    new XAttribute("extension", organizationModel.ID));
-                organizationElement.Add(idElement);
+                if (rootValue == null)
+                {
+                    XElement idElement = new XElement(xmlnsNamespace + "id",
+                        new XAttribute("root", organizationModel.ID));
+                    organizationElement.Add(idElement);
+                }
+                else
+                {
+                    XElement idElement = new XElement(xmlnsNamespace + "id",
+                        new XAttribute("root", rootValue),
+                        new XAttribute("extension", organizationModel.ID));
+                    organizationElement.Add(idElement);
+                }
             }
 
             if (organizationModel.License != null)
@@ -572,11 +575,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 organizationElement.Add(GeneratePropsElements(organizationModel.Props));
             }
 
-            XElement nameElement = new XElement(xmlnsNamespace + "name",
-                organizationModel.Name);
-            organizationElement.Add(nameElement);
+            if (organizationModel.Name != null)
+            {
+                XElement nameElement = new XElement(xmlnsNamespace + "name", organizationModel.Name);
+                organizationElement.Add(nameElement);
+            }
 
-            organizationElement.Add(GenerateTelecomElement(organizationModel.ContactPhoneNumber, true));
+            if (organizationModel.ContactPhoneNumber != null)
+            {
+                organizationElement.Add(GenerateTelecomElement(organizationModel.ContactPhoneNumber, true));
+            }
 
             if (organizationModel.Contacts != null)
             {
@@ -982,7 +990,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             XElement structuredBodyElement = new XElement(xmlnsNamespace + "structuredBody");
 
             structuredBodyElement.Add(GenerateSentSectionElement(documentBodyModel.SentSection));
-            
+            structuredBodyElement.Add(GenerateWorkLocationSection(documentBodyModel.WorkplaceSection));
+
             componentElement.Add(structuredBodyElement);
             return componentElement;
         }
@@ -1009,11 +1018,143 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             XElement titleElement = new XElement(xmlnsNamespace + "title", "НАПРАВЛЕНИЕ");
             sectionElement.Add(titleElement);
 
-            sectionElement.Add(GenerateParagraphsElements(sentSectionModel.Paragraphs));
+            sectionElement.Add(GenerateParagraphsElements(sentSectionModel.SentParagraphs));
 
             sectionElement.Add(GenerateTargetSentElement(sentSectionModel.TargetSent));
 
+            sectionElement.Add(GenerateEntryRelationshipElement("citizenship", code: sentSectionModel.Сitizenship, isEntryElement: true));
+
+            sectionElement.Add(GeneratePatienLocationElement(sentSectionModel.PatientLocationCode, sentSectionModel.PatientLocation));
+
+            sectionElement.Add(GenerateEntryRelationshipElement("militaryDuty", code: sentSectionModel.MilitaryDuty, isEntryElement: true));
+
             componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "Место работы и должность".
+        /// </summary>
+        /// <param name="workplaceSectionModel">Модель места работы и должности.</param>
+        /// <returns>Элемент "Место работы и должность".</returns>
+        private static XElement GenerateWorkLocationSection(WorkplaceSectionModel workplaceSectionModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: "WORK",
+                    codeSystemVersionValue: "1.18",
+                    displayNameValue: "Место работы и должность, условия труда",
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.197",
+                    codeSystemNameValue: "Секции электронных медицинских документов"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "ТРУДОВАЯ ДЕЯТЕЛЬНОСТЬ");
+            sectionElement.Add(titleElement);
+
+            sectionElement.Add(GenerateParagraphsElements(workplaceSectionModel.WorkPlaceParagraphs));
+
+            if (workplaceSectionModel.WorkActivity != null)
+            {
+                sectionElement.Add(GenerateWorkActivityElement(workplaceSectionModel.WorkActivity));
+            }
+
+            componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "Сведения о трудовой деятельности".
+        /// </summary>
+        /// <param name="workActivityModel">Модель сведений о трудовой деятельности.</param>
+        /// <returns>Элемент "Сведения о трудовой деятельности"</returns>
+        private static XElement GenerateWorkActivityElement(WorkActivityModel workActivityModel)
+        {
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement organizerElement = new XElement(xmlnsNamespace + "organizer",
+                new XAttribute("classCode", "CLUSTER"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: "4073",
+                    codeSystemVersionValue: "1.69",
+                    displayNameValue: "Сведения о трудовой деятельности (при осуществлении трудовой деятельности)",
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                    codeSystemNameValue: "Кодируемые поля CDA документов"));
+            organizerElement.Add(codeElement);
+
+            XElement statusCodeElement = new XElement(xmlnsNamespace + "statusCode",
+                new XAttribute("code", "completed"));
+            organizerElement.Add(statusCodeElement);
+
+            XElement participantElement = new XElement(xmlnsNamespace + "participant",
+                new XAttribute("typeCode", "LOC"));
+
+            var participantRoleElement = GenerateOrganizationElement(workActivityModel.Workpalace, "participantRole", classCodeAttributValue: "SDLOC");
+            participantRoleElement.Elements(xmlnsNamespace + "name").Remove();
+
+            XElement playingEntityElement = new XElement(xmlnsNamespace + "playingEntity");
+            XElement nameElement = new XElement(xmlnsNamespace + "name", workActivityModel.Workpalace.Name);
+            playingEntityElement.Add(nameElement);
+            participantRoleElement.Add(playingEntityElement);
+
+            participantElement.Add(participantRoleElement);
+            organizerElement.Add(participantElement);
+
+            organizerElement.Add(GenerateWorkplaceActiityComponenElement("mainProfessionWorkpalceActivity", workActivityModel.MainProfession));
+            organizerElement.Add(GenerateWorkplaceActiityComponenElement("qualificationWorkpalceActivity", workActivityModel.Qualification));
+            organizerElement.Add(GenerateWorkplaceActiityComponenElement("workExperienceWorkpalceActivity", workActivityModel.WorkExperience));
+
+            XElement componentElement = null;
+
+            foreach (var workPerformed in workActivityModel.WorkPerformeds)
+            {
+                componentElement = GenerateWorkPerformedElement(workPerformed);
+            }
+
+            if (componentElement != null)
+            {
+                organizerElement.Add(componentElement);
+            }
+
+            entryElement.Add(organizerElement);
+            return entryElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "Выполняемая работа на момент направления на медико-социальную экспертизу".
+        /// </summary>
+        /// <param name="workPerformed">Модель выполняемой работы.</param>
+        /// <returns>Элемент "Выполняемая работа на момент направления на медико-социальную экспертизу".</returns>
+        private static XElement GenerateWorkPerformedElement((string Profession, string Speciality, string Position) workPerformed)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component",
+                new XAttribute("typeCode", "COMP"));
+            XElement organizerClusterElement = new XElement(xmlnsNamespace + "organizer",
+                new XAttribute("classCode", "CLUSTER"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeClusterElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: "4077",
+                    codeSystemVersionValue: "1.69",
+                    displayNameValue: "Выполняемая работа на момент направления на медико-социальную экспертизу",
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                    codeSystemNameValue: "Кодируемые поля CDA документов"));
+            organizerClusterElement.Add(codeClusterElement);
+
+            XElement statusCodeClusterElement = new XElement(xmlnsNamespace + "statusCode",
+                new XAttribute("code", "completed"));
+            organizerClusterElement.Add(statusCodeClusterElement);
+
+            organizerClusterElement.Add(GenerateWorkplaceActiityComponenElement("professionWorkpalceActivity", workPerformed.Profession));
+            organizerClusterElement.Add(GenerateWorkplaceActiityComponenElement("specialityWorkpalceActivity", workPerformed.Speciality));
+            organizerClusterElement.Add(GenerateWorkplaceActiityComponenElement("positionWorkpalceActivity", workPerformed.Position));
+
+            componentElement.Add(organizerClusterElement);
             return componentElement;
         }
 
@@ -1177,20 +1318,22 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Создает элемент "entryRelationship".
+        /// Создает элемент "entry*".
         /// </summary>
         /// <param name="entryRelationshipElementName">Наименование типа элемента.</param>
         /// <param name="code">Значения элемента "code".</param>
         /// <param name="value">Значения элемента "value".</param>
         /// <param name="effectiveTime">Значения элемента "effectiveTime".</param>
-        /// <returns>Элемент "entryRelationship".</returns>
+        /// <param name="isEntryElement">Истина - простой "entry" элемент.</param>
+        /// <returns>Элемент "entry*".</returns>
         private static XElement GenerateEntryRelationshipElement(
             string entryRelationshipElementName,
             TypeModel code = null,
             string value = null,
-            DateTime? effectiveTime = null)
+            DateTime? effectiveTime = null,
+            bool isEntryElement = false)
         {
-            var codeAttributes = GetEntryRelationshipElementCodeValue(entryRelationshipElementName).Value;
+            var codeAttributes = GetCodeValue(entryRelationshipElementName);
             if (code != null)
             {
                 codeAttributes.codeValue = code.Code;
@@ -1198,9 +1341,18 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 codeAttributes.displayNameValue = code.DisplayName;
             }
 
-            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
-                new XAttribute("typeCode", "SUBJ"),
-                new XAttribute("inversionInd", "true"));
+            XElement entryElement;
+
+            if(isEntryElement)
+            {
+                entryElement = new XElement(xmlnsNamespace + "entry");
+            }
+            else
+            {
+                entryElement = new XElement(xmlnsNamespace + "entryRelationship",
+                    new XAttribute("typeCode", "SUBJ"),
+                    new XAttribute("inversionInd", "true"));
+            }
 
             XElement observationElement = new XElement(xmlnsNamespace + "observation",
                 new XAttribute("classCode", "OBS"),
@@ -1247,8 +1399,73 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 observationElement.Add(valueElement);
             }
 
-            entryRelationshipElement.Add(observationElement);
-            return entryRelationshipElement;
+            entryElement.Add(observationElement);
+            return entryElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "Местонахождение гражданина".
+        /// </summary>
+        /// <param name="patientLocationCode">Код местонахождения гражданина.</param>
+        /// <param name="patientLocation">Модель местанахождения гражданина.</param>
+        /// <returns>Элемент "Местонахождение гражданина"</returns>
+        private static XElement GeneratePatienLocationElement(TypeModel patientLocationCode, OrganizationModel patientLocation)
+        {
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement actElement = new XElement(xmlnsNamespace + "act",
+                new XAttribute("classCode", "ACT"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: patientLocationCode.Code,
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.856",
+                    codeSystemVersionValue: patientLocationCode.CodeSystemVersion,
+                    codeSystemNameValue: "Местонахождение граждан для медико-социальной экспертизы",
+                    displayNameValue: patientLocationCode.DisplayName));
+            actElement.Add(codeElement);
+
+            XElement participantElement = new XElement(xmlnsNamespace + "participant",
+                new XAttribute("typeCode", "LOC"));
+
+            participantElement.Add(GenerateOrganizationElement(patientLocation, "participantRole"));
+
+            actElement.Add(participantElement);
+
+            entryElement.Add(actElement);
+            return entryElement;
+        }
+
+        /// <summary>
+        /// Создает элемент "component".
+        /// </summary>
+        /// <param name="nameElement">Название элемента.</param>
+        /// <param name="contextElement">Контакт элемента.</param>
+        /// <returns>Элемент "component"</returns>
+        private static XElement GenerateWorkplaceActiityComponenElement(string nameElement, string contextElement)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component",
+                new XAttribute("typeCode", "COMP"));
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            var codeValue = GetCodeValue(nameElement);
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: codeValue.codeValue,
+                    codeSystemVersionValue: codeValue.codeSystemVersionValue,
+                    displayNameValue: codeValue.displayNameValue,
+                    codeSystemValue: codeValue.codeSystemValue,
+                    codeSystemNameValue: codeValue.codeSystemNameValue));
+            observationElement.Add(codeElement);
+
+            XElement textElement = new XElement(xmlnsNamespace + "text", contextElement);
+            observationElement.Add(textElement);
+
+            componentElement.Add(observationElement);
+            return componentElement;
         }
 
         #endregion
@@ -1395,39 +1612,34 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         /// <param name="entryRelationshipElementName">Наименование элемента "entryRelationship".</param>
         /// <returns>Значения "code" элемента "entryRelationship".</returns>
-        private static (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue)? GetEntryRelationshipElementCodeValue(string entryRelationshipElementName)
+        private static (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) GetCodeValue(string elementName)
         {
-            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentTarget =
-                ("10", "1.2.643.5.1.13.13.99.2.147", "1.5", "Цели направления на медико-социальную экспертизу", "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)");
-            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentOrder =
-                ("2", "1.2.643.5.1.13.13.11.1007", "2.1", "Вид случая госпитализации или обращения (первичный, повторный)", "Повторный");
-            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentProtocol =
-                ("4059", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Протокол врачебной комиссии");
-            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentLocation =
-                ("4060", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Медико-социальную экспертизу необходимо проводить на дому (Отметка)");
-            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentPolitiveHelp =
-                ("4061", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Нуждаемость в оказании паллиативной медицинской помощи");
-            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentPrimaryProsthetics =
-               ("7012", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Нуждаемость в первичном протезировании");
-            (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue) sentDate =
-               ("4062", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Дата выдачи направления на МСЭ");
+            var values = new Dictionary<string, (string codeValue, string codeSystemValue, string codeSystemVersionValue, string codeSystemNameValue, string displayNameValue)>()
+            {
+                { "sentTarget", ("10", "1.2.643.5.1.13.13.99.2.147", "1.5", "Цели направления на медико-социальную экспертизу", "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)") },
+                { "sentOrder", ("2", "1.2.643.5.1.13.13.11.1007", "2.1", "Вид случая госпитализации или обращения (первичный, повторный)", "Повторный") },
+                { "sentProtocol", ("4059", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Протокол врачебной комиссии") },
+                { "sentLocation", ("4060", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Медико-социальную экспертизу необходимо проводить на дому (Отметка)") },
+                { "sentPolitiveHelp", ("4061", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Нуждаемость в оказании паллиативной медицинской помощи") },
+                { "sentPrimaryProsthetics", ("7012", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Нуждаемость в первичном протезировании") },
+                { "sentDate", ("4062", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Дата выдачи направления на МСЭ") },
+                { "citizenship", ("1", "1.2.643.5.1.13.13.99.2.315", "2.1", "Категории гражданства", "Гражданин Российской Федерации") },
+                { "militaryDuty", ("4", "1.2.643.5.1.13.13.99.2.314", "1.2", "Отношение к воинской обязанности", "Гражданин, не состоящий на воинском учёте") },
 
-            if (entryRelationshipElementName == "sentTarget")
-                return sentTarget;
-            if (entryRelationshipElementName == "sentOrder")
-                return sentOrder;
-            if (entryRelationshipElementName == "sentProtocol")
-                return sentProtocol;
-            if (entryRelationshipElementName == "sentLocation")
-                return sentLocation;
-            if (entryRelationshipElementName == "sentPolitiveHelp")
-                return sentPolitiveHelp;
-            if (entryRelationshipElementName == "sentPrimaryProsthetics")
-                return sentPrimaryProsthetics;
-            if (entryRelationshipElementName == "sentDate")
-                return sentDate;
+                #region Workpalce Activity
 
-            return null;
+                { "mainProfessionWorkpalceActivity", ("4074", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Основная профессия (специальность, должность)") },
+                { "qualificationWorkpalceActivity", ("4075", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Квалификация (класс, разряд, категория, звание)") },
+                { "workExperienceWorkpalceActivity", ("4076", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Стаж работы") },
+                { "professionWorkpalceActivity", ("4078", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Профессия") },
+                { "specialityWorkpalceActivity", ("4079", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Специальность") },
+                { "positionWorkpalceActivity", ("4080", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Должность") },
+                { "workAtTimeWorkpalceActivity", ("4077", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Выполняемая работа на момент направления на медико-социальную экспертизу") }
+
+                #endregion
+            };
+
+            return values[elementName];
         }
 
         #endregion

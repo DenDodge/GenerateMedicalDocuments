@@ -9,5 +9,9 @@
         /// [1..1] СЕКЦИЯ: НАПРАВЛЕН.
         /// </summary>
         public SentSectionModel SentSection { get; set; }
+        /// <summary>
+        /// [1..1] СЕКЦИЯ: Место работы, должность.
+        /// </summary>
+        public WorkplaceSectionModel WorkplaceSection { get; set; }
     }
 }
