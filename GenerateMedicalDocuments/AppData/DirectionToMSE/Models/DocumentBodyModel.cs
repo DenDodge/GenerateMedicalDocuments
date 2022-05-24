@@ -13,5 +13,9 @@
         /// [1..1] СЕКЦИЯ: Место работы, должность.
         /// </summary>
         public WorkplaceSectionModel WorkplaceSection { get; set; }
+        /// <summary>
+        /// [1..1] СЕКЦИЯ: Образование
+        /// </summary>
+        public EducationSectionModel EducationSection { get; set; }
     }
 }

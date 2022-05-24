@@ -858,6 +858,34 @@ namespace GenerateMedicalDocumentsTestApp
                             },
                             Conditions = "Условия и характер выполняемого труда"
                         }
+                    },
+                    EducationSection = new EducationSectionModel()
+                    {
+                        FillingSection = new ParagraphModel()
+                        {
+                            Caption = "Сведения о получении образования",
+                            Content = "Организация, адрес, курс, профессия."
+                        },
+                        Organization = new OrganizationModel()
+                        {
+                            ID = "1.2.643.5.1.13.13.12.4.70.184",
+                            Name = "Томское областное медицинское училище",
+                            Address = new AddressModel()
+                            {
+                                StreetAddressLine = "г Томск, ул Смирнова, д 44",
+                                StateCode = new TypeModel()
+                                {
+                                    Code = "70",
+                                    CodeSystemVersion = "6.3",
+                                    DisplayName = "Томская область"
+                                },
+                                PostalCode = 634027,
+                                AOGUID = new Guid("1564e297-fc5d-453f-8b7e-a90d444e01e7"),
+                                HOUSEGUID = new Guid("4e8ed1a2-13a5-4579-a17d-a692625b5aea")
+                            }
+                        },
+                        Class = "2",
+                        Spetiality = "Стоматология"
                     }
                 }
             };

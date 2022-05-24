@@ -990,7 +990,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             XElement structuredBodyElement = new XElement(xmlnsNamespace + "structuredBody");
 
             structuredBodyElement.Add(GenerateSentSectionElement(documentBodyModel.SentSection));
-            structuredBodyElement.Add(GenerateWorkLocationSection(documentBodyModel.WorkplaceSection));
+            structuredBodyElement.Add(GenerateWorkLocationSectionElement(documentBodyModel.WorkplaceSection));
+            structuredBodyElement.Add(GenerateEducationSectionElement(documentBodyModel.EducationSection));
 
             componentElement.Add(structuredBodyElement);
             return componentElement;
@@ -1037,7 +1038,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         /// <param name="workplaceSectionModel">Модель места работы и должности.</param>
         /// <returns>Элемент "Место работы и должность".</returns>
-        private static XElement GenerateWorkLocationSection(WorkplaceSectionModel workplaceSectionModel)
+        private static XElement GenerateWorkLocationSectionElement(WorkplaceSectionModel workplaceSectionModel)
         {
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
@@ -1060,6 +1061,130 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 sectionElement.Add(GenerateWorkActivityElement(workplaceSectionModel.WorkActivity));
             }
+
+            componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        /// <summary>
+        /// Создает элемент секции "Образование".
+        /// </summary>
+        /// <param name="educationSectionModel">Модель секции "Образование".</param>
+        /// <returns>Элемент секции "Образование".</returns>
+        private static XElement GenerateEducationSectionElement(EducationSectionModel educationSectionModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: "EDU",
+                    codeSystemVersionValue: "1.18",
+                    displayNameValue: "Образование",
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.197",
+                    codeSystemNameValue: "Секции электронных медицинских документов"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "ОБРАЗОВАНИЕ");
+            sectionElement.Add(titleElement);
+
+            XElement textElement = new XElement(xmlnsNamespace + "text");
+            XElement paragraphElement = new XElement(xmlnsNamespace + "paragraph");
+
+            XElement captionElement = new XElement(xmlnsNamespace + "caption", educationSectionModel.FillingSection.Caption);
+            paragraphElement.Add(captionElement, educationSectionModel.FillingSection.Content);
+
+            textElement.Add(paragraphElement);
+            sectionElement.Add(textElement);
+
+            #region entry organization
+
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement observationCodeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: "4100",
+                    codeSystemVersionValue: "1.69",
+                    displayNameValue: "Сведения о получении образования",
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                    codeSystemNameValue: "Кодируемые поля CDA документов"));
+            observationElement.Add(observationCodeElement);
+
+            XElement performerElement = new XElement(xmlnsNamespace + "performer");
+            XElement assignedEntityElement = new XElement(xmlnsNamespace + "assignedEntity");
+
+            XElement idElement = new XElement(xmlnsNamespace + "id",
+                new XAttribute("nullFlavor", "NI"));
+            assignedEntityElement.Add(idElement);
+
+            var representedOrganizationElement = GenerateOrganizationElement(educationSectionModel.Organization, "representedOrganization", classCodeAttributValue: "ORG");
+            foreach (var element in representedOrganizationElement.Elements(xmlnsNamespace + "id"))
+            {
+                element.Add(new XAttribute("extension", "1145"));
+            }
+            assignedEntityElement.Add(representedOrganizationElement);
+
+            performerElement.Add(assignedEntityElement);
+            observationElement.Add(performerElement);
+            entryElement.Add(observationElement);
+            sectionElement.Add(entryElement);
+
+            #endregion
+
+            #region entry class
+
+            XElement entryClassElement = new XElement(xmlnsNamespace + "entry");
+            XElement observationClassElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement observationCodeClassElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: "12137",
+                    codeSystemVersionValue: "1.69",
+                    displayNameValue: "Курс",
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                    codeSystemNameValue: "Кодируемые поля CDA документов"));
+            observationClassElement.Add(observationCodeClassElement);
+
+            XElement valueClassElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute(xsiNamespace + "type", "ST"),
+                educationSectionModel.Class);
+            observationClassElement.Add(valueClassElement);
+
+            entryClassElement.Add(observationClassElement);
+            sectionElement.Add(entryClassElement);
+
+            #endregion
+
+            #region entry spetiality
+
+            XElement entrySpetialityElement = new XElement(xmlnsNamespace + "entry");
+            XElement observationSpetialityElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement observationCodeSpetialityElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: "4078",
+                    codeSystemVersionValue: "1.69",
+                    displayNameValue: "Профессия",
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                    codeSystemNameValue: "Кодируемые поля CDA документов"));
+            observationSpetialityElement.Add(observationCodeSpetialityElement);
+
+            XElement valueSpetialityElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute(xsiNamespace + "type", "ST"),
+                educationSectionModel.Spetiality);
+            observationSpetialityElement.Add(valueSpetialityElement);
+
+            entrySpetialityElement.Add(observationSpetialityElement);
+            sectionElement.Add(entrySpetialityElement);
+
+            #endregion
 
             componentElement.Add(sectionElement);
             return componentElement;
@@ -1119,6 +1244,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 organizerElement.Add(componentElement);
             }
+
+            organizerElement.Add(GenerateWorkplaceActiityComponenElement("conditionsWorkpalceActivity", workActivityModel.Conditions));
 
             entryElement.Add(organizerElement);
             return entryElement;
@@ -1634,7 +1761,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 { "professionWorkpalceActivity", ("4078", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Профессия") },
                 { "specialityWorkpalceActivity", ("4079", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Специальность") },
                 { "positionWorkpalceActivity", ("4080", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Должность") },
-                { "workAtTimeWorkpalceActivity", ("4077", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Выполняемая работа на момент направления на медико-социальную экспертизу") }
+                { "workAtTimeWorkpalceActivity", ("4077", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Выполняемая работа на момент направления на медико-социальную экспертизу") },
+                { "conditionsWorkpalceActivity", ("4081", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Условия и характер выполняемого труда") }
 
                 #endregion
             };
