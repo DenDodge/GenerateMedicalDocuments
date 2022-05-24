@@ -652,70 +652,70 @@ namespace GenerateMedicalDocumentsTestApp
                                 new ParagraphModel()
                                 {
                                     Caption = "Гражданин направляется на медико-социальную экспертизу",
-                                    Content = "повторно"
+                                    Content = new List<string>() { "повторно" }
                                 }
                             },
                             {
                                 new ParagraphModel()
                                 {
                                     Caption = "Цель направления",
-                                    Content = "для разработки индивидуальной программы реабилитации инвалида"
+                                    Content = new List<string>() { "для разработки индивидуальной программы реабилитации инвалида" }
                                 }
                             },
                             {
                                 new ParagraphModel()
                                 {
                                     Caption = "Протокол врачебной комиссии медицинской организации, содержащий решение о направлении гражданина на медико-социальную экспертизу",
-                                    Content = "№ 123 от 20 мая 2018 г."
+                                    Content = new List<string>() { "№ 123 от 20 мая 2018 г." }
                                 }
                             },
                             {
                                 new ParagraphModel()
                                 {
                                     Caption = "Гражданин по состоянию здоровья не может явиться в бюро (главное бюро, Федеральное бюро) медико-социальной экспертизы",
-                                    Content = "медико-социальную экспертизу необходимо проводить на дому"
+                                    Content = new List<string>() { "медико-социальную экспертизу необходимо проводить на дому" }
                                 }
                             },
                             {
                                 new ParagraphModel()
                                 {
                                     Caption = "Нуждаемость в оказании паллиативной медицинской помощи",
-                                    Content = "гражданин нуждается в паллиативной медицинской помощи"
+                                    Content = new List<string>() { "гражданин нуждается в паллиативной медицинской помощи" }
                                 }
                             },
                             {
                                 new ParagraphModel()
                                 {
                                     Caption = "Нахождение на лечении в стационаре в связи с операцией по ампутации  (реампутации)  конечности (конечностей), нуждающийся в первичном протезировании",
-                                    Content = "гражданин не нуждается в первичном протезировании"
+                                    Content = new List<string>() { "гражданин не нуждается в первичном протезировании" }
                                 }
                             },
                             {
                                 new ParagraphModel()
                                 {
                                     Caption = "Дата выдачи гражданину направления на медико-социальную экспертизу медицинской организацией",
-                                    Content = "20 июня 2018 г."
+                                    Content = new List<string>() { "20 июня 2018 г." }
                                 }
                             },
                             {
                                 new ParagraphModel()
                                 {
                                     Caption = "Гражданство",
-                                    Content = "гражданин Российской Федерации"
+                                    Content = new List<string>() { "гражданин Российской Федерации" }
                                 }
                             },
                             {
                                 new ParagraphModel()
                                 {
                                     Caption = "Гражданин находится",
-                                    Content = "текст"
+                                    Content = new List<string>() { "текст" }
                                 }
                             },
                             {
                                 new ParagraphModel()
                                 {
                                     Caption = "Отношения к воинской обязанности",
-                                    Content = "гражданин, не состоящий на воинском учёте"
+                                    Content = new List<string>() { "гражданин, не состоящий на воинском учёте" }
                                 }
                             }
                         },
@@ -822,13 +822,13 @@ namespace GenerateMedicalDocumentsTestApp
                     {
                         WorkPlaceParagraphs = new List<ParagraphModel>
                         {
-                            new ParagraphModel { Caption = "Основная профессия", Content = "текст" },
-                            new ParagraphModel { Caption = "Квалификация", Content = "текст" },
-                            new ParagraphModel { Caption = "Стаж", Content = "текст" },
-                            new ParagraphModel { Caption = "Выполняемая работа", Content = "текст" },
-                            new ParagraphModel { Caption = "Условия труда", Content = "текст" },
-                            new ParagraphModel { Caption = "Место работы", Content = "текст" },
-                            new ParagraphModel { Caption = "Адрес места работы.", Content = "текст" },
+                            new ParagraphModel { Caption = "Основная профессия", Content = new List<string>() { "текст" } },
+                            new ParagraphModel { Caption = "Квалификация", Content = new List<string>() { "текст" } },
+                            new ParagraphModel { Caption = "Стаж", Content = new List<string>() { "текст"} },
+                            new ParagraphModel { Caption = "Выполняемая работа", Content = new List<string>() { "текст" } },
+                            new ParagraphModel { Caption = "Условия труда", Content = new List<string>() { "текст" } },
+                            new ParagraphModel { Caption = "Место работы", Content = new List<string>() { "текст" } },
+                            new ParagraphModel { Caption = "Адрес места работы.", Content = new List<string>() { "текст" } },
                         },
                         WorkActivity = new WorkActivityModel()
                         {
@@ -864,7 +864,7 @@ namespace GenerateMedicalDocumentsTestApp
                         FillingSection = new ParagraphModel()
                         {
                             Caption = "Сведения о получении образования",
-                            Content = "Организация, адрес, курс, профессия."
+                            Content = new List<string>() { "Организация, адрес, курс, профессия." }
                         },
                         Organization = new OrganizationModel()
                         {

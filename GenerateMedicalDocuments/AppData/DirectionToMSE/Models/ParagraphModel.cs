@@ -1,4 +1,6 @@
-﻿namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
+﻿using System.Collections.Generic;
+
+namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
 {
     /// <summary>
     /// Модель наполнения секции.
@@ -12,6 +14,6 @@
         /// <summary>
         /// Значение параметра.
         /// </summary>
-        public string Content { get; set; }
+        public List<string> Content { get; set; }
     }
 }

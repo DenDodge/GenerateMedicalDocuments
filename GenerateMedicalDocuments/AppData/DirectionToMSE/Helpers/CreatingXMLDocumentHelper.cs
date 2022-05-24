@@ -1293,19 +1293,26 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         private static XElement GenerateParagraphsElements(List<ParagraphModel> paragraphs)
         {
             XElement textElement = new XElement(xmlnsNamespace + "text");
-
+            XElement newLineElement = new XElement(xmlnsNamespace + "br");
             foreach (var paragraph in paragraphs)
             {
                 XElement paragraphElement = new XElement(xmlnsNamespace + "paragraph");
 
-                XElement captionElement = new XElement(xmlnsNamespace + "caption", paragraph.Caption);
-                XElement contentElement = new XElement(xmlnsNamespace + "content", paragraph.Content);
+                XElement captionElement = new XElement(xmlnsNamespace + "caption", paragraph.Caption);            
                 paragraphElement.Add(captionElement);
-                paragraphElement.Add(contentElement);
+
+                XElement contentElement = null;
+                foreach (var content in paragraph.Content)
+                {
+                    contentElement = new XElement(xmlnsNamespace + "content", content);
+                    paragraphElement.Add(contentElement);
+                    if (paragraph.Content.Count != 1)
+                    {
+                        paragraphElement.Add(newLineElement);
+                    }
+                }
 
                 textElement.Add(paragraphElement);
-
-                XElement newLineElement = new XElement(xmlnsNamespace + "br");
                 textElement.Add(newLineElement);
             }
 
