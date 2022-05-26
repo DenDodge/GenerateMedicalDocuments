@@ -17,5 +17,9 @@
         /// [1..1] СЕКЦИЯ: Образование
         /// </summary>
         public EducationSectionModel EducationSection { get; set; }
+        /// <summary>
+        /// [1..1] СЕКЦИЯ: АНАМНЕЗ.
+        /// </summary>
+        public AnamnezSectionModel AnamnezSection { get; set; }
     }
 }

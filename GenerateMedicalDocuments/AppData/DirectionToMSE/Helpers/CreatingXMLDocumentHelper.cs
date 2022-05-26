@@ -1,6 +1,7 @@
 ﻿using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 
 namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
@@ -18,6 +19,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         private static XNamespace identityNamespace = "urn:hl7-ru:identity";
         private static XNamespace addressNamespace = "urn:hl7-ru:address";
         private static XNamespace medServiceNamespace = "urn:hl7-ru:medService";
+
+        #endregion
+
+        #region Static elements
+
+        private static readonly XElement NewLineElement = new XElement(xmlnsNamespace + "br");
 
         #endregion
 
@@ -992,6 +999,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             structuredBodyElement.Add(GenerateSentSectionElement(documentBodyModel.SentSection));
             structuredBodyElement.Add(GenerateWorkLocationSectionElement(documentBodyModel.WorkplaceSection));
             structuredBodyElement.Add(GenerateEducationSectionElement(documentBodyModel.EducationSection));
+            structuredBodyElement.Add(GenerateAnamnezSectionElement(documentBodyModel.AnamnezSection));
 
             componentElement.Add(structuredBodyElement);
             return componentElement;
@@ -1191,6 +1199,35 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
+        /// Создает секцию "Анамнез".
+        /// </summary>
+        /// <param name="anamnezSectionModel">Модель секции "Анамнез".</param>
+        /// <returns>Секция "Анамнез".</returns>
+        private static XElement GenerateAnamnezSectionElement(AnamnezSectionModel anamnezSectionModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: "SOCANAM",
+                    codeSystemVersionValue: "1.18",
+                    displayNameValue: "Социальный анамнез",
+                    codeSystemValue: "1.2.643.5.1.13.13.99.2.197",
+                    codeSystemNameValue: "Секции электронных медицинских документов"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "АНАМНЕЗ");
+            sectionElement.Add(titleElement);
+
+            sectionElement.Add(GenerateFillingAnamnezSectionElement(anamnezSectionModel));
+            sectionElement.Add(GenerateEntryAnamnezSectionElements(anamnezSectionModel));
+
+            componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        /// <summary>
         /// Создает элемент "Сведения о трудовой деятельности".
         /// </summary>
         /// <param name="workActivityModel">Модель сведений о трудовой деятельности.</param>
@@ -1286,37 +1323,47 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Создает элемент "text" с наполнением секции "Напарвление".
+        /// Создает элемент "text" с наполнением секции.
         /// </summary>
         /// <param name="paragraphs">Список параграфов.</param>
         /// <returns>Элемент "text" с наполнением секции "Напарвление".</returns>
         private static XElement GenerateParagraphsElements(List<ParagraphModel> paragraphs)
         {
             XElement textElement = new XElement(xmlnsNamespace + "text");
-            XElement newLineElement = new XElement(xmlnsNamespace + "br");
             foreach (var paragraph in paragraphs)
             {
-                XElement paragraphElement = new XElement(xmlnsNamespace + "paragraph");
-
-                XElement captionElement = new XElement(xmlnsNamespace + "caption", paragraph.Caption);            
-                paragraphElement.Add(captionElement);
-
-                XElement contentElement = null;
-                foreach (var content in paragraph.Content)
-                {
-                    contentElement = new XElement(xmlnsNamespace + "content", content);
-                    paragraphElement.Add(contentElement);
-                    if (paragraph.Content.Count != 1)
-                    {
-                        paragraphElement.Add(newLineElement);
-                    }
-                }
-
-                textElement.Add(paragraphElement);
-                textElement.Add(newLineElement);
+                textElement.Add(GenerateParagraphElement(paragraph.Caption, paragraph.Content));
+                textElement.Add(NewLineElement);
             }
 
             return textElement;
+        }
+
+        /// <summary>
+        /// Генерирует элемент "paragraph".
+        /// </summary>
+        /// <param name="caption">Заголовок элемента.</param>
+        /// <param name="context">Наполнение элемента.</param>
+        /// <returns></returns>
+        private static XElement GenerateParagraphElement(string caption, List<string> context)
+        {
+            XElement paragraphElement = new XElement(xmlnsNamespace + "paragraph");
+
+            XElement captionElement = new XElement(xmlnsNamespace + "caption", caption);
+            paragraphElement.Add(captionElement);
+
+            XElement contentElement = null;
+            foreach (var content in context)
+            {
+                contentElement = new XElement(xmlnsNamespace + "content", content);
+                paragraphElement.Add(contentElement);
+                if (context.Count != 1)
+                {
+                    paragraphElement.Add(NewLineElement);
+                }
+            }
+
+            return paragraphElement;
         }
 
         /// <summary>
@@ -1602,6 +1649,282 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             return componentElement;
         }
 
+        /// <summary>
+        /// Генерирует элементы для наполнения секции "Анамнез".
+        /// </summary>
+        /// <param name="anamnezSectionModel">Модель секции "Анамнез".</param>
+        /// <returns>Элементы для наполнения секции "Анамнез".</returns>
+        private static XElement GenerateFillingAnamnezSectionElement(AnamnezSectionModel anamnezSectionModel)
+        {
+            XElement textElement = new XElement(xmlnsNamespace + "text");
+
+            if (anamnezSectionModel.Disability != null)
+            {
+                XElement disabilityParagraphElement = new XElement(xmlnsNamespace + "paragraph");
+
+                XElement disabilityCaptionElement = new XElement(xmlnsNamespace + "caption", "Инвалидность");
+                disabilityParagraphElement.Add(disabilityCaptionElement);
+
+                XElement disabilityContentElement1 = new XElement(xmlnsNamespace + "content",
+                    new XAttribute("ID", "socanam3"), anamnezSectionModel.Disability.Group);
+                disabilityParagraphElement.Add(disabilityContentElement1);
+
+                disabilityParagraphElement.Add(NewLineElement);
+
+                disabilityParagraphElement.Add("Находился на инвалидности на момент направления: ");
+
+                XElement disabilityContentElement2 = new XElement(xmlnsNamespace + "content",
+                    new XAttribute("ID", "socanam34"), anamnezSectionModel.Disability.TimeDisability);
+                disabilityParagraphElement.Add(disabilityContentElement2);
+                disabilityParagraphElement.Add(NewLineElement);
+
+                textElement.Add(disabilityParagraphElement);
+
+                textElement.Add(NewLineElement);
+            }
+
+            if (anamnezSectionModel.DegreeDisability != null)
+            {
+                XElement degreeDisabilityParagraphElement = new XElement(xmlnsNamespace + "paragraph");
+
+                XElement degreeDisabilityCaptionElement = new XElement(xmlnsNamespace + "caption", "Степень утраты профессиональной трудоспособности");
+                degreeDisabilityParagraphElement.Add(degreeDisabilityCaptionElement);
+
+                if (anamnezSectionModel.DegreeDisability.Section31 != null)
+                {
+                    XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
+                        new XAttribute("ID", "socanam31"), anamnezSectionModel.DegreeDisability.Section31);
+                    degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
+                    degreeDisabilityParagraphElement.Add(NewLineElement);
+                }
+
+                if (anamnezSectionModel.DegreeDisability.Section32 != null)
+                {
+                    XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
+                        new XAttribute("ID", "socanam32"), anamnezSectionModel.DegreeDisability.Section32);
+                    degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
+                    degreeDisabilityParagraphElement.Add(NewLineElement);
+                }
+
+                if (anamnezSectionModel.DegreeDisability.Section33 != null)
+                {
+                    XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
+                        new XAttribute("ID", "socanam33"), anamnezSectionModel.DegreeDisability.Section33);
+                    degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
+                    degreeDisabilityParagraphElement.Add(NewLineElement);
+                }
+
+                textElement.Add(degreeDisabilityParagraphElement);
+
+                textElement.Add(NewLineElement);
+            }
+
+            if (anamnezSectionModel.SeenOrganizations != null)
+            {
+                textElement.Add(GenerateParagraphElement("Наблюдается в организациях, оказывающих лечебно-профилактическую помощь", 
+                    new List<string>() { anamnezSectionModel.SeenOrganizations } ));
+                textElement.Add(NewLineElement);
+            }
+
+            if (anamnezSectionModel.MedicalAnamnez != null)
+            {
+                textElement.Add(GenerateParagraphElement("Анамнез заболевания",
+                    new List<string>() { anamnezSectionModel.MedicalAnamnez }));
+                textElement.Add(NewLineElement);
+            }
+
+            if (anamnezSectionModel.LifeAnamnez != null)
+            {
+                textElement.Add(GenerateParagraphElement("Анамнез жизни",
+                    new List<string>() { anamnezSectionModel.LifeAnamnez }));
+                textElement.Add(NewLineElement);
+            }
+
+            if (anamnezSectionModel.ActualDevelopment != null)
+            {
+                var paragraphElement = GenerateParagraphElement(
+                    "Физическое развитие (в отношении детей в возрасте до 3 лет)",
+                    new List<string>() { anamnezSectionModel.ActualDevelopment });
+                var contentParagraphElement = paragraphElement.Elements(xmlnsNamespace + "content");
+                foreach (var element in contentParagraphElement)
+                {
+                    element.Add(new XAttribute("ID", "socanam4"));
+                }
+
+                textElement.Add(paragraphElement);
+                textElement.Add(NewLineElement);
+            }
+
+            if (anamnezSectionModel.TemporaryDisabilitys != null)
+            {
+                XElement tableElement = new XElement(xmlnsNamespace + "table",
+                    new XAttribute("width", "100%"));
+
+                XElement captionTableElement = new XElement(xmlnsNamespace + "caption", "Временная нетрудоспособность:");
+                tableElement.Add(captionTableElement);
+
+                #region Column elements
+
+                XElement column1Element = new XElement(xmlnsNamespace + "col",
+                    new XAttribute("width", "10%"));
+                tableElement.Add(column1Element);
+                XElement column2Element = new XElement(xmlnsNamespace + "col",
+                    new XAttribute("width", "20%"));
+                tableElement.Add(column2Element);
+                XElement column3Element = new XElement(xmlnsNamespace + "col",
+                    new XAttribute("width", "70%"));
+                tableElement.Add(column3Element);
+
+                #endregion
+
+                #region Table body elements
+
+                XElement tbodyElement = new XElement(xmlnsNamespace + "tbody");
+
+                #region Table body header elements
+
+                XElement trHeaderElement = new XElement(xmlnsNamespace + "tr");
+
+                XElement th1Element = new XElement(xmlnsNamespace + "th", "Дата начала");
+                trHeaderElement.Add(th1Element);
+                XElement th2Element = new XElement(xmlnsNamespace + "th", "Дата окончания");
+                trHeaderElement.Add(th2Element);
+                XElement th3Element = new XElement(xmlnsNamespace + "th", "Число дней");
+                trHeaderElement.Add(th3Element);
+                XElement th4Element = new XElement(xmlnsNamespace + "th", "Шифр МКБ");
+                trHeaderElement.Add(th4Element);
+
+                tbodyElement.Add(trHeaderElement);
+
+                #endregion
+
+                foreach (var temporaryDisability in anamnezSectionModel.TemporaryDisabilitys)
+                {
+                    XElement trContentElement = new XElement(xmlnsNamespace + "tr");
+
+                    XElement td1Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateStart.ToString("dd.MM.yyyy"));
+                    trContentElement.Add(td1Element);
+                    XElement td2Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateFinish.ToString("dd.MM.yyyy"));
+                    trContentElement.Add(td2Element);
+                    XElement td3Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DayCount);
+                    trContentElement.Add(td3Element);
+                    XElement td4Element = new XElement(xmlnsNamespace + "td", temporaryDisability.CipherMKB);
+                    trContentElement.Add(td4Element);
+
+                    tbodyElement.Add(trContentElement);
+                }
+
+                tableElement.Add(tbodyElement);
+
+                #endregion
+
+                textElement.Add(tableElement);
+                textElement.Add(NewLineElement);
+            }
+
+            if (anamnezSectionModel.CertificateDisabilityNumber != null)
+            {
+                textElement.Add(GenerateParagraphElement("Листок нетрудоспособности в форме электронного документа",
+                    new List<string>() { anamnezSectionModel.CertificateDisabilityNumber }));
+                textElement.Add(NewLineElement);
+            }
+
+            if (anamnezSectionModel.EffectityAction != null)
+            {
+                textElement.Add(GenerateParagraphElement("Результаты и эффективность проведенных мероприятий медицинской реабилитации",
+                    anamnezSectionModel.EffectityAction));
+            }
+
+            return textElement;
+        }
+
+        /// <summary>
+        /// Генерирует список елементов "entry" для секции "Анамнез".
+        /// </summary>
+        /// <param name="anamnezSectionModel"></param>
+        /// <returns></returns>
+        private static List<XElement> GenerateEntryAnamnezSectionElements(AnamnezSectionModel anamnezSectionModel)
+        {
+            List<XElement> entryElements = new List<XElement>();
+
+            if (anamnezSectionModel.StartYear != null)
+            {
+                entryElements.Add(GenerateEntryAnamnezSectionElement("startYearAnamnez", "ST", anamnezSectionModel.StartYear.ToString()));
+            }
+            if (anamnezSectionModel.MedicalAnamnez != null)
+            {
+                entryElements.Add(GenerateEntryAnamnezSectionElement("medicalAnamnezAnamnez", "ST", anamnezSectionModel.MedicalAnamnez));
+            }
+            if (anamnezSectionModel.LifeAnamnez != null)
+            {
+                entryElements.Add(GenerateEntryAnamnezSectionElement("lifeAnamnezAnamnez", "ST", anamnezSectionModel.LifeAnamnez));
+            }
+            if (anamnezSectionModel.ActualDevelopment != null)
+            {
+                var entryElement = GenerateEntryAnamnezSectionElement("actualDevelopmentAnamnez", "ST", anamnezSectionModel.ActualDevelopment);
+
+                foreach (var entryElementChild in entryElement.Elements())
+                {
+                    if (entryElementChild.Name == xmlnsNamespace + "observation")
+                    {
+                        foreach (var observationElementChild in entryElementChild.Elements())
+                        {
+                            if (observationElementChild.Name == xmlnsNamespace + "value") observationElementChild.Remove();
+                            if (observationElementChild.Name == xmlnsNamespace + "code")
+                            {
+                                XElement originalTextElement = new XElement(xmlnsNamespace + "originalText");
+
+                                XElement referenceElement = new XElement(xmlnsNamespace + "reference",
+                                    new XAttribute("value", "#socanam4"));
+                                originalTextElement.Add(referenceElement);
+
+                                observationElementChild.Add(originalTextElement);
+                            }
+                        }
+                        XElement textElement = new XElement(xmlnsNamespace + "text", anamnezSectionModel.ActualDevelopment);
+                        entryElementChild.Add(textElement);
+                    }
+                }
+
+                entryElements.Add(entryElement);
+            }
+
+            return entryElements;
+        }
+
+        /// <summary>
+        /// Генерирование элемента "entry" для секции "Анамнез".
+        /// </summary>
+        /// <param name="entryName">Наименование элемента.</param>
+        /// <param name="type">Типа контанта.</param>
+        /// <param name="content">Контент.</param>
+        /// <returns>Элемент "entry".</returns>
+        private static XElement GenerateEntryAnamnezSectionElement(string entryName, string type, string content)
+        {
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            var codeValue = GetCodeValue(entryName);
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: codeValue.codeValue,
+                    codeSystemValue: codeValue.codeSystemValue,
+                    codeSystemVersionValue: codeValue.codeSystemVersionValue,
+                    codeSystemNameValue: codeValue.codeSystemNameValue,
+                    displayNameValue: codeValue.displayNameValue));
+            observationElement.Add(codeElement);
+
+            XElement valuElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute(xsiNamespace + "type", type),
+                content);
+            observationElement.Add(valuElement);
+
+            entryElement.Add(observationElement);
+            return entryElement;
+        }
+
         #endregion
 
         #region Generate element attributes
@@ -1769,7 +2092,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 { "specialityWorkpalceActivity", ("4079", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Специальность") },
                 { "positionWorkpalceActivity", ("4080", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Должность") },
                 { "workAtTimeWorkpalceActivity", ("4077", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Выполняемая работа на момент направления на медико-социальную экспертизу") },
-                { "conditionsWorkpalceActivity", ("4081", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Условия и характер выполняемого труда") }
+                { "conditionsWorkpalceActivity", ("4081", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Условия и характер выполняемого труда") },
+
+                #endregion
+
+                #region Anamnez
+
+                { "startYearAnamnez", ("4101", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Год, с которого наблюдается в медицинской организации") },
+                { "medicalAnamnezAnamnez", ("4102", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Анамнез заболевания") },
+                { "lifeAnamnezAnamnez", ("4103", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Анамнез жизни") },
+                { "actualDevelopmentAnamnez", ("4082", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Физическое развитие (в отношении детей в возрасте до 3 лет)") }
 
                 #endregion
             };
