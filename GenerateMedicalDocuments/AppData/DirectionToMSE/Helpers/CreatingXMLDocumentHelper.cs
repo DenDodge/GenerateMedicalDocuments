@@ -2138,6 +2138,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             return entryElement;
         }
 
+        /// <summary>
+        /// Генерирование элемента "entry" от "Инвалидность".
+        /// </summary>
+        /// <param name="disabilityModel">Модель "Инвалидность".</param>
+        /// <returns>Элемент "entry" от "Инвалидность".</returns>
         private static XElement GenerateDisabilityElement(DisabilityModel disabilityModel)
         {
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
@@ -2237,6 +2242,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             return entryElement;
         }
 
+        /// <summary>
+        /// Генерирует элемент "entryRelationship" для "Инвалидности".
+        /// </summary>
+        /// <param name="codeElementName">Наименование элемента.</param>
+        /// <param name="codeModel">Модель элемента "code".</param>
+        /// <param name="valueModel">Модель элемента "value".</param>
+        /// <returns>Элемент "entryRelationship" для "Инвалидности".</returns>
         private static XElement GenerateEntryRelationshipDisabilityElement(string codeElementName, CodeElementModel codeModel = null, ValueElementModel valueModel = null)
         {
             XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
