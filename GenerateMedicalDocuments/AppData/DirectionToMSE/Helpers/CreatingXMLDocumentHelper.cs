@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Xml.Linq;
 
 namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
@@ -1666,7 +1667,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 disabilityParagraphElement.Add(disabilityCaptionElement);
 
                 XElement disabilityContentElement1 = new XElement(xmlnsNamespace + "content",
-                    new XAttribute("ID", "socanam3"), anamnezSectionModel.Disability.Group);
+                    new XAttribute("ID", "socanam3"), anamnezSectionModel.Disability.GroupText);
                 disabilityParagraphElement.Add(disabilityContentElement1);
 
                 disabilityParagraphElement.Add(NewLineElement);
@@ -1690,26 +1691,26 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 XElement degreeDisabilityCaptionElement = new XElement(xmlnsNamespace + "caption", "Степень утраты профессиональной трудоспособности");
                 degreeDisabilityParagraphElement.Add(degreeDisabilityCaptionElement);
 
-                if (anamnezSectionModel.DegreeDisability.Section31 != null)
+                if (anamnezSectionModel.DegreeDisability.Section31Text != null)
                 {
                     XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
-                        new XAttribute("ID", "socanam31"), anamnezSectionModel.DegreeDisability.Section31);
+                        new XAttribute("ID", "socanam31"), anamnezSectionModel.DegreeDisability.Section31Text);
                     degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
                     degreeDisabilityParagraphElement.Add(NewLineElement);
                 }
 
-                if (anamnezSectionModel.DegreeDisability.Section32 != null)
+                if (anamnezSectionModel.DegreeDisability.Section32Text != null)
                 {
                     XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
-                        new XAttribute("ID", "socanam32"), anamnezSectionModel.DegreeDisability.Section32);
+                        new XAttribute("ID", "socanam32"), anamnezSectionModel.DegreeDisability.Section32Text);
                     degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
                     degreeDisabilityParagraphElement.Add(NewLineElement);
                 }
 
-                if (anamnezSectionModel.DegreeDisability.Section33 != null)
+                if (anamnezSectionModel.DegreeDisability.Section33Text != null)
                 {
                     XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
-                        new XAttribute("ID", "socanam33"), anamnezSectionModel.DegreeDisability.Section33);
+                        new XAttribute("ID", "socanam33"), anamnezSectionModel.DegreeDisability.Section33Text);
                     degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
                     degreeDisabilityParagraphElement.Add(NewLineElement);
                 }
@@ -1849,19 +1850,19 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             if (anamnezSectionModel.StartYear != null)
             {
-                entryElements.Add(GenerateEntryAnamnezSectionElement("startYearAnamnez", "ST", anamnezSectionModel.StartYear.ToString()));
+                entryElements.Add(GenerateEntryAnamnezSectionElement_Light("startYearAnamnez", "ST", anamnezSectionModel.StartYear.ToString()));
             }
             if (anamnezSectionModel.MedicalAnamnez != null)
             {
-                entryElements.Add(GenerateEntryAnamnezSectionElement("medicalAnamnezAnamnez", "ST", anamnezSectionModel.MedicalAnamnez));
+                entryElements.Add(GenerateEntryAnamnezSectionElement_Light("medicalAnamnezAnamnez", "ST", anamnezSectionModel.MedicalAnamnez));
             }
             if (anamnezSectionModel.LifeAnamnez != null)
             {
-                entryElements.Add(GenerateEntryAnamnezSectionElement("lifeAnamnezAnamnez", "ST", anamnezSectionModel.LifeAnamnez));
+                entryElements.Add(GenerateEntryAnamnezSectionElement_Light("lifeAnamnezAnamnez", "ST", anamnezSectionModel.LifeAnamnez));
             }
             if (anamnezSectionModel.ActualDevelopment != null)
             {
-                var entryElement = GenerateEntryAnamnezSectionElement("actualDevelopmentAnamnez", "ST", anamnezSectionModel.ActualDevelopment);
+                var entryElement = GenerateEntryAnamnezSectionElement_Light("actualDevelopmentAnamnez", "ST", anamnezSectionModel.ActualDevelopment);
 
                 foreach (var entryElementChild in entryElement.Elements())
                 {
@@ -1888,18 +1889,100 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
                 entryElements.Add(entryElement);
             }
+            if (anamnezSectionModel.TemporaryDisabilitys != null)
+            {
+                XElement temporaryDisabilitysEntryElement = new XElement(xmlnsNamespace + "entry");
+                XElement temporaryDisabilitysOrganizerElement = new XElement(xmlnsNamespace + "organizer",
+                    new XAttribute("classCode", "CLUSTER"),
+                    new XAttribute("moodCode", "EVN"));
+                XElement temporaryDisabilitysStatusCodeElement = new XElement(xmlnsNamespace + "statusCode",
+                    new XAttribute("code", "completed"));
+                temporaryDisabilitysOrganizerElement.Add(temporaryDisabilitysStatusCodeElement);
+
+                foreach (var temporaryDisability in anamnezSectionModel.TemporaryDisabilitys)
+                {
+                    temporaryDisabilitysOrganizerElement.Add(GenerateTemporaryDisabilitysElement(temporaryDisability));
+                }
+
+                XElement certificateDisabilityNumberComponentElement = new XElement(xmlnsNamespace + "component",
+                    new XAttribute("typeCode", "COMP"));
+                XElement certificateDisabilityNumberObservationElement = new XElement(xmlnsNamespace + "observation",
+                    new XAttribute("classCode", "OBS"),
+                    new XAttribute("moodCode", "EVN"));
+
+                var codeValue = GetCodeValue("certificateDisabilityNumberAnamnez");
+                XElement certificateDisabilityNumberCodeElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: codeValue.codeValue,
+                        codeSystemValue: codeValue.codeSystemValue,
+                        codeSystemVersionValue: codeValue.codeSystemVersionValue,
+                        codeSystemNameValue: codeValue.codeSystemNameValue,
+                        displayNameValue: codeValue.displayNameValue));
+                certificateDisabilityNumberObservationElement.Add(certificateDisabilityNumberCodeElement);
+
+                XElement certificateDisabilityNumberValueElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", "INT"),
+                    new XAttribute("value", GetNumbersFromString(anamnezSectionModel.CertificateDisabilityNumber)));
+                certificateDisabilityNumberObservationElement.Add(certificateDisabilityNumberValueElement);
+
+                certificateDisabilityNumberComponentElement.Add(certificateDisabilityNumberObservationElement);
+                temporaryDisabilitysOrganizerElement.Add(certificateDisabilityNumberComponentElement);
+
+                temporaryDisabilitysEntryElement.Add(temporaryDisabilitysOrganizerElement);
+                entryElements.Add(temporaryDisabilitysEntryElement);
+            }
+            if (anamnezSectionModel.DegreeDisability != null)
+            {
+                if (anamnezSectionModel.DegreeDisability.Section31Text != null &&
+                    anamnezSectionModel.DegreeDisability.Section31DateTo != null &&
+                    anamnezSectionModel.DegreeDisability.Section31Time != null &&
+                    anamnezSectionModel.DegreeDisability.Section31Percent != null)
+                {
+                    entryElements.Add(GenerateDegreeDisabilityElement(
+                        anamnezSectionModel.DegreeDisability.Section31DateTo, 
+                        anamnezSectionModel.DegreeDisability.Section31Time, 
+                        anamnezSectionModel.DegreeDisability.Section31Percent,
+                        "socanam31"));
+                }
+                if (anamnezSectionModel.DegreeDisability.Section32Text != null &&
+                    anamnezSectionModel.DegreeDisability.Section32DateTo != null &&
+                    anamnezSectionModel.DegreeDisability.Section32Time != null &&
+                    anamnezSectionModel.DegreeDisability.Section32Percent != null)
+                {
+                    entryElements.Add(GenerateDegreeDisabilityElement(
+                        anamnezSectionModel.DegreeDisability.Section32DateTo,
+                        anamnezSectionModel.DegreeDisability.Section32Time,
+                        anamnezSectionModel.DegreeDisability.Section32Percent,
+                        "socanam32"));
+                }
+                if (anamnezSectionModel.DegreeDisability.Section33Text != null &&
+                    anamnezSectionModel.DegreeDisability.Section33DateTo != null &&
+                    anamnezSectionModel.DegreeDisability.Section33Time != null &&
+                    anamnezSectionModel.DegreeDisability.Section33Percent != null)
+                {
+                    entryElements.Add(GenerateDegreeDisabilityElement(
+                        anamnezSectionModel.DegreeDisability.Section33DateTo,
+                        anamnezSectionModel.DegreeDisability.Section33Time,
+                        anamnezSectionModel.DegreeDisability.Section33Percent,
+                        "socanam33"));
+                }
+            }
+            if (anamnezSectionModel.Disability != null)
+            {
+                entryElements.Add(GenerateDisabilityElement(anamnezSectionModel.Disability));
+            }
 
             return entryElements;
         }
 
         /// <summary>
-        /// Генерирование элемента "entry" для секции "Анамнез".
+        /// Генерирование элемента "entry" для секции "Анамнез". (лайт версия).
         /// </summary>
         /// <param name="entryName">Наименование элемента.</param>
         /// <param name="type">Типа контанта.</param>
         /// <param name="content">Контент.</param>
         /// <returns>Элемент "entry".</returns>
-        private static XElement GenerateEntryAnamnezSectionElement(string entryName, string type, string content)
+        private static XElement GenerateEntryAnamnezSectionElement_Light(string entryName, string type, string content)
         {
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
             XElement observationElement = new XElement(xmlnsNamespace + "observation",
@@ -1923,6 +2006,295 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             entryElement.Add(observationElement);
             return entryElement;
+        }
+
+        /// <summary>
+        /// Генерирование элемента "entry" для секции "Анамнез". (Временная нетрудоспособность).
+        /// </summary>
+        /// <param name="temporaryDisabilityModel">Модель "Временная нетрудоспособность".</param>
+        /// <returns>Элемента "entry" для секции "Анамнез". (Временная нетрудоспособность).</returns>
+        private static XElement GenerateTemporaryDisabilitysElement(TemporaryDisabilityModel temporaryDisabilityModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component",
+                new XAttribute("typeCode", "COMP"));
+            XElement actElement = new XElement(xmlnsNamespace + "act",
+                new XAttribute("classCode", "ACT"),
+                new XAttribute("moodCode", "EVN"));
+
+            var codeValue = GetCodeValue("temporaryDisabilitysAnamnez");
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: codeValue.codeValue,
+                    codeSystemValue: codeValue.codeSystemValue,
+                    codeSystemVersionValue: codeValue.codeSystemVersionValue,
+                    codeSystemNameValue: codeValue.codeSystemNameValue,
+                    displayNameValue: codeValue.displayNameValue));
+            actElement.Add(codeElement);
+
+            XElement effectiveTimeElement = new XElement(xmlnsNamespace + "effectiveTime");
+            XElement lowElement = new XElement(xmlnsNamespace + "low",
+                new XAttribute("value", temporaryDisabilityModel.DateStart.ToString("yyyyMMdd")));
+            XElement highElement = new XElement(xmlnsNamespace + "high",
+                new XAttribute("value", temporaryDisabilityModel.DateFinish.ToString("yyyyMMdd")));
+            effectiveTimeElement.Add(lowElement);
+            effectiveTimeElement.Add(highElement);
+            actElement.Add(effectiveTimeElement);
+
+            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
+                new XAttribute("typeCode", "COMP"));
+            XElement observationEntryRelationshipElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+            XElement entryRelationshipCodeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: temporaryDisabilityModel.CipherMKB,
+                    codeSystemValue: "1.2.643.5.1.13.13.11.1005",
+                    codeSystemVersionValue: "2.19",
+                    codeSystemNameValue: "Международная статистическая классификация болезней и проблем, связанных со здоровьем (10-й пересмотр)",
+                    displayNameValue: temporaryDisabilityModel.Diagnosis));
+            observationEntryRelationshipElement.Add(entryRelationshipCodeElement);
+            entryRelationshipElement.Add(observationEntryRelationshipElement);
+            actElement.Add(entryRelationshipElement);
+
+            componentElement.Add(actElement);
+            return componentElement;
+        }
+
+        /// <summary>
+        /// Генерирование степени утраты профессиональной трудоспособности.
+        /// </summary>
+        /// <param name="degreeDisabilityDateTo">Дата, до которой установлена степень утраты профессиональной трудоспособности.</param>
+        /// <param name="degreeDisabilityTime">Срок, на который установлена степень утраты профессиональной трудоспособности.</param>
+        /// <param name="degreeDisabilityPercent">Процент утраты профессиональной трудоспособности.</param>
+        /// <param name="socanomeNumber">Номер секции (ссылки).</param>
+        /// <returns>Элемент "entry" степени утраты профессиональной трудоспособности.</returns>
+        private static XElement GenerateDegreeDisabilityElement(
+            DateTime? degreeDisabilityDateTo, 
+            string degreeDisabilityTime, 
+            int? degreeDisabilityPercent,
+            string socanomeNumber)
+        {
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            var codeValue = GetCodeValue("degreeDisabilityAnamnez");
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: codeValue.codeValue,
+                    codeSystemValue: codeValue.codeSystemValue,
+                    codeSystemVersionValue: codeValue.codeSystemVersionValue,
+                    codeSystemNameValue: codeValue.codeSystemNameValue,
+                    displayNameValue: codeValue.displayNameValue));
+            observationElement.Add(codeElement);
+
+            XElement textElement = new XElement(xmlnsNamespace + "text");
+            XElement referenceElement = new XElement(xmlnsNamespace + "reference",
+                new XAttribute("value", $"#{socanomeNumber}"));
+            textElement.Add(referenceElement);
+            observationElement.Add(textElement);
+
+            XElement effectiveTimeElement = new XElement(xmlnsNamespace + "effectiveTime");
+            XElement highElement = new XElement(xmlnsNamespace + "high",
+                new XAttribute("value", degreeDisabilityDateTo?.ToString("yyyyMMdd")));
+            effectiveTimeElement.Add(highElement);
+            observationElement.Add(effectiveTimeElement);
+
+            XElement valueElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute(xsiNamespace + "type", "INT"),
+                new XAttribute("value", degreeDisabilityPercent));
+            observationElement.Add(valueElement);
+
+            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
+                new XAttribute("typeCode", "COMP"));
+            XElement observationEntryRelationshipElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            var codeValueTimeEntryRelationship = GetCodeValue("degreeDisabilityTimeAnamnez");
+            XElement entryRelationshipCodeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: codeValueTimeEntryRelationship.codeValue,
+                    codeSystemValue: codeValueTimeEntryRelationship.codeSystemValue,
+                    codeSystemVersionValue: codeValueTimeEntryRelationship.codeSystemVersionValue,
+                    codeSystemNameValue: codeValueTimeEntryRelationship.codeSystemNameValue,
+                    displayNameValue: codeValueTimeEntryRelationship.displayNameValue));
+            observationEntryRelationshipElement.Add(entryRelationshipCodeElement);
+
+            XElement entryRelationshipValueElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute(xsiNamespace + "type", "CD"),
+                new XAttribute("code", "2"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.325"),
+                new XAttribute("codeSystemVersion", "1.2"),
+                new XAttribute("codeSystemName",
+                    "Срок, на который установлена степень утраты профессиональной трудоспособности"),
+                new XAttribute("displayName", degreeDisabilityTime));
+            observationEntryRelationshipElement.Add(entryRelationshipValueElement);
+
+            entryRelationshipElement.Add(observationEntryRelationshipElement);
+            observationElement.Add(entryRelationshipElement);
+            entryElement.Add(observationElement);
+            return entryElement;
+        }
+
+        private static XElement GenerateDisabilityElement(DisabilityModel disabilityModel)
+        {
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            #region code element
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "3"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.11.1053"),
+                new XAttribute("codeSystemVersion", "3.3"),
+                new XAttribute("codeSystemName", "Группы инвалидности"),
+                new XAttribute("displayName", $"{disabilityModel.Group} группа"));
+
+            XElement originalTextElement = new XElement(xmlnsNamespace + "originalText");
+            XElement referenceElement = new XElement(xmlnsNamespace + "reference",
+                new XAttribute("value", "#socanam3"));
+            originalTextElement.Add(referenceElement);
+            codeElement.Add(originalTextElement);
+
+            XElement qualifierElement = new XElement(xmlnsNamespace + "qualifier");
+            XElement qualifierValueElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute("code", 2),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.11.1041"),
+                new XAttribute("codeSystemVersion", "1.1"),
+                new XAttribute("codeSystemName", "Тип установления инвалидности (впервые, повторно)"),
+                new XAttribute("displayName", disabilityModel.GroupOrder));
+            qualifierElement.Add(qualifierValueElement);
+            codeElement.Add(qualifierElement);
+
+            observationElement.Add(codeElement);
+
+            #endregion
+
+            #region effectiveTime element
+
+            XElement effectiveTimeElement = new XElement(xmlnsNamespace + "effectiveTime");
+
+            XElement lowElement = new XElement(xmlnsNamespace + "low",
+                new XAttribute("value", disabilityModel.DateDisabilityStart?.ToString("yyyyMMdd")));
+            effectiveTimeElement.Add(lowElement);
+
+            if (disabilityModel.DateDisabilityFinish != null)
+            {
+                XElement highElement = new XElement(xmlnsNamespace + "high",
+                    new XAttribute("value", disabilityModel.DateDisabilityFinish?.ToString("yyyyMMdd")));
+                effectiveTimeElement.Add(highElement);
+            }
+
+            observationElement.Add(effectiveTimeElement);
+
+            #endregion
+
+            #region entryRelationship elements
+
+            ValueElementModel groopTimeValue = new ValueElementModel()
+            {
+                Type = "CD",
+                Code = "6",
+                CodeSystem = "1.2.643.5.1.13.13.99.2.358",
+                CodeSystemVersion = "1.3",
+                CodeSystemName = "Срок, на который установлена инвалидность",
+                DisplayName = disabilityModel.GroupTime
+            };
+            observationElement.Add(GenerateEntryRelationshipDisabilityElement("groopTimeAnamnez", valueModel: groopTimeValue));
+
+            ValueElementModel timeDisabilityValue = new ValueElementModel()
+            {
+                Type = "CD",
+                Code = "4",
+                CodeSystem = "1.2.643.5.1.13.13.11.1490",
+                CodeSystemVersion = "1.1",
+                CodeSystemName =
+                    "Период, в течение которого гражданин находился на инвалидности на дату направления на медико - социальную экспертизу",
+                DisplayName = disabilityModel.TimeDisability
+            };
+            observationElement.Add(GenerateEntryRelationshipDisabilityElement("timeDisabilityAnamnez", valueModel: timeDisabilityValue));
+
+            if (disabilityModel.CauseOfDisability != null)
+            {
+                CodeElementModel codeValue = new CodeElementModel()
+                {
+                    Code = "4",
+                    CodeSystem = "1.2.643.5.1.13.13.11.1474",
+                    CodeSystemVersion = "2.2",
+                    CodeSystemName = "Причины инвалидности",
+                    DisplayName = disabilityModel.CauseOfDisability
+                };
+                observationElement.Add(GenerateEntryRelationshipDisabilityElement("groopTimeAnamnez", codeModel: codeValue));
+            }
+
+            #endregion
+
+            entryElement.Add(observationElement);
+            return entryElement;
+        }
+
+        private static XElement GenerateEntryRelationshipDisabilityElement(string codeElementName, CodeElementModel codeModel = null, ValueElementModel valueModel = null)
+        {
+            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
+                new XAttribute("typeCode", "COMP"));
+            if (codeModel != null)
+            {
+                entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
+                    new XAttribute("typeCode", "CAUS"),
+                    new XAttribute("inversionInd", "true"));
+            }
+
+            XElement observationElement = null;
+
+            if (codeModel == null)
+            {
+                observationElement = new XElement(xmlnsNamespace + "observation",
+                    new XAttribute("classCode", "OBS"),
+                    new XAttribute("moodCode", "EVN"));
+                var codeValue = GetCodeValue(codeElementName);
+                XElement codeElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: codeValue.codeValue,
+                        codeSystemValue: codeValue.codeSystemValue,
+                        codeSystemVersionValue: codeValue.codeSystemVersionValue,
+                        codeSystemNameValue: codeValue.codeSystemNameValue,
+                        displayNameValue: codeValue.displayNameValue));
+                observationElement.Add(codeElement);
+            }
+            else
+            {
+                XElement actElement = new XElement(xmlnsNamespace + "act",
+                    new XAttribute("classCode", "ACT"),
+                    new XAttribute("moodCode", "EVN"));
+                XElement codeElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: codeModel.Code,
+                        codeSystemValue: codeModel.CodeSystem,
+                        codeSystemVersionValue: codeModel.CodeSystemVersion,
+                        codeSystemNameValue: codeModel.CodeSystemName,
+                        displayNameValue: codeModel.DisplayName));
+                actElement.Add(codeElement);
+                entryRelationshipElement.Add(actElement);
+            }
+
+            if (valueModel != null)
+            {
+                XElement valueElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", valueModel.Type),
+                    new XAttribute("code", valueModel.Code),
+                    new XAttribute("codeSystem", valueModel.CodeSystem),
+                    new XAttribute("codeSystemVersion", valueModel.CodeSystemVersion),
+                    new XAttribute("codeSystemName", valueModel.CodeSystemName),
+                    new XAttribute("displayName", valueModel.DisplayName));
+                observationElement.Add(valueElement);
+            }
+
+            entryRelationshipElement.Add(observationElement);
+            return entryRelationshipElement;
         }
 
         #endregion
@@ -2101,12 +2473,28 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 { "startYearAnamnez", ("4101", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Год, с которого наблюдается в медицинской организации") },
                 { "medicalAnamnezAnamnez", ("4102", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Анамнез заболевания") },
                 { "lifeAnamnezAnamnez", ("4103", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Анамнез жизни") },
-                { "actualDevelopmentAnamnez", ("4082", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Физическое развитие (в отношении детей в возрасте до 3 лет)") }
+                { "actualDevelopmentAnamnez", ("4082", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Физическое развитие (в отношении детей в возрасте до 3 лет)") },
+                { "temporaryDisabilitysAnamnez", ("4057", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Временная нетрудоспособность") },
+                { "certificateDisabilityNumberAnamnez", ("4063", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Номер электронного листка нетрудоспособности") },
+                { "degreeDisabilityAnamnez", ("4058", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Степень утраты профессиональной трудоспособности (%)") },
+                { "degreeDisabilityTimeAnamnez", ("4083", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Срок, на который установлена степень утраты профессиональной трудоспособности") },
+                { "groopTimeAnamnez", ("4115", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Срок, на который установлена инвалидность") },
+                { "timeDisabilityAnamnez", ("4169", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Период, в течение которого гражданин находился на инвалидности на момент направления на медико-социальную экспертизу") }
 
                 #endregion
             };
 
             return values[elementName];
+        }
+
+        /// <summary>
+        /// Получить все цифры (строкой) из строки.
+        /// </summary>
+        /// <param name="mainString">Строка для преобразования.</param>
+        /// <returns>Преобразованная строка с цифрами.</returns>
+        private static string GetNumbersFromString(string mainString)
+        {
+            return new string(mainString.Where(t => Char.IsDigit(t)).ToArray()); ;
         }
 
         #endregion

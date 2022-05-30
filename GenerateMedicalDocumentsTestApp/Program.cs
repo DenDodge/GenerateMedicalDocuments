@@ -891,14 +891,28 @@ namespace GenerateMedicalDocumentsTestApp
                     {
                         Disability = new DisabilityModel()
                         {
-                            Group = "3 группа (установлена: повторно, бессрочно)",
-                            TimeDisability = "четыре и более лет"
+                            Group = 3,
+                            GroupOrder = "Повторно",
+                            GroupTime = "бессрочно",
+                            GroupText = "3 группа (установлена: повторно, бессрочно)",
+                            TimeDisability = "четыре и более лет",
+                            DateDisabilityStart = new DateTime(1999, 03, 28),
+                            CauseOfDisability = "Общее заболевание"
                         },
                         DegreeDisability = new DegreeDisabilityModel()
                         {
-                            Section31 = "60% (на 1 год до 01.01.2019)",
-                            Section32 = "80% (на 1 год до 01.01.2018)",
-                            Section33 = "90% (на 1 год до 01.01.2017)"
+                            Section31Text = "60% (на 1 год до 01.01.2019)",
+                            Section31DateTo = new DateTime(2019, 01, 01),
+                            Section31Time = "Один год",
+                            Section31Percent = 60,
+                            Section32Text = "80% (на 1 год до 01.01.2018)",
+                            Section32DateTo = new DateTime(2018, 01, 01),
+                            Section32Time = "Один год",
+                            Section32Percent = 80,
+                            Section33Text = "90% (на 1 год до 01.01.2017)",
+                            Section33DateTo = new DateTime(2017, 01, 01),
+                            Section33Time = "Один год",
+                            Section33Percent = 90
                         },
                         SeenOrganizations = "с 2000  года.",
                         MedicalAnamnez = "Пациентка поступила для дообследования по поводу опухоли с поражением проксимального отдела правой голени и правого коленного сустава. При обследовании по данным морфологии выявлена саркома мягких тканей правой голени низкой степени злокачественности. Учитывая местную распространенность опухолевого процесса пациентке показано хирургическое лечение в объеме удаления опухоли с резекцией проксимального отдела правой большеберцовой кости и эндопротезированием.",

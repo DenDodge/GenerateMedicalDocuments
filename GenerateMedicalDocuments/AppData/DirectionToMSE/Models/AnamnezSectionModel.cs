@@ -63,11 +63,35 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// Группа инвалидности.
         /// </summary>
-        public string Group { get; set; }
+        public int? Group { get; set; } = null;
+        /// <summary>
+        /// Группа инвалидности (полный текст).
+        /// </summary>
+        public string GroupText { get; set; } = null;
+        /// <summary>
+        /// Порядок установления инвалидности.
+        /// </summary>
+        public string GroupOrder { get; set; } = null;
+        /// <summary>
+        /// Срок, на который установлена степень утраты профессиональной трудоспособности.
+        /// </summary>
+        public string GroupTime { get; set; } = null;
         /// <summary>
         /// Находится на инвалидности на момент направления.
         /// </summary>
         public string TimeDisability { get; set; }
+        /// <summary>
+        /// Дата установления инвалидности.
+        /// </summary>
+        public DateTime? DateDisabilityStart { get; set; } = null;
+        /// <summary>
+        /// Дата, до которой установлена инвалидность.
+        /// </summary>
+        public DateTime? DateDisabilityFinish { get; set; } = null;
+        /// <summary>
+        /// Причина инвалидности.
+        /// </summary>
+        public string CauseOfDisability { get; set; } = null;
     }
 
     /// <summary>
@@ -103,18 +127,60 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
     public class DegreeDisabilityModel
     {
         /// <summary>
-        /// Секция 1\3.
+        /// Секция 1\3 полный текст.
         /// </summary>
-        public string Section31 { get; set; } = null;
+        public string Section31Text { get; set; } = null;
+
+        /// <summary>
+        /// Секция 1\3 дата до которой установлена степень утраты профессиональной трудоспособности.
+        /// </summary>
+        public DateTime? Section31DateTo { get; set; } = null;
+        /// <summary>
+        /// Секция 1\3 Срок.
+        /// </summary>
+        public string Section31Time { get; set; } = null;
+
+        /// <summary>
+        /// Секция 1\3 Процент.
+        /// </summary>
+        public int? Section31Percent { get; set; } = null;
 
         /// <summary>
         /// Секция 2\3.
         /// </summary>
-        public string Section32 { get; set; } = null;
+        public string Section32Text { get; set; } = null;
+
+        /// <summary>
+        /// Секция 2\3 дата до которой установлена степень утраты профессиональной трудоспособности.
+        /// </summary>
+        public DateTime? Section32DateTo { get; set; } = null;
+        /// <summary>
+        /// Секция 2\3 Срок.
+        /// </summary>
+        public string Section32Time { get; set; } = null;
+
+        /// <summary>
+        /// Секция 2\3 Процент.
+        /// </summary>
+        public int? Section32Percent { get; set; } = null;
 
         /// <summary>
         /// Секция 3\3.
         /// </summary>
-        public string Section33 { get; set; } = null;
+        public string Section33Text { get; set; } = null;
+
+        /// <summary>
+        /// Секция 3\3 дата до которой установлена степень утраты профессиональной трудоспособности.
+        /// </summary>
+        public DateTime? Section33DateTo { get; set; } = null;
+        /// <summary>
+        /// Секция 3\3 Срок.
+        /// </summary>
+        public string Section33Time { get; set; } = null;
+
+        /// <summary>
+        /// Секция 3\3 Процент.
+        /// </summary>
+        public int? Section33Percent { get; set; } = null;
     }
 }
