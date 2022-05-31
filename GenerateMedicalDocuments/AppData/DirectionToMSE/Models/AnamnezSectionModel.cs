@@ -53,6 +53,30 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// Год, с которого наблюдается в медицинской организации.
         /// </summary>
         public int? StartYear { get; set; } = null;
+        /// <summary>
+        /// Номер ИПРА.
+        /// </summary>
+        public string IPRANumber { get; set; } = null;
+        /// <summary>
+        /// Номер протокола проведения медико-социальной экспертизы.
+        /// </summary>
+        public string ProtocolNumber { get; set; } = null;
+        /// <summary>
+        /// Дата протокола проведения медико-социальной экспертизы.
+        /// </summary>
+        public DateTime? ProtocolDate { get; set; } = null;
+        /// <summary>
+        /// Результаты и эффективность проведенных мероприятий медицинской реабилитации, рекомендованных индивидуальной программой реабилитации или абилитации инвалида (ребенка-инвалида) (ИПРА) (текстовое описание).
+        /// </summary>
+        public string Results { get; set; } = null;
+        /// <summary>
+        /// Результаты и эффективность проведенных мероприятий медицинской реабилитации, Восстановление нарушенных функций.
+        /// </summary>
+        public string ResultRestorationFunctions { get; set; } = null;
+        /// <summary>
+        /// Результаты и эффективность проведенных мероприятий медицинской реабилитации, Достижение компенсации утраченных либо отсутствующих функций.
+        /// </summary>
+        public string ResultCompensationFunction { get; set; } = null;
     }
 
     /// <summary>

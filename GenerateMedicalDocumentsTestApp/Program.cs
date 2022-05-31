@@ -944,7 +944,13 @@ namespace GenerateMedicalDocumentsTestApp
                             "Восстановление нарушенных функций: частичное",
                             "Достижение компенсации утраченных либо отсутствующих функций: положительные результаты отсутствуют"
                         },
-                        StartYear = 2000
+                        StartYear = 2000,
+                        IPRANumber = "123",
+                        ProtocolNumber = "123",
+                        ProtocolDate = new DateTime(2018, 10, 01),
+                        Results = "результаты",
+                        ResultRestorationFunctions = "Частичное",
+                        ResultCompensationFunction = "Частичное"
                     }
                 }
             };

@@ -1971,6 +1971,103 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 entryElements.Add(GenerateDisabilityElement(anamnezSectionModel.Disability));
             }
+            if (anamnezSectionModel.IPRANumber != null)
+            {
+                var codeValue = GetCodeValue("IPRANumberAnamnez");
+                var codeModel = new CodeElementModel()
+                {
+                    Code = codeValue.codeValue,
+                    CodeSystemVersion = codeValue.codeSystemVersionValue,
+                    CodeSystem = codeValue.codeSystemValue,
+                    CodeSystemName = codeValue.codeSystemNameValue,
+                    DisplayName = codeValue.displayNameValue
+                };
+                entryElements.Add(GenerateCodingElementAnamnezSection(codeModel, valueType:"ST", valueValue: anamnezSectionModel.IPRANumber));
+            }
+            if (anamnezSectionModel.ProtocolNumber != null)
+            {
+                var codeValue = GetCodeValue("protocolNumberAnamnez");
+                var codeModel = new CodeElementModel()
+                {
+                    Code = codeValue.codeValue,
+                    CodeSystemVersion = codeValue.codeSystemVersionValue,
+                    CodeSystem = codeValue.codeSystemValue,
+                    CodeSystemName = codeValue.codeSystemNameValue,
+                    DisplayName = codeValue.displayNameValue
+                };
+                entryElements.Add(GenerateCodingElementAnamnezSection(codeModel, valueType: "ST", valueValue: anamnezSectionModel.ProtocolNumber));
+            }
+            if (anamnezSectionModel.ProtocolDate != null)
+            {
+                var codeValue = GetCodeValue("protocolDateAnamnez");
+                var codeModel = new CodeElementModel()
+                {
+                    Code = codeValue.codeValue,
+                    CodeSystemVersion = codeValue.codeSystemVersionValue,
+                    CodeSystem = codeValue.codeSystemValue,
+                    CodeSystemName = codeValue.codeSystemNameValue,
+                    DisplayName = codeValue.displayNameValue
+                };
+                entryElements.Add(GenerateCodingElementAnamnezSection(codeModel, valueType: "TS", valueValue: anamnezSectionModel.ProtocolDate?.ToString("yyyyMMdd")));
+            }
+            if (anamnezSectionModel.Results != null)
+            {
+                var codeValue = GetCodeValue("resultsAnamnez");
+                var codeModel = new CodeElementModel()
+                {
+                    Code = codeValue.codeValue,
+                    CodeSystemVersion = codeValue.codeSystemVersionValue,
+                    CodeSystem = codeValue.codeSystemValue,
+                    CodeSystemName = codeValue.codeSystemNameValue,
+                    DisplayName = codeValue.displayNameValue
+                };
+                entryElements.Add(GenerateCodingElementAnamnezSection(codeModel, valueType: "ST", valueValue: anamnezSectionModel.Results));
+            }
+            if (anamnezSectionModel.ResultRestorationFunctions != null)
+            {
+                var codeValue = GetCodeValue("resultRestorationFunctionsAnamnez");
+                var codeModel = new CodeElementModel()
+                {
+                    Code = codeValue.codeValue,
+                    CodeSystemVersion = codeValue.codeSystemVersionValue,
+                    CodeSystem = codeValue.codeSystemValue,
+                    CodeSystemName = codeValue.codeSystemNameValue,
+                    DisplayName = codeValue.displayNameValue
+                };
+                var valueModel = new ValueElementModel()
+                {
+                    Type = "CD",
+                    Code = "2",
+                    CodeSystem = "1.2.643.5.1.13.13.11.1475",
+                    CodeSystemVersion = "2.1",
+                    CodeSystemName = "Результаты индивидуальной программы реабилитации инвалидов",
+                    DisplayName = anamnezSectionModel.ResultRestorationFunctions
+                };
+                entryElements.Add(GenerateCodingElementAnamnezSection(codeModel, valueModel:valueModel));
+            }
+            if (anamnezSectionModel.ResultCompensationFunction != null)
+            {
+                var codeValue = GetCodeValue("resultCompensationFunctionAnamnez");
+                var codeModel = new CodeElementModel()
+                {
+                    Code = codeValue.codeValue,
+                    CodeSystemVersion = codeValue.codeSystemVersionValue,
+                    CodeSystem = codeValue.codeSystemValue,
+                    CodeSystemName = codeValue.codeSystemNameValue,
+                    DisplayName = codeValue.displayNameValue
+                };
+                var valueModel = new ValueElementModel()
+                {
+                    Type = "CD",
+                    Code = "2",
+                    CodeSystem = "1.2.643.5.1.13.13.11.1475",
+                    CodeSystemVersion = "2.1",
+                    CodeSystemName = "Результаты индивидуальной программы реабилитации инвалидов",
+                    DisplayName = anamnezSectionModel.ResultCompensationFunction
+                };
+                entryElements.Add(GenerateCodingElementAnamnezSection(codeModel, valueModel: valueModel));
+            }
+
 
             return entryElements;
         }
@@ -2309,6 +2406,62 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             return entryRelationshipElement;
         }
 
+        /// <summary>
+        /// Генерирует элементы "Кодирование..." для секции "Анамнез".
+        /// </summary>
+        /// <param name="codeModel">Модель элемента "code".</param>
+        /// <param name="valueModel">Модель элемента "value".</param>
+        /// <param name="valueType">Тип элемента "value".</param>
+        /// <param name="valueValue">Значение элемента "value". (не указывается вместе с valueModel).</param>
+        /// <returns></returns>
+        private static XElement GenerateCodingElementAnamnezSection(
+            CodeElementModel codeModel,
+            ValueElementModel valueModel = null,
+            string valueType = null,
+            string valueValue = null)
+        {
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", codeModel.Code),
+                new XAttribute("codeSystem", codeModel.CodeSystem),
+                new XAttribute("codeSystemVersion", codeModel.CodeSystemVersion),
+                new XAttribute("codeSystemName", codeModel.CodeSystemName),
+                new XAttribute("displayName", codeModel.DisplayName));
+            observationElement.Add(codeElement);
+
+            XElement valueElement = null;
+
+            if (valueType == "ST")
+            {
+                valueElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", valueType), valueValue);
+            } else if (valueType == "TS")
+            {
+                valueElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", valueType),
+                    new XAttribute("value", valueValue));
+            }
+            else
+            {
+                valueElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", valueModel.Type),
+                    new XAttribute("code", valueModel.Code),
+                    new XAttribute("codeSystem", valueModel.CodeSystem),
+                    new XAttribute("codeSystemVersion", valueModel.CodeSystemVersion),
+                    new XAttribute("codeSystemName", valueModel.CodeSystemName),
+                    new XAttribute("displayName", valueModel.DisplayName));
+            }
+
+            observationElement.Add(valueElement);
+
+            entryElement.Add(observationElement);
+            return entryElement;
+        }
+
         #endregion
 
         #region Generate element attributes
@@ -2491,7 +2644,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 { "degreeDisabilityAnamnez", ("4058", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Степень утраты профессиональной трудоспособности (%)") },
                 { "degreeDisabilityTimeAnamnez", ("4083", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Срок, на который установлена степень утраты профессиональной трудоспособности") },
                 { "groopTimeAnamnez", ("4115", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Срок, на который установлена инвалидность") },
-                { "timeDisabilityAnamnez", ("4169", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Период, в течение которого гражданин находился на инвалидности на момент направления на медико-социальную экспертизу") }
+                { "timeDisabilityAnamnez", ("4169", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Период, в течение которого гражданин находился на инвалидности на момент направления на медико-социальную экспертизу") },
+                { "IPRANumberAnamnez", ("4104", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Номер ИПРА") },
+                { "protocolNumberAnamnez", ("4105", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Номер протокола проведения медико-социальной экспертизы") },
+                { "protocolDateAnamnez", ("4106", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Дата протокола проведения медико-социальной экспертизы") },
+                { "resultsAnamnez", ("4107", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Результаты и эффективность проведенных мероприятий медицинской реабилитации, рекомендованных индивидуальной программой реабилитации или абилитации инвалида (ребенка-инвалида) (ИПРА) (текстовое описание)") },
+                { "resultRestorationFunctionsAnamnez", ("4064", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Восстановление нарушенных функций") },
+                { "resultCompensationFunctionAnamnez", ("4065", "1.2.643.5.1.13.13.99.2.166", "1.69", "Кодируемые поля CDA документов", "Достижение компенсации утраченных/отсутствующих функций") }
 
                 #endregion
             };
