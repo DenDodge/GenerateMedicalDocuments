@@ -21,5 +21,9 @@
         /// [1..1] СЕКЦИЯ: АНАМНЕЗ.
         /// </summary>
         public AnamnezSectionModel AnamnezSection { get; set; }
+        /// <summary>
+        /// [1..1] СЕКЦИЯ: ВИТАЛЬНЫЕ ПАРАМЕТРЫ.
+        /// </summary>
+        public VitalParametersSectionModel VitalParametersSection { get; set; }
     }
 }

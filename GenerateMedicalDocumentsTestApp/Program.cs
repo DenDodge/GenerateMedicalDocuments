@@ -951,6 +951,24 @@ namespace GenerateMedicalDocumentsTestApp
                         Results = "результаты",
                         ResultRestorationFunctions = "Частичное",
                         ResultCompensationFunction = "Частичное"
+                    },
+                    VitalParametersSection = new VitalParametersSectionModel()
+                    {
+                        BodyMass = 80,
+                        DateMeteringBodyMass = new DateTime(2021, 05, 25, 10, 10, 00),
+                        BirthWeight = 4,
+                        DateMeteringBirthWeight = new DateTime(1985, 03, 31),
+                        Growth = 1.56,
+                        DateMeteringGrowth = new DateTime(2021, 05, 25, 10, 10, 00),
+                        IMT = 32.87,
+                        DateMeteringIMT = new DateTime(2018, 05, 25, 10, 10, 00),
+                        BodyType = "нормостеническое",
+                        PhysiologicalShipmentsVolume = 2000,
+                        DateMeteringPhysiologicalShipmentsVolume = new DateTime(2018, 05, 25, 10, 10, 00),
+                        Waist = 65,
+                        DateMeteringWaist = new DateTime(2018, 05, 25, 10, 10, 00),
+                        Hips = 97,
+                        DateMeteringHips = new DateTime(2018, 05, 25, 10, 10, 00)
                     }
                 }
             };
