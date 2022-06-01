@@ -969,6 +969,85 @@ namespace GenerateMedicalDocumentsTestApp
                         DateMeteringWaist = new DateTime(2018, 05, 25, 10, 10, 00),
                         Hips = 97,
                         DateMeteringHips = new DateTime(2018, 05, 25, 10, 10, 00)
+                    },
+                    DirectionStateSection = new DirectionStateSectionModel()
+                    {
+                        StateText = "Жалоб нет. Физическое развитие нормальное.	Психофизиологическая выносливость в норме.	Эмоциональная устойчивость в норме."
+                    },
+                    DiagnosticStudiesSection = new DiagnosticStudiesSectionModel()
+                    {
+                        MedicalExaminations = new List<MedicalExaminationModel>()
+                        {
+                            new MedicalExaminationModel()
+                            {
+                                Date = new DateTime(2021, 05, 01, 16, 10, 00),
+                                Number = "A04.01.001",
+                                Name = "Ультразвуковое исследование мягких тканей (одна анатомическая зона)",
+                                Result = "результат",
+                                ID = "324576"
+                            },
+                            new MedicalExaminationModel()
+                            {
+                                Date = new DateTime(2021, 05, 01, 17, 10, 00),
+                                Number = "A06.09.007",
+                                Name = "Рентгенография легких",
+                                Result = "результат",
+                                ID = "895543"
+                            },
+                            new MedicalExaminationModel()
+                            {
+                                Date = new DateTime(2021, 05, 01, 17, 10 ,00),
+                                Number = "B01.015.001",
+                                Name = "Прием (осмотр, консультация) врача-кардиолога первичный",
+                                Result = "результат",
+                                ID = "8754871"
+                            }
+                        }
+                    },
+                    DiagnosisSection = new DiagnosisSection()
+                    {
+                        Diagnosis = new List<DiagnosticModel>()
+                        {
+                            new DiagnosticModel()
+                            {
+                                ID = "C49.2",
+                                Name = "Злокачественное новообразование соединительной и мягких тканей нижней конечности, включая тазобедренную область",
+                                Caption = "Основное заболевание",
+                                Result = "Фибромиксоидная саркома мягких тканей верхней трети правой голени с подрастанием к большеберцовой кости и мягким тканям правого коленного сустава T2bN0M0G1 Стадия: I."
+                            },
+                            new DiagnosticModel()
+                            {
+                                ID = "I25",
+                                Name = "Хроническая ишемическая болезнь сердца",
+                                Caption = "Сопутствующая патология",
+                                Result = "ИБС, стенокардия напряжения, 3ФК. Постоянная форма мерцательной аритмии, ХСН 2А. 3ФК. Гипертоническая болезнь 2 стадии, АГ 2 степени, риск 4. Ожирение 1 степени."
+                            },
+                            new DiagnosticModel()
+                            {
+                                ID = "I25.1",
+                                Name = "Атеросклеротическая болезнь сердца",
+                                Caption = "Осложнение сопутствующего заболевания",
+                                Result = "Атеросклеротический кардиосклероз."
+                            }
+                        }
+                    },
+                    ConditionAssessmentSection = new ConditionAssessmentSection()
+                    {
+                        ClinicalPrognosis = new ConditionGrateModel()
+                        {
+                            GrateType = "Клинический прогноз",
+                            GrateResult = "Относительно благоприятный"
+                        },
+                        RehabilitationPotential = new ConditionGrateModel()
+                        {
+                            GrateType = "Реабилитационный потенциал",
+                            GrateResult = "Удовлетворительный"
+                        },
+                        RehabilitationPrognosis = new ConditionGrateModel()
+                        {
+                            GrateType = "Реабилитационный прогноз",
+                            GrateResult = "Сомнительный (неопределенный)"
+                        }
                     }
                 }
             };
