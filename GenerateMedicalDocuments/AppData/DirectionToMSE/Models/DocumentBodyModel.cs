@@ -41,5 +41,17 @@
         /// [1..1] СЕКЦИЯ: ОБЪЕКТИВИЗИРОВАННАЯ ОЦЕНКА СОСТОЯНИЯ.
         /// </summary>
         public ConditionAssessmentSection ConditionAssessmentSection { get; set; }
+        /// <summary>
+        /// [1..1] СЕКЦИЯ: РЕКОМЕНДАЦИИ.
+        /// </summary>
+        public RecommendationsSectionModel RecommendationsSection { get; set; }
+        /// <summary>
+        /// [0..1] СЕКЦИЯ: Посторонний специальный медицинский уход.
+        /// </summary>
+        public OutsideSpecialMedicalCareSection OutsideSpecialMedicalCareSection { get; set; } = null;
+        /// <summary>
+        /// [0..1] СЕКЦИЯ: СВЯЗАННЫЕ ДОКУМЕНТЫ.
+        /// </summary>
+        public AttachmentDocumentsSection AttachmentDocumentsSection { get; set; } = null;
     }
 }

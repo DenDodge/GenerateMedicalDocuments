@@ -1048,6 +1048,54 @@ namespace GenerateMedicalDocumentsTestApp
                             GrateType = "Реабилитационный прогноз",
                             GrateResult = "Сомнительный (неопределенный)"
                         }
+                    },
+                    RecommendationsSection = new RecommendationsSectionModel()
+                    {
+                        RecommendedMeasuresReconstructiveSurgery = "отсутствуют",
+                        RecommendedMeasuresProstheticsAndOrthotics = "отсутствуют",
+                        SpaTreatment = "не требуется",
+                        Medications = new List<MedicationModel>()
+                        {
+                            new MedicationModel()
+                            {
+                                InternationalName = "Ацетилсалециловая кислота",
+                                DosageForm = "Таблетки",
+                                Dose = "100 мг+75 мг",
+                                KTRUCode = "21.20.10.131-000003-1-00050-0000000000000",
+                                KTRUName = "Стандартизованное_МНН:АЦЕТИЛСАЛИЦИЛОВАЯ КИСЛОТА+КЛОПИДОГРЕЛ Стандартизованная_лекарственная_форма:ТАБЛЕТКИ Стандартизованная_лекарственная_доза:100 мг+75 мг Код_КТРУ:21.20.10.131-000003-1-00050-0000000000000",
+                                DurationAdmission = "1 неделя",
+                                MultiplicityCoursesTreatment = "раз в 3 месяца",
+                                ReceptionFrequency = "100-300 мг/день"
+                            }
+                        },
+                        MedicalDevices = "текст",
+                        OtherRecommendatons = "отсутствуют"
+                    },
+                    OutsideSpecialMedicalCareSection = new OutsideSpecialMedicalCareSection()
+                    {
+                        Text = "Текст"
+                    },
+                    AttachmentDocumentsSection = new AttachmentDocumentsSection()
+                    {
+                        AttachmentDocuments = new List<MedicalDocumentModel>()
+                        {
+                            new MedicalDocumentModel()
+                            {
+                                Name = "Ультразвуковое исследование мягких тканей (одна анатомическая зона)",
+                                Result = "результат",
+                                Created = new DateTime(2021, 06, 10, 16, 10, 00),
+                                ReferenceRoot = "1.2.643.5.1.13.13.12.2.77.8312.100.1.1.51",
+                                ReferenceExtension = "2568973"
+                            },
+                            new MedicalDocumentModel()
+                            {
+                                Name = "Рентгенография легких",
+                                Result = "результат",
+                                Created = new DateTime(2021, 06, 10, 16, 10, 00),
+                                ReferenceRoot = "1.2.643.5.1.13.13.12.2.77.8312.100.1.1.51",
+                                ReferenceExtension = "2568973"
+                            }
+                        }
                     }
                 }
             };
