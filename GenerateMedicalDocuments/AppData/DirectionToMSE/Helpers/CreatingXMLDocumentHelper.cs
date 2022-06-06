@@ -1002,10 +1002,821 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             structuredBodyElement.Add(GenerateEducationSectionElement(documentBodyModel.EducationSection));
             structuredBodyElement.Add(GenerateAnamnezSectionElement(documentBodyModel.AnamnezSection));
             structuredBodyElement.Add(GenerateVitalParametersSectionElement(documentBodyModel.VitalParametersSection));
+            structuredBodyElement.Add(GenerateDirectionStateSectionElement(documentBodyModel.DirectionStateSection));
+            structuredBodyElement.Add(GenerateDiagnosticStudiesSectionElement(documentBodyModel.DiagnosticStudiesSection));
+            structuredBodyElement.Add(GenerateDiagnosisSection(documentBodyModel.DiagnosisSection));
+            structuredBodyElement.Add(GenerateConditionAssessmentSectionElement(documentBodyModel.ConditionAssessmentSection));
+            structuredBodyElement.Add(GenerateRecommendationSectionElement(documentBodyModel.RecommendationsSection));
 
             componentElement.Add(structuredBodyElement);
             return componentElement;
         }
+
+        #region Direction state
+
+        /// <summary>
+        /// Генерирование секции "Состояние при направлении".
+        /// </summary>
+        /// <param name="directionStateSectionModel">Модель секции "Сосотояние при направлении".</param>
+        /// <returns>Элемент "component" секции "Состояние при направлении".</returns>
+        private static XElement GenerateDirectionStateSectionElement(DirectionStateSectionModel directionStateSectionModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "STATECUR"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.197"),
+                new XAttribute("codeSystemVersion", "1.18"),
+                new XAttribute("codeSystemName", "Секции электронных медицинских документов"),
+                new XAttribute("displayName", "Текущее состояние"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "СОСТОЯНИЕ ПРИ НАПРАВЛЕНИИ");
+            sectionElement.Add(titleElement);
+
+            XElement textElement = new XElement(xmlnsNamespace + "text");
+            XElement paragraphElement = new XElement(xmlnsNamespace + "paragraph");
+
+            XElement captionElement = new XElement(xmlnsNamespace + "caption",
+                "Состояние здоровья гражданина при направлении на медико-социальную экспертизу");
+            paragraphElement.Add(captionElement);
+            XElement contentElement = new XElement(xmlnsNamespace + "content", directionStateSectionModel.StateText);
+            paragraphElement.Add(contentElement);
+
+            textElement.Add(paragraphElement);
+            sectionElement.Add(textElement);
+
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement observationCodeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "4109"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.166"),
+                new XAttribute("codeSystemVersion", "1.69"),
+                new XAttribute("codeSystemName", "Кодируемые поля CDA документов"),
+                new XAttribute("displayName",
+                    "Состояние здоровья гражданина при направлении на медико-социальную экспертизу"));
+            observationElement.Add(observationCodeElement);
+
+            XElement observationValueElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute(xsiNamespace + "type", "ST"), directionStateSectionModel.StateText);
+            observationElement.Add(observationValueElement);
+
+            entryElement.Add(observationElement);
+            sectionElement.Add(entryElement);
+
+            componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        #endregion
+
+        #region Diagnostic Studies
+
+        /// <summary>
+        /// Создает элементы секции "Диагностические исследования и консультации".
+        /// </summary>
+        /// <param name="diagnosticStudiesSectionModel">Модель секции "Диагностические исследования и результаты".</param>
+        /// <returns>Элемент "component" секции 2Диагностические исследования и консультации".</returns>
+        private static XElement GenerateDiagnosticStudiesSectionElement(DiagnosticStudiesSectionModel diagnosticStudiesSectionModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "PROC"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.197"),
+                new XAttribute("codeSystemVersion", "1.18"),
+                new XAttribute("codeSystemName", "Секции электронных медицинских документов"),
+                new XAttribute("displayName", "Исследования и процедуры"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "МЕДИЦИНСКИЕ ОБСЛЕДОВАНИЯ");
+            sectionElement.Add(titleElement);
+
+            XElement textElement = new XElement(xmlnsNamespace + "text");
+
+            textElement.Add(GenerateTableDiagnosticStudiesSection(diagnosticStudiesSectionModel));
+
+            sectionElement.Add(textElement);
+
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement observatinElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeObservationElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "4110"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.166"),
+                new XAttribute("codeSystemVersion", "1.69"),
+                new XAttribute("codeSystemName", "Кодируемые поля CDA документов"),
+                new XAttribute("displayName", "Сведения о медицинских обследованиях, необходимых для получения клинико-функциональных данных в зависимости от заболевания при проведении медико-социальной экспертизы"));
+            observatinElement.Add(codeObservationElement);
+
+            foreach (var medicalExamination in diagnosticStudiesSectionModel.MedicalExaminations)
+            {
+                observatinElement.Add(GenerateEntryReletionshipElementDiagnosticStudiesSection(
+                    medicalExamination.Date.ToString("yyyyMMddHHmm+0300"),
+                    medicalExamination.Number,
+                    medicalExamination.Name,
+                    medicalExamination.Result,
+                    medicalExamination.ID,
+                    medicalExamination.Code));
+            }
+
+            entryElement.Add(observatinElement);
+            sectionElement.Add(entryElement);
+
+            componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        /// <summary>
+        /// Создает табличную часть для секции "Диагностические исследования и консультации".
+        /// </summary>
+        /// <param name="diagnosticStudiesSectionModel">Модель секции "Диагностические исследования и результаты".</param>
+        /// <returns>Табличную часть секции "Диагностические исследования и консультации".</returns>
+        private static XElement GenerateTableDiagnosticStudiesSection(DiagnosticStudiesSectionModel diagnosticStudiesSectionModel)
+        {
+            XElement tableElement = new XElement(xmlnsNamespace + "table");
+
+            XElement captionElement = new XElement(xmlnsNamespace + "caption",
+                "Сведения о медицинских обследованиях, необходимых для получения клинико-функциональных данных в зависимости от заболевания при проведении медико-социальной экспертизы:");
+            tableElement.Add(captionElement);
+            XElement tbodyElement = new XElement(xmlnsNamespace + "tbody");
+
+            tbodyElement.Add(GenerateTRElementTableDiagnosticStudiesSection("Дата", "Код", "Наименование", "Результат", true));
+
+            foreach (var medicalExamination in diagnosticStudiesSectionModel.MedicalExaminations)
+            {
+                tbodyElement.Add(GenerateTRElementTableDiagnosticStudiesSection(
+                    medicalExamination.Date.ToString("dd.MM.yy"),
+                    medicalExamination.Number,
+                    medicalExamination.Name,
+                    medicalExamination.Result));
+            }
+
+            tableElement.Add(tbodyElement);
+            return tableElement;
+        }
+
+        /// <summary>
+        /// Генерирование элементов заполнения таблицы секции "Диагностические исследования и консультации".
+        /// </summary>
+        /// <param name="date">Дата.</param>
+        /// <param name="code">Код.</param>
+        /// <param name="name">Наименование.</param>
+        /// <param name="result">Результат.</param>
+        /// <param name="isHeader">Истина - заголовок таблицы.</param>
+        /// <returns>Элементы заполнения таблицы секции "Диагностические исследования и консультации".</returns>
+        private static XElement GenerateTRElementTableDiagnosticStudiesSection(
+            string date, 
+            string code, 
+            string name,
+            string result,
+            bool isHeader = false)
+        {
+            XElement trElement = new XElement(xmlnsNamespace + "tr");
+
+            string childElementTag;
+            if (isHeader)
+            {
+                childElementTag = "th";
+            }
+            else
+            {
+                childElementTag = "td";
+            }
+
+            XElement childElementDate = new XElement(xmlnsNamespace + childElementTag, date);
+            trElement.Add(childElementDate);
+
+            XElement childElementCode = new XElement(xmlnsNamespace + childElementTag, code);
+            trElement.Add(childElementCode);
+
+            XElement childElementName = new XElement(xmlnsNamespace + childElementTag, name);
+            trElement.Add(childElementName);
+
+            XElement childElementResult = new XElement(xmlnsNamespace + childElementTag, result);
+            trElement.Add(childElementResult);
+
+            return trElement;
+        }
+
+        /// <summary>
+        /// Создает элемент кодирования секции "Диагностические исследования и консультации".
+        /// </summary>
+        /// <param name="date">Дата.</param>
+        /// <param name="number">Номер.</param>
+        /// <param name="name">Наименование.</param>
+        /// <param name="result">Результат.</param>
+        /// <param name="id">Идентификатор.</param>
+        /// <param name="code">Код.</param>
+        /// <returns>Элемент кодирования секции "Диагностические исследования и консультации".</returns>
+        private static XElement GenerateEntryReletionshipElementDiagnosticStudiesSection(
+            string date,
+            string number,
+            string name,
+            string result,
+            string id,
+            string code)
+        {
+            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
+                new XAttribute("typeCode", "COMP"));
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", code),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.857"),
+                new XAttribute("codeSystemVersion", "1.2"),
+                new XAttribute("codeSystemName", "Медицинские обследования для медико-социальной экспертизы"),
+                new XAttribute("displayName", $"{number} {name}"));
+            observationElement.Add(codeElement);
+
+            XElement effectiveTimeElement = new XElement(xmlnsNamespace + "effectiveTime",
+                new XAttribute("value", date));
+            observationElement.Add(effectiveTimeElement);
+
+            XElement valueElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute(xsiNamespace + "type", "ST"), result);
+            observationElement.Add(valueElement);
+
+            XElement referenceElement = new XElement(xmlnsNamespace + "reference",
+                new XAttribute("typeCode", "REFR"));
+
+            XElement externalDocument = new XElement(xmlnsNamespace + "externalDocument",
+                new XAttribute("classCode", "DOCCLIN"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement idElement = new XElement(xmlnsNamespace + "id",
+                new XAttribute("root", "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.51"),
+                new XAttribute("extension", id));
+            externalDocument.Add(idElement);
+
+            referenceElement.Add(externalDocument);
+            observationElement.Add(referenceElement);
+
+            entryRelationshipElement.Add(observationElement);
+            return entryRelationshipElement;
+        }
+
+        #endregion
+
+        #region Diagnosis sections
+
+        /// <summary>
+        /// Генерирование элемента "component" секции "Диагнозы".
+        /// </summary>
+        /// <param name="diagnosisSectionModel">Модель секции "Диагнозы".</param>
+        /// <returns>"лемент "component" секции "Диагнозы".</returns>
+        private static XElement GenerateDiagnosisSection(DiagnosisSectionModel diagnosisSectionModel)
+        {
+            XElement componentModel = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "DGN"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.197"),
+                new XAttribute("codeSystemVersion", "1.18"),
+                new XAttribute("codeSystemName", "Секции электронных медицинских документов"),
+                new XAttribute("displayName", "Диагнозы"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "ДИАГНОЗЫ");
+            sectionElement.Add(titleElement);
+
+            XElement textElement = new XElement(xmlnsNamespace + "text");
+
+            textElement.Add(GenerateTableDiagnosisSection(diagnosisSectionModel));
+
+            sectionElement.Add(textElement);
+
+            XElement entryelement = new XElement(xmlnsNamespace + "entry");
+            XElement actElement = new XElement(xmlnsNamespace + "act",
+                new XAttribute("classCode", "ACT"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeActElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "3"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.795"),
+                new XAttribute("codeSystemVersion", "2.1"),
+                new XAttribute("codeSystemName", "Степень обоснованности диагноза"),
+                new XAttribute("displayName", "Заключительный клинический диагноз"));
+            actElement.Add(codeActElement);
+
+            foreach (var diagnos in diagnosisSectionModel.Diagnosis)
+            {
+                actElement.Add(GenerateCodingElementDiagnosisSection(
+                    diagnos.Code,
+                    diagnos.Caption,
+                    diagnos.Name,
+                    diagnos.Result,
+                    diagnos.ID));
+            }
+
+            entryelement.Add(actElement);
+            sectionElement.Add(entryelement);
+
+            componentModel.Add(sectionElement);
+            return componentModel;
+        }
+
+        /// <summary>
+        /// Создает табличную часть для секции "Диагнозы".
+        /// </summary>
+        /// <param name="diagnosisSectionModel">Модель секции "Диагнозы".</param>
+        /// <returns>Табличную часть секции "Диагнозы".</returns>
+        private static XElement GenerateTableDiagnosisSection(DiagnosisSectionModel diagnosisSectionModel)
+        {
+            XElement tableElement = new XElement(xmlnsNamespace + "table");
+
+            XElement captionElement = new XElement(xmlnsNamespace + "caption",
+                "Диагноз при направлении на медико-социальную экспертизу:");
+            tableElement.Add(captionElement);
+            XElement tbodyElement = new XElement(xmlnsNamespace + "tbody");
+
+            tbodyElement.Add(GenerateTRElementTableDiagnosisSection("Шифр", "Тип", "Текст", true));
+
+            foreach (var diagnos in diagnosisSectionModel.Diagnosis)
+            {
+                tbodyElement.Add(GenerateTRElementTableDiagnosisSection(
+                    diagnos.ID,
+                    diagnos.Caption,
+                    diagnos.Result));
+            }
+
+            tableElement.Add(tbodyElement);
+            return tableElement;
+        }
+
+        /// <summary>
+        /// Генерирование элементов заполнения таблицы секции "Диагнозы".
+        /// </summary>
+        /// <param name="cipher">Шифр.</param>
+        /// <param name="type">Тип.</param>
+        /// <param name="text">Текст.</param>
+        /// <param name="isHeader">Истина - заголовок таблицы.</param>
+        /// <returns>Элементы заполнения таблицы секции "Диагнозы".</returns>
+        private static XElement GenerateTRElementTableDiagnosisSection(
+            string cipher,
+            string type,
+            string text,
+            bool isHeader = false)
+        {
+            XElement trElement = new XElement(xmlnsNamespace + "tr");
+
+            string childElementTag;
+            if (isHeader)
+            {
+                childElementTag = "th";
+            }
+            else
+            {
+                childElementTag = "td";
+            }
+
+            XElement childElementChiper = new XElement(xmlnsNamespace + childElementTag, cipher);
+            trElement.Add(childElementChiper);
+
+            XElement childElementType = new XElement(xmlnsNamespace + childElementTag, type);
+            trElement.Add(childElementType);
+
+            XElement childElementText = new XElement(xmlnsNamespace + childElementTag, text);
+            trElement.Add(childElementText);
+
+            return trElement;
+        }
+
+        /// <summary>
+        /// Генерирование элементов кодирования элементов секции "Диагнозы".
+        /// </summary>
+        /// <param name="code">Код.</param>
+        /// <param name="caption">Описание.</param>
+        /// <param name="name">Наименование.</param>
+        /// <param name="result">Результат диагноза.</param>
+        /// <param name="id">Идентификатор.</param>
+        /// <returns>Элементы кодирования элементов секции "Диагнозы".</returns>
+        private static XElement GenerateCodingElementDiagnosisSection(
+            string code,
+            string caption,
+            string name,
+            string result,
+            string id)
+        {
+            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
+                new XAttribute("typeCode", "COMP"));
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", code),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.11.1077"),
+                new XAttribute("codeSystemVersion", "1.3"),
+                new XAttribute("codeSystemName", "Виды нозологических единиц диагноза"),
+                new XAttribute("displayName", caption));
+            observationElement.Add(codeElement);
+
+            XElement textElement = new XElement(xmlnsNamespace + "text", result);
+            observationElement.Add(textElement);
+
+            XElement statusCodeElement = new XElement(xmlnsNamespace + "statusCode",
+                new XAttribute("code", "completed"));
+            observationElement.Add(statusCodeElement);
+
+            XElement valueElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute(xsiNamespace + "type", "CD"),
+                new XAttribute("code", id),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.11.1005"),
+                new XAttribute("codeSystemVersion", "2.19"),
+                new XAttribute("codeSystemName", "Международная статистическая классификация болезней и проблем, связанных со здоровьем (10-й пересмотр)"),
+                new XAttribute("displayName", name));
+            observationElement.Add(valueElement);
+
+            entryRelationshipElement.Add(observationElement);
+            return entryRelationshipElement;
+        }
+
+        #endregion
+
+        #region Condition Assessment
+
+        /// <summary>
+        /// Генерирование элемента "component" секции "Объектизированная оцента состояния".
+        /// </summary>
+        /// <param name="conditionAssessmentSection">Модель секции "Объектизированная оцента состояния".</param>
+        /// <returns>Элемент "component" секции "Объектизированная оцента состояния".</returns>
+        private static XElement GenerateConditionAssessmentSectionElement(ConditionAssessmentSection conditionAssessmentSection)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "SCORES"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.197"),
+                new XAttribute("codeSystemVersion", "1.18"),
+                new XAttribute("codeSystemName", "Секции электронных медицинских документов"),
+                new XAttribute("displayName", "Объективизированная оценка состояния больного"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "ОБЪЕКТИВИЗИРОВАННАЯ ОЦЕНКА СОСТОЯНИЯ");
+            sectionElement.Add(titleElement);
+
+            XElement textElement = new XElement(xmlnsNamespace + "text");
+
+            textElement.Add(GenerateTableConditionAssessmentSection(conditionAssessmentSection));
+
+            sectionElement.Add(textElement);
+
+            if (conditionAssessmentSection.ClinicalPrognosis != null)
+            {
+                sectionElement.Add(GenerateCodingElementConditionAssessmentSection(
+                    conditionAssessmentSection.ClinicalPrognosis.GrateType,
+                    conditionAssessmentSection.ClinicalPrognosis.GrateResult,
+                    "#ob_1",
+                    "4054",
+                    "11"));
+            }
+
+            if (conditionAssessmentSection.RehabilitationPotential != null)
+            {
+                sectionElement.Add(GenerateCodingElementConditionAssessmentSection(
+                    conditionAssessmentSection.RehabilitationPotential.GrateType,
+                    conditionAssessmentSection.RehabilitationPotential.GrateResult,
+                    "#ob_2",
+                    "4055",
+                    "15"));
+            }
+
+            if (conditionAssessmentSection.RehabilitationPrognosis != null)
+            {
+                sectionElement.Add(GenerateCodingElementConditionAssessmentSection(
+                    conditionAssessmentSection.RehabilitationPrognosis.GrateType,
+                    conditionAssessmentSection.RehabilitationPrognosis.GrateResult,
+                    "#ob_3",
+                    "4056",
+                    "19"));
+            }
+
+            componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        /// <summary>
+        /// Создает табличную часть для секции "Объектизированная оцента состояния".
+        /// </summary>
+        /// <param name="conditionAssessmentSection">Модель секции "Объектизированная оцента состояния".</param>
+        /// <returns>Табличную часть секции "Объектизированная оцента состояния".</returns>
+        private static XElement GenerateTableConditionAssessmentSection(ConditionAssessmentSection conditionAssessmentSection)
+        {
+            XElement tableElement = new XElement(xmlnsNamespace + "table");
+            XElement tbodyElement = new XElement(xmlnsNamespace + "tbody");
+            XElement theadElement = new XElement(xmlnsNamespace + "thead");
+
+            theadElement.Add(GenerateTRElementTableConditionAssessmentSection("Тип оценки", "Результат", null, true));
+
+            tableElement.Add(theadElement);
+
+            if (conditionAssessmentSection.ClinicalPrognosis != null)
+            {
+                tbodyElement.Add(GenerateTRElementTableConditionAssessmentSection(
+                    conditionAssessmentSection.ClinicalPrognosis.GrateType,
+                    conditionAssessmentSection.ClinicalPrognosis.GrateResult,
+                    "ob_1"));
+            }
+
+            if (conditionAssessmentSection.RehabilitationPotential != null)
+            {
+                tbodyElement.Add(GenerateTRElementTableConditionAssessmentSection(
+                    conditionAssessmentSection.RehabilitationPotential.GrateType,
+                    conditionAssessmentSection.RehabilitationPotential.GrateResult,
+                    "ob_2"));
+            }
+
+            if (conditionAssessmentSection.RehabilitationPrognosis != null)
+            {
+                tbodyElement.Add(GenerateTRElementTableConditionAssessmentSection(
+                    conditionAssessmentSection.RehabilitationPrognosis.GrateType,
+                    conditionAssessmentSection.RehabilitationPrognosis.GrateResult,
+                    "ob_3"));
+            }
+
+            tableElement.Add(tbodyElement);
+
+            return tableElement;
+        }
+
+        /// <summary>
+        /// Генерирование элементов заполнения таблицы секции "Объектизированная оцента состояния".
+        /// </summary>
+        /// <param name="cipher">Шифр.</param>
+        /// <param name="type">Тип.</param>
+        /// <param name="text">Текст.</param>
+        /// <param name="isHeader">Истина - заголовок таблицы.</param>
+        /// <returns>Элементы заполнения таблицы секции "Объектизированная оцента состояния".</returns>
+        private static XElement GenerateTRElementTableConditionAssessmentSection(
+            string type,
+            string result,
+            string reference,
+            bool isHeader = false)
+        {
+            XElement trElement = new XElement(xmlnsNamespace + "tr");
+
+            string childElementTag;
+            if (isHeader)
+            {
+                childElementTag = "th";
+            }
+            else
+            {
+                childElementTag = "td";
+            }
+
+            XElement childElementType = new XElement(xmlnsNamespace + childElementTag, type);
+            trElement.Add(childElementType);
+
+            if (isHeader)
+            {
+                XElement childElementResult = new XElement(xmlnsNamespace + childElementTag, result);
+                trElement.Add(childElementResult);
+            }
+            else
+            {
+                XElement childElementResult = new XElement(xmlnsNamespace + childElementTag);
+
+                XElement contentElement = new XElement(xmlnsNamespace + "content",
+                    new XAttribute("ID", reference), result);
+                childElementResult.Add(contentElement);
+
+                trElement.Add(childElementResult);
+            }
+
+
+            return trElement;
+        }
+
+        /// <summary>
+        /// Генерирование элементов кодирования элементов секции "Объектизированная оцента состояния".
+        /// </summary>
+        /// <param name="code">Код.</param>
+        /// <param name="caption">Описание.</param>
+        /// <param name="name">Наименование.</param>
+        /// <param name="result">Результат диагноза.</param>
+        /// <param name="id">Идентификатор.</param>
+        /// <returns>Элементы кодирования элементов секции "Объектизированная оцента состояния".</returns>
+        private static XElement GenerateCodingElementConditionAssessmentSection(
+            string caption,
+            string result,
+            string reference,
+            string codeCode,
+            string codeValue)
+        {
+            XElement entryElement = new XElement(xmlnsNamespace + "entry");
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", codeCode),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.166"),
+                new XAttribute("codeSystemVersion", "1.69"),
+                new XAttribute("codeSystemName", "Кодируемые поля CDA документов"),
+                new XAttribute("displayName", caption));
+
+            XElement originalTextElement = new XElement(xmlnsNamespace + "originalText");
+
+            XElement referenceElement = new XElement(xmlnsNamespace + "reference",
+                new XAttribute("value", reference));
+            originalTextElement.Add(referenceElement);
+
+            codeElement.Add(originalTextElement);
+
+            observationElement.Add(codeElement);
+
+            XElement valueElement = new XElement(xmlnsNamespace + "value",
+                new XAttribute(xsiNamespace + "type", "CD"),
+                new XAttribute("code", codeValue),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.148"),
+                new XAttribute("codeSystemVersion", "1.3"),
+                new XAttribute("codeSystemName", "Оценки состояния для медико-социальной экспертизы"),
+                new XAttribute("displayName", $"{caption} {result.ToLower()}"));
+            observationElement.Add(valueElement);
+
+            entryElement.Add(observationElement);
+            return entryElement;
+        }
+
+        #endregion
+
+        #region Recomendations
+
+        /// <summary>
+        /// Создает элемент "component" секции "Рекомендации".
+        /// </summary>
+        /// <param name="recommendationsSectionModel">Модель секции "Рекомендации".</param>
+        /// <returns>Элемент "component" секции "Рекомендации".</returns>
+        private static XElement GenerateRecommendationSectionElement(RecommendationsSectionModel recommendationsSectionModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "REGIME"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.197"),
+                new XAttribute("codeSystemVersion", "1.18"),
+                new XAttribute("codeSystemName", "Секции электронных медицинских документов"),
+                new XAttribute("displayName", "Режим и рекомендации"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "РЕКОМЕНДАЦИИ");
+            sectionElement.Add(titleElement);
+
+            sectionElement.Add(GenerateCommonRecommendationsSectionElement(recommendationsSectionModel));
+            //sectionElement.Add(GenerateOtherRecommendationsSectionElement(recommendationsSectionModel.OtherRecommendatons));
+
+            componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        private static XElement GenerateCommonRecommendationsSectionElement(RecommendationsSectionModel recommendationsSectionModel)
+        {
+            XElement componentElement = new XElement(xmlnsNamespace + "component");
+            XElement sectionElement = new XElement(xmlnsNamespace + "section");
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                new XAttribute("code", "RECTREAT"),
+                new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.197"),
+                new XAttribute("codeSystemVersion", "1.18"),
+                new XAttribute("codeSystemName", "Секции электронных медицинских документов"),
+                new XAttribute("displayName", "Рекомендованное лечение"));
+            sectionElement.Add(codeElement);
+
+            XElement titleElement = new XElement(xmlnsNamespace + "title", "Рекомендованное лечение");
+            sectionElement.Add(titleElement);
+
+            sectionElement.Add(GenerateTableRecommendationSectionElement(recommendationsSectionModel));
+
+            componentElement.Add(sectionElement);
+            return componentElement;
+        }
+
+        private static XElement GenerateTableRecommendationSectionElement(RecommendationsSectionModel recommendationsSectionModel)
+        {
+            XElement textElement = new XElement(xmlnsNamespace + "text");
+            XElement tableElement = new XElement(xmlnsNamespace + "table");
+            XElement tbodyElement = new XElement(xmlnsNamespace + "tbody");
+
+            tbodyElement.Add(GenerateTRTableRecommendationSectionElement("Рекомендуемые мероприятия по реконструктивной хирургии",
+                recommendationsSectionModel.RecommendedMeasuresReconstructiveSurgery));
+            tbodyElement.Add(GenerateTRTableRecommendationSectionElement("Рекомендуемые мероприятия по протезированию и ортезированию, техническим средствам реабилитации",
+                recommendationsSectionModel.RecommendedMeasuresProstheticsAndOrthotics));
+            tbodyElement.Add(GenerateTRTableRecommendationSectionElement("Санаторно-курортное лечение",
+                recommendationsSectionModel.SpaTreatment));
+            tbodyElement.Add(GenerateTRTableMedicalRecommendationSectionElement("Перечень лекарственных препаратов для медицинского применения (заполняется в отношении граждан, пострадавших в результате несчастных случаев на производстве и профессиональных заболеваний)",
+                recommendationsSectionModel.Medications));
+            tbodyElement.Add(GenerateTRTableRecommendationSectionElement("Перечень медицинских изделий для медицинского применения",
+            recommendationsSectionModel.MedicalDevices));
+
+            tableElement.Add(tbodyElement);
+            textElement.Add(tableElement);
+            return textElement;
+        }
+
+        /// <summary>
+        /// Создание элемента таблицы заполнения секции.
+        /// </summary>
+        /// <param name="caption">Описание.</param>
+        /// <param name="content">Контент.</param>
+        /// <returns>Элемента таблицы заполнения секции.</returns>
+        private static XElement GenerateTRTableRecommendationSectionElement(string caption, string content)
+        {
+            XElement trElement = new XElement(xmlnsNamespace + "tr");
+
+            XElement tdElement = new XElement(xmlnsNamespace + "td");
+            XElement contentElement = new XElement(xmlnsNamespace + "content", caption);
+            tdElement.Add(contentElement);
+            trElement.Add(tdElement);
+
+            tdElement = new XElement(xmlnsNamespace + "td");
+            contentElement = new XElement(xmlnsNamespace + "content", content);
+            tdElement.Add(contentElement);
+            trElement.Add(tdElement);
+
+            return trElement;
+        }
+
+        /// <summary>
+        /// Создание элемента таблицы, отвечающего за препараты.
+        /// </summary>
+        /// <param name="caption">Описание.</param>
+        /// <param name="medications">Список препаратов.</param>
+        /// <returns>Элемент таблицы, отвечающий за препараты</returns>
+        private static XElement GenerateTRTableMedicalRecommendationSectionElement(string caption, List<MedicationModel> medications)
+        {
+            XElement trElement = new XElement(xmlnsNamespace + "tr");
+            XElement tdCaptionElement = new XElement(xmlnsNamespace + "td");
+            XElement captionContentElement = new XElement(xmlnsNamespace + "content", caption);
+            tdCaptionElement.Add(captionContentElement);
+            trElement.Add(tdCaptionElement);
+
+            foreach (var medic in medications)
+            {
+                XElement tdMedicalElement = new XElement(xmlnsNamespace + "td");
+                XElement medicalContentElement = new XElement(xmlnsNamespace + "content");
+
+                medicalContentElement.Add("Международное название:");
+                medicalContentElement.Add(NewLineElement);
+                medicalContentElement.Add(medic.InternationalName);
+                medicalContentElement.Add(NewLineElement);
+
+                medicalContentElement.Add("Лекарственная форма:");
+                medicalContentElement.Add(NewLineElement);
+                medicalContentElement.Add(medic.DosageForm);
+                medicalContentElement.Add(NewLineElement);
+
+                medicalContentElement.Add("Лекарственная доза:");
+                medicalContentElement.Add(NewLineElement);
+                medicalContentElement.Add(medic.Dose);
+                medicalContentElement.Add(NewLineElement);
+
+                medicalContentElement.Add("Код КТРУ:");
+                medicalContentElement.Add(NewLineElement);
+                medicalContentElement.Add(medic.KTRUCode);
+                medicalContentElement.Add(NewLineElement);
+
+                medicalContentElement.Add("Продолжительность приема:");
+                medicalContentElement.Add(NewLineElement);
+                medicalContentElement.Add(medic.DurationAdmission);
+                medicalContentElement.Add(NewLineElement);
+
+                medicalContentElement.Add("Кратность курсов лечения:");
+                medicalContentElement.Add(NewLineElement);
+                medicalContentElement.Add(medic.MultiplicityCoursesTreatment);
+                medicalContentElement.Add(NewLineElement);
+
+                medicalContentElement.Add("Кратность приема:");
+                medicalContentElement.Add(NewLineElement);
+                medicalContentElement.Add(medic.ReceptionFrequency);
+
+                tdMedicalElement.Add(medicalContentElement);
+                trElement.Add(tdMedicalElement);
+                tdMedicalElement.Add(NewLineElement);
+            }
+
+            return trElement;
+        }
+
+        //private static XElement GenerateOtherRecommendationsSectionElement(string otherRecommendations)
+        //{
+
+        //}
+
+        #endregion
 
         /// <summary>
         /// Создает элемент "component" с наполнением секции "Направление".

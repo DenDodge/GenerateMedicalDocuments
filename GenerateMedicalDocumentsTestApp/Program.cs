@@ -984,7 +984,8 @@ namespace GenerateMedicalDocumentsTestApp
                                 Number = "A04.01.001",
                                 Name = "Ультразвуковое исследование мягких тканей (одна анатомическая зона)",
                                 Result = "результат",
-                                ID = "324576"
+                                ID = "324576",
+                                Code = "174"
                             },
                             new MedicalExaminationModel()
                             {
@@ -992,7 +993,8 @@ namespace GenerateMedicalDocumentsTestApp
                                 Number = "A06.09.007",
                                 Name = "Рентгенография легких",
                                 Result = "результат",
-                                ID = "895543"
+                                ID = "895543",
+                                Code = "64"
                             },
                             new MedicalExaminationModel()
                             {
@@ -1000,17 +1002,19 @@ namespace GenerateMedicalDocumentsTestApp
                                 Number = "B01.015.001",
                                 Name = "Прием (осмотр, консультация) врача-кардиолога первичный",
                                 Result = "результат",
-                                ID = "8754871"
+                                ID = "8754871",
+                                Code = "512"
                             }
                         }
                     },
-                    DiagnosisSection = new DiagnosisSection()
+                    DiagnosisSection = new DiagnosisSectionModel()
                     {
                         Diagnosis = new List<DiagnosticModel>()
                         {
                             new DiagnosticModel()
                             {
                                 ID = "C49.2",
+                                Code = "1",
                                 Name = "Злокачественное новообразование соединительной и мягких тканей нижней конечности, включая тазобедренную область",
                                 Caption = "Основное заболевание",
                                 Result = "Фибромиксоидная саркома мягких тканей верхней трети правой голени с подрастанием к большеберцовой кости и мягким тканям правого коленного сустава T2bN0M0G1 Стадия: I."
@@ -1018,6 +1022,7 @@ namespace GenerateMedicalDocumentsTestApp
                             new DiagnosticModel()
                             {
                                 ID = "I25",
+                                Code = "3",
                                 Name = "Хроническая ишемическая болезнь сердца",
                                 Caption = "Сопутствующая патология",
                                 Result = "ИБС, стенокардия напряжения, 3ФК. Постоянная форма мерцательной аритмии, ХСН 2А. 3ФК. Гипертоническая болезнь 2 стадии, АГ 2 степени, риск 4. Ожирение 1 степени."
@@ -1025,6 +1030,7 @@ namespace GenerateMedicalDocumentsTestApp
                             new DiagnosticModel()
                             {
                                 ID = "I25.1",
+                                Code = "7",
                                 Name = "Атеросклеротическая болезнь сердца",
                                 Caption = "Осложнение сопутствующего заболевания",
                                 Result = "Атеросклеротический кардиосклероз."

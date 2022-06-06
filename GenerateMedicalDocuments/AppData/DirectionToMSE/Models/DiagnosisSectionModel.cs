@@ -5,7 +5,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
     /// <summary>
     /// Модель секции [1..1] СЕКЦИЯ: ДИАГНОЗЫ.
     /// </summary>
-    public class DiagnosisSection
+    public class DiagnosisSectionModel
     {
         /// <summary>
         /// Диагнозы.

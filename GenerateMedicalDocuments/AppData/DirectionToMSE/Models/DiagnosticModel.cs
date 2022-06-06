@@ -21,5 +21,9 @@
         /// Врачебное описание.
         /// </summary>
         public string Result { get; set; }
+        /// <summary>
+        /// Код для кодирования элемента.
+        /// </summary>
+        public string Code { get; set; }
     }
 }

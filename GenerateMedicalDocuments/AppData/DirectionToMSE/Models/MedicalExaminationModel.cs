@@ -20,6 +20,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// </summary>
         public string ID { get; set; }
         /// <summary>
+        /// Код для кодирования медицинского исследования.
+        /// </summary>
+        public string Code { get; set; }
+        /// <summary>
         /// Наименование исследования.
         /// </summary>
         public string Name { get; set; }

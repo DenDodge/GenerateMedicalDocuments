@@ -36,7 +36,7 @@
         /// <summary>
         /// [1..1] СЕКЦИЯ: ДИАГНОЗЫ.
         /// </summary>
-        public DiagnosisSection DiagnosisSection { get; set; }
+        public DiagnosisSectionModel DiagnosisSection { get; set; }
         /// <summary>
         /// [1..1] СЕКЦИЯ: ОБЪЕКТИВИЗИРОВАННАЯ ОЦЕНКА СОСТОЯНИЯ.
         /// </summary>
