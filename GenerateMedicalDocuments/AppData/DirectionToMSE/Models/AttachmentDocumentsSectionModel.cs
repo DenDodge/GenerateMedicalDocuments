@@ -5,7 +5,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
     /// <summary>
     /// Модель секции "СВЯЗАННЫЕ ДОКУМЕНТЫ".
     /// </summary>
-    public class AttachmentDocumentsSection
+    public class AttachmentDocumentsSectionModel
     {
         /// <summary>
         /// Список связанных документов.

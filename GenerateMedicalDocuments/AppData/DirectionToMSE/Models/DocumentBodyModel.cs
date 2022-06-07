@@ -48,10 +48,10 @@
         /// <summary>
         /// [0..1] СЕКЦИЯ: Посторонний специальный медицинский уход.
         /// </summary>
-        public OutsideSpecialMedicalCareSection OutsideSpecialMedicalCareSection { get; set; } = null;
+        public OutsideSpecialMedicalCareSectionModel OutsideSpecialMedicalCareSection { get; set; } = null;
         /// <summary>
         /// [0..1] СЕКЦИЯ: СВЯЗАННЫЕ ДОКУМЕНТЫ.
         /// </summary>
-        public AttachmentDocumentsSection AttachmentDocumentsSection { get; set; } = null;
+        public AttachmentDocumentsSectionModel AttachmentDocumentsSection { get; set; } = null;
     }
 }

@@ -3,7 +3,7 @@
     /// <summary>
     /// Модель секции "Посторонний специальный медицинский уход".
     /// </summary>
-    public class OutsideSpecialMedicalCareSection
+    public class OutsideSpecialMedicalCareSectionModel
     {
         /// <summary>
         /// Текст секции.

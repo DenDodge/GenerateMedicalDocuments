@@ -1077,11 +1077,11 @@ namespace GenerateMedicalDocumentsTestApp
                         MedicalDevices = "текст",
                         OtherRecommendatons = "отсутствуют"
                     },
-                    OutsideSpecialMedicalCareSection = new OutsideSpecialMedicalCareSection()
+                    OutsideSpecialMedicalCareSection = new OutsideSpecialMedicalCareSectionModel()
                     {
                         Text = "Текст"
                     },
-                    AttachmentDocumentsSection = new AttachmentDocumentsSection()
+                    AttachmentDocumentsSection = new AttachmentDocumentsSectionModel()
                     {
                         AttachmentDocuments = new List<MedicalDocumentModel>()
                         {
