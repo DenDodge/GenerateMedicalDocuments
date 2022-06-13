@@ -19,8 +19,8 @@ namespace ServiceTestApp
             PixServiceClient pixClient =
                 new PixServiceClient(PixServiceClient.EndpointConfiguration.BasicHttpBinding_IPixService);
             var pixServiceResult = await PixServiceAddPatient(pixClient);
-            
-            
+            //await PixServiceGetPatient(pixClient);
+
             //var emkServiceResult= await EmkServiceAddMedRecord();
         }
 
@@ -35,8 +35,7 @@ namespace ServiceTestApp
             
             try
             {
-                var patientid = "8CDE415D-FAB7-4809-AA37-8CDD70B1B46C";
-                await service.AddPatientAsync(patientid, lpuId, patient);
+                await service.AddPatientAsync(iemkTocken, lpuId, patient);
                 return null;
             }
             catch (Exception e)
@@ -47,7 +46,7 @@ namespace ServiceTestApp
                 return e.Message;
             }
         }
-        
+
         /// <summary>
         /// Метод сервиса EMK.
         /// </summary>
@@ -186,7 +185,7 @@ namespace ServiceTestApp
                 IdBloodType = 8,
                 IdGlobal = null,
                 IdLivingAreaType = 2,
-                IdPatientMIS = "Identificator21.01.2021_05:49:10538",
+                IdPatientMIS = "8CDE415D-FAB7-4809-AA37-8CDD70B1B46C",
                 IsVip = false,
                 Job = null,
                 MiddleName = "Антонович",
