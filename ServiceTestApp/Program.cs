@@ -211,67 +211,68 @@ VZUJN3/UFQBU/mMk2ODS0DChWqUCepQzk3e3XpAmY4VfWgaIC5Ze4588Mn3Gs3joj80Qzd3Zh20=";
             MedDocument medDocument = new MedDocument()
             {
                 Attachments = new List<MedDocumentDtoDocumentAttachment>()
-                {
-                    new MedDocumentDtoDocumentAttachment()
                     {
-                        Data = byteDocument,
-                        OrganizationSign = Convert.FromBase64String(sign),
-                        PersonalSigns =
+                        new MedDocumentDtoDocumentAttachment()
                         {
-                            new MedDocumentDtoPersonalSign()
+                            Data = byteDocument,
+                            OrganizationSign = Convert.FromBase64String(sign),
+                            PersonalSigns = new List<MedDocumentDtoPersonalSign>()
                             {
-                                Doctor = new MedicalStaff()
+                                new MedDocumentDtoPersonalSign()
                                 {
-                                    Person = new PersonWithIdentity()
+                                    Doctor = new MedicalStaff()
                                     {
-                                        HumanName = new HumanName()
+                                        Person = new PersonWithIdentity()
                                         {
-                                            FamilyName = "Привалов",
-                                            GivenName = "Александр",
-                                            MiddleName = "Иванович"
+                                            HumanName = new HumanName()
+                                            {
+                                                FamilyName = "Привалов",
+                                                GivenName = "Александр",
+                                                MiddleName = "Иванович"
+                                            },
+                                            IdPersonMis = "1"
                                         },
-                                        IdPersonMis = "1"
+                                        IdLpu = "f1bb4d39-86fc-404f-99d2-6a05ecc15faa",
+                                        IdSpeciality = 30,
+                                        IdPosition = 122,
                                     },
-                                    IdLpu = "f1bb4d39-86fc-404f-99d2-6a05ecc15faa",
-                                    IdSpeciality = 30,
-                                    IdPosition = 122,
-                                },
-                                Sign = Convert.FromBase64String(sign),
-                            }
-                        },
-                        MimeType = "text/xml",
-                        Url = null
-                    }
-                },
+                                    Sign = Convert.FromBase64String(sign),
+                                }
+                            },
+                            MimeType = "text/xml",
+                            Url = null
+                        }
+                    },
                 CreationDate = DateTime.Now,
                 Header = "Тестовая отправка направления на МСЭ",
                 IdDocumentMis = "1",
                 IdMedDocumentType = 145,
-                RelatedMedDoc =
-                {
-                    "0"
-                },
-                Observations = {
-                    new Observation()
+                RelatedMedDoc = new List<string>
                     {
-                        Code = 214,
-                        DateTime = DateTime.Now,
-                        Interpretation = "E",
-                        ValueQuantity = new BooleanValue()
+                        "0"
+                    },
+                Observations = new List<Observation>()
+                    {
+                        new Observation()
                         {
-                            Value = true,
-                        },
-                        ReferenceRanges =
-                        {
-                            new ReferenceRange
+                            Code = 214,
+                            DateTime = DateTime.Now,
+                            Interpretation = "E",
+                            ValueQuantity = new BooleanValue()
                             {
-                                RangeType = 2,
-                                IdUnit = 506,
-                                Value = "666"
+                                Value = true,
+                            },
+                            ReferenceRanges = new List<ReferenceRange>()
+                            {
+                                new ReferenceRange
+                                {
+                                    RangeType = 2,
+                                    IdUnit = 506,
+                                    Value = "666"
+                                }
                             }
                         }
-                    }
-                },
+                    },
                 Author = new MedicalStaff()
                 {
                     Person = new PersonWithIdentity()
