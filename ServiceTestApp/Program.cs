@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using EMKService;
 using ServiceTestApp.PixService;
@@ -156,23 +157,23 @@ VZUJN3/UFQBU/mMk2ODS0DChWqUCepQzk3e3XpAmY4VfWgaIC5Ze4588Mn3Gs3joj80Qzd3Zh20=";
         private static string iemkTocken = "f498062a-e84f-44db-b0ba-deb7236df292";
         private static string mpiTocken = "a8dc08ba-964f-4d58-b63b-603a95dc0ffa";
         
-        private static string lpuId= "f1bb4d39-86fc-404f-99d2-6a05ecc15faa";
+        private static string lpuId= "395f273c-a727-456b-ba72-c8fc98963917";
         private static string lpuOID = "1.2.643.2.69.1.2.319";
         
         static async Task Main(string[] args)
         {
-            /*PixServiceClient pixClient =
+            PixServiceClient pixClient =
                 new PixServiceClient(PixServiceClient.EndpointConfiguration.BasicHttpBinding_IPixService);
-            var pixServiceResult = await PixServiceAddPatient(pixClient);*/
-            //await PixServiceGetPatient(pixClient);
+            var pixServiceResult = await PixServiceAddPatient(pixClient); 
+            var patient = await PixServiceGetPatient(pixClient);
 
-            var emkServiceResult= await EmkServiceAddMedRecord();
+            var emkServiceResult= await EmkServiceAddMedRecord(patient[0].IdPatientMIS);
         }
 
         /// <summary>
         /// Тестирование метода AddPatient PIX сервиса.
         /// </summary>
-        /// <param name="service">PXI сервис.</param>
+        /// <param name="service">PIX сервис.</param>
         /// <returns></returns>
         private static async Task<string> PixServiceAddPatient(PixServiceClient service)
         {
@@ -185,94 +186,124 @@ VZUJN3/UFQBU/mMk2ODS0DChWqUCepQzk3e3XpAmY4VfWgaIC5Ze4588Mn3Gs3joj80Qzd3Zh20=";
             }
             catch (Exception e)
             {
-                //TODO: 12.06.22 "Неправильный идентификатор системы".
-                // создал тикет.
                 Console.WriteLine(e);
                 return e.Message;
             }
         }
 
         /// <summary>
+        /// Метод сервиса PIX для получения пациента.
+        /// </summary>
+        /// <returns></returns>
+        private static async Task<PatientDto[]> PixServiceGetPatient(PixServiceClient service)
+        {
+            PatientDto pac = new PatientDto { IdPatientMIS = "8CDE415D-FAB7-4809-AA37-8CDD70B1B46C" };
+            PatientDto[] patient;
+            try
+            {
+                patient = await service.GetPatientAsync(iemkTocken, lpuId, pac, SourceType.Reg);
+                return patient;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return null;
+            }
+        }
+        
+        /// <summary>
         /// Метод сервиса EMK.
         /// </summary>
         /// <returns></returns>
-        private static async Task<string> EmkServiceAddMedRecord()
+        private static async Task<string> EmkServiceAddMedRecord(string idPatient)
         {
             string pathToGeneratedXMLDocument =
-                "..\\testDocument.xml";
+                "testDocument.xml";
+            string pathToSigGeneratedXMLDocument = "testDocument.xml.sig";
             byte[] byteDocument = null;
+            byte[] byteSigDocument = null;
             using (FileStream fs = File.OpenRead(pathToGeneratedXMLDocument))
             {
                 byteDocument = new byte[fs.Length];
                 await fs.ReadAsync(byteDocument, 0, byteDocument.Length);
             }
+            using (FileStream fs = File.OpenRead(pathToSigGeneratedXMLDocument))
+            {
+                byteSigDocument = new byte[fs.Length];
+                await fs.ReadAsync(byteSigDocument, 0, byteSigDocument.Length);
+            }
 
             EmkServiceClient emkClient = new EmkServiceClient(EmkServiceClient.EndpointConfiguration.BasicHttpBinding_IEmkService);
             MedDocument medDocument = new MedDocument()
             {
+                
+            };
+
+            ReferralMSE referal = new ReferralMSE()
+            {
                 Attachments = new List<MedDocumentDtoDocumentAttachment>()
+                {
+                    new MedDocumentDtoDocumentAttachment()
                     {
-                        new MedDocumentDtoDocumentAttachment()
+                        Data = byteDocument,
+                        OrganizationSign = byteSigDocument,
+                        PersonalSigns = new List<MedDocumentDtoPersonalSign>()
                         {
-                            Data = byteDocument,
-                            OrganizationSign = Convert.FromBase64String(sign),
-                            PersonalSigns = new List<MedDocumentDtoPersonalSign>()
+                            new MedDocumentDtoPersonalSign()
                             {
-                                new MedDocumentDtoPersonalSign()
+                                Doctor = new MedicalStaff()
                                 {
-                                    Doctor = new MedicalStaff()
+                                    Person = new PersonWithIdentity()
                                     {
-                                        Person = new PersonWithIdentity()
+                                        HumanName = new HumanName()
                                         {
-                                            HumanName = new HumanName()
-                                            {
-                                                FamilyName = "Привалов",
-                                                GivenName = "Александр",
-                                                MiddleName = "Иванович"
-                                            },
-                                            IdPersonMis = "1"
+                                            FamilyName = "Привалов",
+                                            GivenName = "Александр",
+                                            MiddleName = "Иванович"
                                         },
-                                        IdLpu = "f1bb4d39-86fc-404f-99d2-6a05ecc15faa",
-                                        IdSpeciality = 30,
-                                        IdPosition = 122,
+                                        IdPersonMis = "1"
                                     },
-                                    Sign = Convert.FromBase64String(sign),
-                                }
-                            },
-                            MimeType = "text/xml",
-                            Url = null
-                        }
-                    },
+                                    IdLpu = lpuId,
+                                    IdSpeciality = 30,
+                                    IdPosition = 122,
+                                },
+                                Sign = byteSigDocument,
+                            }
+                        },
+                        MimeType = "text/xml",
+                        Url = null
+                    }
+                },
                 CreationDate = DateTime.Now,
-                Header = "Тестовая отправка направления на МСЭ",
+                Header = "Направление на медико-социальную экспертизу (редакция 5)",
                 IdDocumentMis = "1",
-                IdMedDocumentType = 145,
+                IdMedDocumentType = byte.Parse("145"),
                 RelatedMedDoc = new List<string>
-                    {
-                        "0"
-                    },
+                {
+                    "0"
+                },
                 Observations = new List<Observation>()
+                {
+                    new Observation()
                     {
-                        new Observation()
+                        Code = 214,
+                        DateTime = DateTime.Now,
+                        Interpretation = "E",
+                        ValueQuantity = new BooleanValue()
                         {
-                            Code = 214,
-                            DateTime = DateTime.Now,
-                            Interpretation = "E",
-                            ValueQuantity = new BooleanValue()
+                            Value = true,
+                        },
+                        ReferenceRanges = new List<ReferenceRange>()
+                        {
+                            new ReferenceRange
                             {
-                                Value = true,
-                            },
-                            ReferenceRanges = new List<ReferenceRange>()
-                            {
-                                new ReferenceRange
-                                {
-                                    RangeType = 2,
-                                    IdUnit = 506,
-                                    Value = "666"
-                                }
+                                RangeType = 2,
+                                IdUnit = 506,
+                                Value = "666"
                             }
                         }
-                    },
+                    }
+                },
                 Author = new MedicalStaff()
                 {
                     Person = new PersonWithIdentity()
@@ -285,20 +316,20 @@ VZUJN3/UFQBU/mMk2ODS0DChWqUCepQzk3e3XpAmY4VfWgaIC5Ze4588Mn3Gs3joj80Qzd3Zh20=";
                         },
                         IdPersonMis = "2341"
                     },
-                    IdLpu = "f1bb4d39-86fc-404f-99d2-6a05ecc15faa",
+                    IdLpu = lpuId,
                     IdSpeciality = 30,
                     IdPosition = 122
                 }
             };
-
+            
             try
             {
                 await emkClient.AddMedRecordAsync(
                     iemkTocken,
                     lpuId,
-                    "88f6f255-250a-4f85-b81c-7111509f264e",
+                    idPatient,
                     null,
-                    medDocument,
+                    referal,
                     null);
                 return null;
             }
@@ -309,7 +340,7 @@ VZUJN3/UFQBU/mMk2ODS0DChWqUCepQzk3e3XpAmY4VfWgaIC5Ze4588Mn3Gs3joj80Qzd3Zh20=";
             }
             
         }
-
+        
         /// <summary>
         /// Получить тестовые данные пацинта.
         /// </summary>
@@ -395,10 +426,10 @@ VZUJN3/UFQBU/mMk2ODS0DChWqUCepQzk3e3XpAmY4VfWgaIC5Ze4588Mn3Gs3joj80Qzd3Zh20=";
                         DocumentName = null,
                         ExpiredDate = new DateTime(2000, 06, 02),
                         IdDocumentType = 228,
-                        IdProvider = "22003",
+                        IdProvider = "46003",
                         IssuedDate = new DateTime(1994, 02, 04),
                         ProviderName = "Единый полис",
-                        RegionCode = "128",
+                        RegionCode = "46",
                         StartDate = new DateTime(1995, 02, 05)
                     }
                 },
