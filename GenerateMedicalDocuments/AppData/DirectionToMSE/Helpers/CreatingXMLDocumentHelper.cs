@@ -467,6 +467,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         {
             List<XElement> telecomElements = new List<XElement>();
 
+            if (telecomModels == null)
+            {
+                return null;
+            }
+            
             foreach(var telecomModel in telecomModels)
             {
                 telecomElements.Add(GenerateTelecomElement(telecomModel, isOrganization));
@@ -1064,10 +1069,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             serviceEventElement.Add(serviceCondElement);
 
             serviceEventElement.Add(GeneratePerformerElement(serviceEventModel.Performer, "PPRF"));
-            
-            foreach(var performer in serviceEventModel.OtherPerformers)
+
+            if (serviceEventModel.OtherPerformers != null)
             {
-                serviceEventElement.Add(GeneratePerformerElement(performer, "SPRF"));
+                foreach(var performer in serviceEventModel.OtherPerformers)
+                {
+                    serviceEventElement.Add(GeneratePerformerElement(performer, "SPRF"));
+                }
             }
 
             documentationOfElement.Add(serviceEventElement);
@@ -1282,12 +1290,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         private static List<XElement> GenerateVitalParametersSectionContentElement(Dictionary<string, string> values)
         {
             List<XElement> contentElements = new List<XElement>();
-            foreach (var value in values)
+            if (values != null)
             {
-                XElement contentElement = new XElement(xmlnsNamespace + "content",
-                    new XAttribute("ID", value.Key), value.Value);
-                contentElements.Add(contentElement);
+                foreach (var value in values)
+                {
+                    XElement contentElement = new XElement(xmlnsNamespace + "content",
+                        new XAttribute("ID", value.Key), value.Value);
+                    contentElements.Add(contentElement);
+                }
             }
+            
             return contentElements;
         }
 
@@ -1602,15 +1614,18 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 new XAttribute("displayName", "Сведения о медицинских обследованиях, необходимых для получения клинико-функциональных данных в зависимости от заболевания при проведении медико-социальной экспертизы"));
             observatinElement.Add(codeObservationElement);
 
-            foreach (var medicalExamination in diagnosticStudiesSectionModel.MedicalExaminations)
+            if (diagnosticStudiesSectionModel.MedicalExaminations != null)
             {
-                observatinElement.Add(GenerateEntryReletionshipElementDiagnosticStudiesSection(
-                    medicalExamination.Date.ToString("yyyyMMddHHmm+0300"),
-                    medicalExamination.Number,
-                    medicalExamination.Name,
-                    medicalExamination.Result,
-                    medicalExamination.ID,
-                    medicalExamination.Code));
+                foreach (var medicalExamination in diagnosticStudiesSectionModel.MedicalExaminations)
+                {
+                    observatinElement.Add(GenerateEntryReletionshipElementDiagnosticStudiesSection(
+                        medicalExamination.Date.ToString("yyyyMMddHHmm+0300"),
+                        medicalExamination.Number,
+                        medicalExamination.Name,
+                        medicalExamination.Result,
+                        medicalExamination.ID,
+                        medicalExamination.Code));
+                }
             }
 
             entryElement.Add(observatinElement);
@@ -1641,13 +1656,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             tbodyElement.Add(GenerateTRElementTableDiagnosticStudiesSection("Дата", "Код", "Наименование", "Результат", true));
 
-            foreach (var medicalExamination in diagnosticStudiesSectionModel.MedicalExaminations)
+            if (diagnosticStudiesSectionModel.MedicalExaminations != null)
             {
-                tbodyElement.Add(GenerateTRElementTableDiagnosticStudiesSection(
-                    medicalExamination.Date.ToString("dd.MM.yy"),
-                    medicalExamination.Number,
-                    medicalExamination.Name,
-                    medicalExamination.Result));
+                foreach (var medicalExamination in diagnosticStudiesSectionModel.MedicalExaminations)
+                {
+                    tbodyElement.Add(GenerateTRElementTableDiagnosticStudiesSection(
+                        medicalExamination.Date.ToString("dd.MM.yy"),
+                        medicalExamination.Number,
+                        medicalExamination.Name,
+                        medicalExamination.Result));
+                }
             }
 
             tableElement.Add(tbodyElement);
@@ -1805,14 +1823,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 new XAttribute("displayName", "Заключительный клинический диагноз"));
             actElement.Add(codeActElement);
 
-            foreach (var diagnos in diagnosisSectionModel.Diagnosis)
+            if (diagnosisSectionModel.Diagnosis != null)
             {
-                actElement.Add(GenerateCodingElementDiagnosisSection(
-                    diagnos.Code,
-                    diagnos.Caption,
-                    diagnos.Name,
-                    diagnos.Result,
-                    diagnos.ID));
+                foreach (var diagnos in diagnosisSectionModel.Diagnosis)
+                {
+                    actElement.Add(GenerateCodingElementDiagnosisSection(
+                        diagnos.Code,
+                        diagnos.Caption,
+                        diagnos.Name,
+                        diagnos.Result,
+                        diagnos.ID));
+                }
             }
 
             entryelement.Add(actElement);
@@ -1843,12 +1864,15 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             tbodyElement.Add(GenerateTRElementTableDiagnosisSection("Шифр", "Тип", "Текст", true));
 
-            foreach (var diagnos in diagnosisSectionModel.Diagnosis)
+            if (diagnosisSectionModel.Diagnosis != null)
             {
-                tbodyElement.Add(GenerateTRElementTableDiagnosisSection(
-                    diagnos.ID,
-                    diagnos.Caption,
-                    diagnos.Result));
+                foreach (var diagnos in diagnosisSectionModel.Diagnosis)
+                {
+                    tbodyElement.Add(GenerateTRElementTableDiagnosisSection(
+                        diagnos.ID,
+                        diagnos.Caption,
+                        diagnos.Result));
+                }
             }
 
             tableElement.Add(tbodyElement);
@@ -2240,9 +2264,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "Санаторно-курортное лечение",
                 recommendationsSectionModel.SpaTreatment));
 
-            foreach (var medic in recommendationsSectionModel.Medications)
+            if (recommendationsSectionModel.Medications != null)
             {
-                sectionElement.Add(GenerateMedicalCodingRecomendationSectionElement(medic));
+                foreach (var medic in recommendationsSectionModel.Medications)
+                {
+                    sectionElement.Add(GenerateMedicalCodingRecomendationSectionElement(medic));
+                }
             }
 
             sectionElement.Add(GenerateStandartCodingCommonRecomendationSectionElement(
@@ -2319,12 +2346,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент таблицы, отвечающий за препараты</returns>
         private static XElement GenerateTRTableMedicalRecommendationSectionElement(string caption, List<MedicationModel> medications)
         {
+            if (medications == null)
+            {
+                return null;
+            }
+            
             XElement trElement = new XElement(xmlnsNamespace + "tr");
             XElement tdCaptionElement = new XElement(xmlnsNamespace + "td");
             XElement captionContentElement = new XElement(xmlnsNamespace + "content", caption);
             tdCaptionElement.Add(captionContentElement);
             trElement.Add(tdCaptionElement);
-
+            
             foreach (var medic in medications)
             {
                 XElement tdMedicalElement = new XElement(xmlnsNamespace + "td");
@@ -2678,11 +2710,14 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             sectionElement.Add(GenerateTableAttachmentDocumentsSectionElement(attachmentDocumentsSectionModel));
 
-            foreach (var document in attachmentDocumentsSectionModel.AttachmentDocuments)
+            if (attachmentDocumentsSectionModel.AttachmentDocuments != null)
             {
-                sectionElement.Add(GenerateEntryAttachmentDocumentsSectionElement(document));
+                foreach (var document in attachmentDocumentsSectionModel.AttachmentDocuments)
+                {
+                    sectionElement.Add(GenerateEntryAttachmentDocumentsSectionElement(document));
+                }
             }
-            
+
             componentElement.Add(sectionElement);
             return componentElement;
         }
@@ -2703,9 +2738,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             XElement tableElement = new XElement(xmlnsNamespace + "table");
             XElement tbodyElement = new XElement(xmlnsNamespace + "tbody");
 
-            foreach (var document in attachmentDocumentsSectionModel.AttachmentDocuments)
+            if (attachmentDocumentsSectionModel.AttachmentDocuments != null)
             {
-                tbodyElement.Add(GenerateTRTableAttachmentDocumentsSectionElement(document.Name, document.Result));
+                foreach (var document in attachmentDocumentsSectionModel.AttachmentDocuments)
+                {
+                    tbodyElement.Add(GenerateTRTableAttachmentDocumentsSectionElement(document.Name, document.Result));
+                }
             }
 
             tableElement.Add(tbodyElement);
@@ -3080,9 +3118,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             XElement componentElement = null;
 
-            foreach (var workPerformed in workActivityModel.WorkPerformeds)
+            if (workActivityModel.WorkPerformeds != null)
             {
-                componentElement = GenerateWorkPerformedElement(workPerformed);
+                foreach (var workPerformed in workActivityModel.WorkPerformeds)
+                {
+                    componentElement = GenerateWorkPerformedElement(workPerformed);
+                }
             }
 
             if (componentElement != null)
@@ -3583,10 +3624,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 var paragraphElement = GenerateParagraphElement(
                     "Физическое развитие (в отношении детей в возрасте до 3 лет)",
                     new List<string>() { anamnezSectionModel.ActualDevelopment });
-                var contentParagraphElement = paragraphElement.Elements(xmlnsNamespace + "content");
-                foreach (var element in contentParagraphElement)
+                if (paragraphElement != null)
                 {
-                    element.Add(new XAttribute("ID", "socanam4"));
+                    var contentParagraphElement = paragraphElement.Elements(xmlnsNamespace + "content");
+                    if (contentParagraphElement != null)
+                    {
+                        foreach (var element in contentParagraphElement)
+                        {
+                            element.Add(new XAttribute("ID", "socanam4"));
+                        }
+                    }
                 }
 
                 textElement.Add(paragraphElement);
@@ -3636,20 +3683,23 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
                 #endregion
 
-                foreach (var temporaryDisability in anamnezSectionModel.TemporaryDisabilitys)
+                if (anamnezSectionModel.TemporaryDisabilitys != null)
                 {
-                    XElement trContentElement = new XElement(xmlnsNamespace + "tr");
+                    foreach (var temporaryDisability in anamnezSectionModel.TemporaryDisabilitys)
+                    {
+                        XElement trContentElement = new XElement(xmlnsNamespace + "tr");
 
-                    XElement td1Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateStart.ToString("dd.MM.yyyy"));
-                    trContentElement.Add(td1Element);
-                    XElement td2Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateFinish.ToString("dd.MM.yyyy"));
-                    trContentElement.Add(td2Element);
-                    XElement td3Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DayCount);
-                    trContentElement.Add(td3Element);
-                    XElement td4Element = new XElement(xmlnsNamespace + "td", temporaryDisability.CipherMKB);
-                    trContentElement.Add(td4Element);
+                        XElement td1Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateStart.ToString("dd.MM.yyyy"));
+                        trContentElement.Add(td1Element);
+                        XElement td2Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateFinish.ToString("dd.MM.yyyy"));
+                        trContentElement.Add(td2Element);
+                        XElement td3Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DayCount);
+                        trContentElement.Add(td3Element);
+                        XElement td4Element = new XElement(xmlnsNamespace + "td", temporaryDisability.CipherMKB);
+                        trContentElement.Add(td4Element);
 
-                    tbodyElement.Add(trContentElement);
+                        tbodyElement.Add(trContentElement);
+                    }
                 }
 
                 tableElement.Add(tbodyElement);
@@ -3741,9 +3791,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     new XAttribute("code", "completed"));
                 temporaryDisabilitysOrganizerElement.Add(temporaryDisabilitysStatusCodeElement);
 
-                foreach (var temporaryDisability in anamnezSectionModel.TemporaryDisabilitys)
+                if (anamnezSectionModel.TemporaryDisabilitys != null)
                 {
-                    temporaryDisabilitysOrganizerElement.Add(GenerateTemporaryDisabilitysElement(temporaryDisability));
+                    foreach (var temporaryDisability in anamnezSectionModel.TemporaryDisabilitys)
+                    {
+                        temporaryDisabilitysOrganizerElement.Add(GenerateTemporaryDisabilitysElement(temporaryDisability));
+                    }
                 }
 
                 XElement certificateDisabilityNumberComponentElement = new XElement(xmlnsNamespace + "component",
