@@ -2924,11 +2924,14 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             assignedEntityElement.Add(idElement);
 
             var representedOrganizationElement = GenerateOrganizationElement(educationSectionModel.Organization, "representedOrganization", classCodeAttributValue: "ORG");
-            foreach (var element in representedOrganizationElement.Elements(xmlnsNamespace + "id"))
+            if (representedOrganizationElement != null)
             {
-                element.Add(new XAttribute("extension", "1145"));
+                foreach (var element in representedOrganizationElement.Elements(xmlnsNamespace + "id"))
+                {
+                    element.Add(new XAttribute("extension", "1145"));
+                }
+                assignedEntityElement.Add(representedOrganizationElement);
             }
-            assignedEntityElement.Add(representedOrganizationElement);
 
             performerElement.Add(assignedEntityElement);
             observationElement.Add(performerElement);

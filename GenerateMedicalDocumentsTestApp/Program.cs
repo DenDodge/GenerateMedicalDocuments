@@ -2,21 +2,28 @@
 using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GenerateMedicalDocumentsTestApp
 {
     internal class Program
     {
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            var documentModel = GetDocumentModel();
+            var documentModel = await  GetDocumentModel();
+            //var documentModel = await GetDocumentModelOnJson();
 
             DirectionToMSE directionToMSE = new DirectionToMSE();
             var xmlDocument = directionToMSE.GetDirectionTOMSEDocumentXML(documentModel);
             directionToMSE.SaveDocument(xmlDocument, "testDocument.xml");
         }
 
-        private static DirectionToMSEDocumentModel GetDocumentModel()
+        private static async Task<DirectionToMSEDocumentModel> GetDocumentModel()
         {
             DirectionToMSEDocumentModel documentModel = new DirectionToMSEDocumentModel();
 
@@ -498,7 +505,7 @@ namespace GenerateMedicalDocumentsTestApp
                         {
                             Code = "7",
                             CodeSystemVersion = "7.5",
-                            DisplayName = "Заведующий отделением"
+                            DisplayName = "заведующий (начальник) структурного подразделения (отдела, отделения, лаборатории, кабинета, отряда и другое) медицинской организации - врач-специалист"
                         },
                         Address = new AddressModel()
                         {
@@ -1105,8 +1112,35 @@ namespace GenerateMedicalDocumentsTestApp
                     }
                 }
             };
+            
+            JsonSerializerOptions jsonSerializeOption = new JsonSerializerOptions()
+            {
+                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                WriteIndented = true
+            };
 
+            string pathToSaveFile = "myJson.json";
+            
+            using (FileStream fs = new FileStream(pathToSaveFile, FileMode.Create))
+            {
+                await JsonSerializer.SerializeAsync<DirectionToMSEDocumentModel>(fs, documentModel, jsonSerializeOption);
+            }
+            
             return documentModel;
+        }
+
+        private static async Task<DirectionToMSEDocumentModel> GetDocumentModelOnJson()
+        {
+            string jsonString;
+            using (StreamReader reader = new StreamReader("super.json"))
+            {
+                jsonString = await reader.ReadToEndAsync();
+            }
+            using (FileStream fs = new FileStream("super.json", FileMode.Open))
+            {
+                var model = await JsonSerializer.DeserializeAsync<DirectionToMSEDocumentModel>(fs);
+                return model;
+            }
         }
     }
 }
