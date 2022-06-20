@@ -35,6 +35,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>XML документ "Направление на медико-социальную экспертизу" по модели документа.</returns>
         public static XDocument GetXMLDocument(DirectionToMSEDocumentModel documentModel)
         {
+            if (documentModel == null)
+            {
+                return null;
+            }
+            
             XDocument document = new XDocument();
 
             // формируем шапку документа.
@@ -53,6 +58,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "ClinicalDocument".</returns>
         private static XElement GenerateClinicalDocumentElement(DirectionToMSEDocumentModel documentModel)
         {
+            if (documentModel == null)
+            {
+                return null;
+            }
+            
             XElement clinicalDocumentElement = new XElement(xmlnsNamespace + "ClinicalDocument",
                 GetClinicalDocumentElementAttributes());
 
@@ -169,6 +179,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "recordTarget".</returns>
         private static XElement GenerateRecordTargetElement(RecordTargetModel recordTargetModel)
         {
+            if (recordTargetModel == null)
+            {
+                return null;
+            }
+            
             XElement recordTargetElement = new XElement(xmlnsNamespace + "recordTarget");
 
             recordTargetElement.Add(GeneratePatientRoleElement(recordTargetModel.PatientRole));
@@ -184,6 +199,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "patientRole".</returns>
         private static XElement GeneratePatientRoleElement(PatientModel patientRoleModel)
         {
+            if (patientRoleModel == null)
+            {
+                return null;
+            }
+            
             XElement patientRoleElement = new XElement(xmlnsNamespace + "patientRole");
 
             XElement idElement = new XElement(xmlnsNamespace + "id", GetIdAttributes(patientRoleModel.ID.Root, patientRoleModel.ID.Extension));
@@ -231,6 +251,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент по модели документа.</returns>
         private static XElement GeneratePersonalDocumentElement(DocumentModel documentModel, string elementName)
         {
+            if (documentModel == null)
+            {
+                return null;
+            }
+            
             XElement identityDocElement = new XElement(identityNamespace + elementName);
 
             var attributesValue = GetTypeValue(elementName);
@@ -284,6 +309,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "identity:InsurancePolicy".</returns>
         private static XElement GenerateInsurancePolicyElement(InsurancePolicyModel insurancePolicyModel)
         {
+            if (insurancePolicyModel == null)
+            {
+                return null;
+            }
+            
             XElement insurancePolicyElement = new XElement(identityNamespace + "InsurancePolicy");
 
             XElement insurancePolicyTypeElement = new XElement(identityNamespace + "InsurancePolicyType",
@@ -323,6 +353,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 return null;
             }
+            
             XElement addrElement = new XElement(xmlnsNamespace + "addr");
 
             if (addressModel.Type != null)
@@ -390,6 +421,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "telecom".</returns>
         private static XElement GenerateTelecomElement(TelecomModel telecomModel, bool isOrgnization = false)
         {
+            if (telecomModel == null)
+            {
+                return null;
+            }
+            
             XElement telecomElement = new XElement(xmlnsNamespace + "telecom");
             XAttribute useAttribute = null;
 
@@ -446,6 +482,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>эдемент "patient".</returns>
         private static XElement GeneratePatientElement(PeopleDataModel peopleDataModel)
         {
+            if (peopleDataModel == null)
+            {
+                return null;
+            }
+            
             XElement patientElement = new XElement(xmlnsNamespace + "patient");
 
             patientElement.Add(GenerateNameElement(peopleDataModel.Name));
@@ -473,6 +514,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "name".</returns>
         private static XElement GenerateNameElement(NameModel nameModel)
         {
+            if (nameModel == null)
+            {
+                return null;
+            }
+            
             XElement nameElement = new XElement(xmlnsNamespace + "name");
 
             XElement familyElement = new XElement(xmlnsNamespace + "family", nameModel.Family);
@@ -496,6 +542,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "guardian".</returns>
         private static XElement GenerateGuardianElement(GuardianModel guardianModel)
         {
+            if (guardianModel == null)
+            {
+                return null;
+            }
+            
             XElement guardianElement = new XElement(xmlnsNamespace + "guardian",
                 new XAttribute("classCode", "GUARD"));
 
@@ -542,8 +593,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="classCodeAttributValue">Значение атрибута "classCode".</param>
         /// <param name="rootValue">Значение параметра root в ID.</param>
         /// <returns>Элемент организации.</returns>
-        private static XElement GenerateOrganizationElement(OrganizationModel organizationModel, string elementName, string classCodeAttributValue = null, string rootValue = null)
+        private static XElement GenerateOrganizationElement(
+            OrganizationModel organizationModel, 
+            string elementName, 
+            string classCodeAttributValue = null, 
+            string rootValue = null)
         {
+            if (organizationModel == null)
+            {
+                return null;
+            }
+            
             XElement organizationElement = new XElement(xmlnsNamespace + elementName);
             if (classCodeAttributValue != null)
             {
@@ -610,6 +670,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "Props".</returns>
         private static XElement GeneratePropsElements(PropsOrganizationModel propsModel)
         {
+            if (propsModel == null)
+            {
+                return null;
+            }
+            
             XElement propsElements = new XElement(identityNamespace + "Props");
 
             if(propsModel.OGRN != null)
@@ -652,6 +717,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "author".</returns>
         private static XElement GenerateAuthorElement(AuthorDataModel authorDateModel)
         {
+            if (authorDateModel == null)
+            {
+                return null;
+            }
+            
             XElement authorElement = new XElement(xmlnsNamespace + "author");
 
             XElement timeElement = new XElement(xmlnsNamespace + "time",
@@ -671,6 +741,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "assigned*".</returns>
         private static XElement GenerateAssignedElement(AuthorModel authorModel, string elementName)
         {
+            if (authorModel == null)
+            {
+                return null;
+            }
+            
             XElement assignedElement = new XElement(xmlnsNamespace + elementName);
 
             XElement idElement = new XElement(xmlnsNamespace + "id",
@@ -728,6 +803,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "custodian" с дочерними элементами.</returns>
         private static XElement GenerateCustodianElement(OrganizationModel representedCustodianOrganizationModel)
         {
+            if (representedCustodianOrganizationModel == null)
+            {
+                return null;
+            }
+            
             XElement custodianElement = new XElement(xmlnsNamespace + "custodian");
 
             XElement assignedCustodianElement = new XElement(xmlnsNamespace + "assignedCustodian");
@@ -770,6 +850,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "legalAuthenticator".</returns>
         private static XElement GenerateLegalAuthenticatorElement(LegalAuthenticatorModel legalAuthenticatorModel)
         {
+            if (legalAuthenticatorModel == null)
+            {
+                return null;
+            }
+            
             XElement authorElement = new XElement(xmlnsNamespace + "legalAuthenticator");
 
             XElement timeElement = new XElement(xmlnsNamespace + "time",
@@ -792,6 +877,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "participant".</returns>
         private static XElement GenerateParticipantElement(ParticipantModel participantModel)
         {
+            if (participantModel == null)
+            {
+                return null;
+            }
+            
             XElement participantElement = new XElement(xmlnsNamespace + "participant",
                 new XAttribute("typeCode", "IND"));
 
@@ -822,6 +912,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "DocInfo".</returns>
         private static XElement GenerateBasisDocumentElement(BasisDocumentModel basisDocumentModel)
         {
+            if (basisDocumentModel == null)
+            {
+                return null;
+            }
+            
             XElement docInfoElement = new XElement(identityNamespace + "DocInfo");
 
             XElement identityDocTypeElement = new XElement(identityNamespace + "IdentityDocType",
@@ -871,7 +966,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="finishDate">Дата окончания.</param>
         /// <param name="isUseTime">Используется время.</param>
         /// <returns>Элемент "effectiveTime".</returns>
-        private static XElement GenerateEffectiveTimeElement(DateTime startDate, DateTime finishDate, XNamespace namespaceValue, bool isUseTime = false)
+        private static XElement GenerateEffectiveTimeElement(
+            DateTime startDate, 
+            DateTime finishDate, 
+            XNamespace namespaceValue, 
+            bool isUseTime = false)
         {
             string startDateString;
             string finishDateString;
@@ -918,6 +1017,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns></returns>
         private static XElement GenerateDocumentationOfElement(ServiceEventModel serviceEventModel)
         {
+            if (serviceEventModel == null)
+            {
+                return null;
+            }
+            
             XElement documentationOfElement = new XElement(xmlnsNamespace + "documentationOf");
             XElement serviceEventElement = new XElement(xmlnsNamespace + "serviceEvent");
 
@@ -978,6 +1082,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "performer".</returns>
         private static XElement GeneratePerformerElement(PerformerModel performerModel, string typeCodeValue)
         {
+            if (performerModel == null)
+            {
+                return null;
+            }
+            
             XElement performerElement = new XElement(xmlnsNamespace + "performer",
                 new XAttribute("typeCode", typeCodeValue));
 
@@ -993,6 +1102,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "component" с наполнением (тело документа).</returns>
         private static XElement GenerateBodyDocumentElement(DocumentBodyModel documentBodyModel)
         {
+            if (documentBodyModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement structuredBodyElement = new XElement(xmlnsNamespace + "structuredBody");
 
@@ -1023,6 +1137,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Cекция "Витальные параметры".</returns>
         private static XElement GenerateVitalParametersSectionElement(VitalParametersSectionModel vitalParametersSectionModel)
         {
+            if (vitalParametersSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -1053,6 +1172,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Таблица наполнения секции "Витальные параметры".</returns>
         private static XElement GenerateVitalParametersSectionTableElement(VitalParametersSectionModel vitalParametersSectionModel)
         {
+            if (vitalParametersSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement textElement = new XElement(xmlnsNamespace + "text");
             XElement tableElement = new XElement(xmlnsNamespace + "table",
                 new XAttribute("width", "100%"));
@@ -1174,6 +1298,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns></returns>
         private static List<XElement> GenerateVitalParametersSectionCodingElements(VitalParametersSectionModel vitalParametersSectionModel)
         {
+            if (vitalParametersSectionModel == null)
+            {
+                return null;
+            }
+            
             List<XElement> entryElements = new List<XElement>();
 
             var bodyMassElement = GenerateVitalParametersSectionEntryElement(
@@ -1368,6 +1497,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "component" секции "Состояние при направлении".</returns>
         private static XElement GenerateDirectionStateSectionElement(DirectionStateSectionModel directionStateSectionModel)
         {
+            if (directionStateSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -1430,6 +1564,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "component" секции 2Диагностические исследования и консультации".</returns>
         private static XElement GenerateDiagnosticStudiesSectionElement(DiagnosticStudiesSectionModel diagnosticStudiesSectionModel)
         {
+            if (diagnosticStudiesSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -1488,6 +1627,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Табличную часть секции "Диагностические исследования и консультации".</returns>
         private static XElement GenerateTableDiagnosticStudiesSection(DiagnosticStudiesSectionModel diagnosticStudiesSectionModel)
         {
+            if (diagnosticStudiesSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement tableElement = new XElement(xmlnsNamespace + "table");
 
             XElement captionElement = new XElement(xmlnsNamespace + "caption",
@@ -1623,6 +1767,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>"лемент "component" секции "Диагнозы".</returns>
         private static XElement GenerateDiagnosisSection(DiagnosisSectionModel diagnosisSectionModel)
         {
+            if (diagnosisSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentModel = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -1680,6 +1829,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Табличную часть секции "Диагнозы".</returns>
         private static XElement GenerateTableDiagnosisSection(DiagnosisSectionModel diagnosisSectionModel)
         {
+            if (diagnosisSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement tableElement = new XElement(xmlnsNamespace + "table");
 
             XElement captionElement = new XElement(xmlnsNamespace + "caption",
@@ -1800,6 +1954,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "component" секции "Объектизированная оцента состояния".</returns>
         private static XElement GenerateConditionAssessmentSectionElement(ConditionAssessmentSection conditionAssessmentSection)
         {
+            if (conditionAssessmentSection == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -1861,6 +2020,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Табличную часть секции "Объектизированная оцента состояния".</returns>
         private static XElement GenerateTableConditionAssessmentSection(ConditionAssessmentSection conditionAssessmentSection)
         {
+            if (conditionAssessmentSection == null)
+            {
+                return null;
+            }
+            
             XElement tableElement = new XElement(xmlnsNamespace + "table");
             XElement tbodyElement = new XElement(xmlnsNamespace + "tbody");
             XElement theadElement = new XElement(xmlnsNamespace + "thead");
@@ -2009,6 +2173,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "component" секции "Рекомендации".</returns>
         private static XElement GenerateRecommendationSectionElement(RecommendationsSectionModel recommendationsSectionModel)
         {
+            if (recommendationsSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -2037,6 +2206,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "основные рекомендации" для секции "Рекомендации".</returns>
         private static XElement GenerateCommonRecommendationsSectionElement(RecommendationsSectionModel recommendationsSectionModel)
         {
+            if (recommendationsSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -2088,6 +2262,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент таблицы для наполнения "основные рекомендации" секции "Рекомендации".</returns>
         private static XElement GenerateTableCommonRecommendationSectionElement(RecommendationsSectionModel recommendationsSectionModel)
         {
+            if (recommendationsSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement textElement = new XElement(xmlnsNamespace + "text");
             XElement tableElement = new XElement(xmlnsNamespace + "table");
             XElement tbodyElement = new XElement(xmlnsNamespace + "tbody");
@@ -2240,6 +2419,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "entry" для лекарствнного средства раздела "основные рекомендации" секции "Рекомендации".</returns>
         private static XElement GenerateMedicalCodingRecomendationSectionElement(MedicationModel medicationModel)
         {
+            if (medicationModel == null)
+            {
+                return null;
+            }
+            
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
             XElement substanceAdministrationElement = new XElement(xmlnsNamespace + "substanceAdministration",
                 new XAttribute("classCode", "SBADM"),
@@ -2406,6 +2590,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Секция "Посторонний специальный медицинский уход".</returns>
         private static XElement GenerateOutsideSpecialMedicalCareSection(OutsideSpecialMedicalCareSectionModel outsideSpecialMedicalCareSectionModel)
         {
+            if (outsideSpecialMedicalCareSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -2468,6 +2657,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "component" секции "Связанные документы".</returns>
         private static XElement GenerateAttachmentDocumentsSectionElement(AttachmentDocumentsSectionModel attachmentDocumentsSectionModel)
         {
+            if (attachmentDocumentsSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -2500,6 +2694,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "text" секции "Связанные документы".</returns>
         private static XElement GenerateTableAttachmentDocumentsSectionElement(AttachmentDocumentsSectionModel attachmentDocumentsSectionModel)
         {
+            if (attachmentDocumentsSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement textElement = new XElement(xmlnsNamespace + "text");
             XElement tableElement = new XElement(xmlnsNamespace + "table");
             XElement tbodyElement = new XElement(xmlnsNamespace + "tbody");
@@ -2540,6 +2739,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "entry" блока кодирования секции "Связанные документы".</returns>
         private static XElement GenerateEntryAttachmentDocumentsSectionElement(MedicalDocumentModel medicalDocumentModel)
         {
+            if (medicalDocumentModel == null)
+            {
+                return null;
+            }
+            
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
             XElement actElement = new XElement(xmlnsNamespace + "act",
                 new XAttribute("classCode", "ACT"),
@@ -2588,6 +2792,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "component" с наполнением секции "Направление".</returns>
         private static XElement GenerateSentSectionElement(SentSectionModel sentSectionModel)
         {
+            if (sentSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -2624,6 +2833,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "Место работы и должность".</returns>
         private static XElement GenerateWorkLocationSectionElement(WorkplaceSectionModel workplaceSectionModel)
         {
+            if (workplaceSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -2657,6 +2871,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент секции "Образование".</returns>
         private static XElement GenerateEducationSectionElement(EducationSectionModel educationSectionModel)
         {
+            if (educationSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -2781,6 +3000,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Секция "Анамнез".</returns>
         private static XElement GenerateAnamnezSectionElement(AnamnezSectionModel anamnezSectionModel)
         {
+            if (anamnezSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
 
@@ -2810,6 +3034,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "Сведения о трудовой деятельности"</returns>
         private static XElement GenerateWorkActivityElement(WorkActivityModel workActivityModel)
         {
+            if (workActivityModel == null)
+            {
+                return null;
+            }
+            
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
             XElement organizerElement = new XElement(xmlnsNamespace + "organizer",
                 new XAttribute("classCode", "CLUSTER"),
@@ -2905,6 +3134,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "text" с наполнением секции "Напарвление".</returns>
         private static XElement GenerateParagraphsElements(List<ParagraphModel> paragraphs)
         {
+            if (paragraphs == null)
+            {
+                return null;
+            }
+            
             XElement textElement = new XElement(xmlnsNamespace + "text");
             foreach (var paragraph in paragraphs)
             {
@@ -2923,6 +3157,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns></returns>
         private static XElement GenerateParagraphElement(string caption, List<string> context)
         {
+            if (context == null)
+            {
+                return null;
+            }
+            
             XElement paragraphElement = new XElement(xmlnsNamespace + "paragraph");
 
             XElement captionElement = new XElement(xmlnsNamespace + "caption", caption);
@@ -2949,6 +3188,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "entry" с наполнением секции "Кодирование цели направления и медицинской организации, куда направлен пациент".</returns>
         private static XElement GenerateTargetSentElement(TargetSentModel targetSentModel)
         {
+            if (targetSentModel == null)
+            {
+                return null;
+            }
+            
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
 
             entryElement.Add(GenerateActElement(targetSentModel));
@@ -2963,6 +3207,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "act" с наполнением дочерних элементов.</returns>
         private static XElement GenerateActElement(TargetSentModel targetSentModel)
         {
+            if (targetSentModel == null)
+            {
+                return null;
+            }
+            
             XElement actElement = new XElement(xmlnsNamespace + "act",
                 new XAttribute("classCode", "ACT"),
                 new XAttribute("moodCode", "RQO"));
@@ -3168,6 +3417,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "Местонахождение гражданина"</returns>
         private static XElement GeneratePatienLocationElement(TypeModel patientLocationCode, OrganizationModel patientLocation)
         {
+            if (patientLocation == null)
+            {
+                return null;
+            }
+            
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
             XElement actElement = new XElement(xmlnsNamespace + "act",
                 new XAttribute("classCode", "ACT"),
@@ -3232,6 +3486,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элементы для наполнения секции "Анамнез".</returns>
         private static XElement GenerateFillingAnamnezSectionElement(AnamnezSectionModel anamnezSectionModel)
         {
+            if (anamnezSectionModel == null)
+            {
+                return null;
+            }
+            
             XElement textElement = new XElement(xmlnsNamespace + "text");
 
             if (anamnezSectionModel.Disability != null)
@@ -3421,6 +3680,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns></returns>
         private static List<XElement> GenerateEntryAnamnezSectionElements(AnamnezSectionModel anamnezSectionModel)
         {
+            if (anamnezSectionModel == null)
+            {
+                return null;
+            }
+            
             List<XElement> entryElements = new List<XElement>();
 
             if (anamnezSectionModel.StartYear != null)
@@ -3687,6 +3951,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемента "entry" для секции "Анамнез". (Временная нетрудоспособность).</returns>
         private static XElement GenerateTemporaryDisabilitysElement(TemporaryDisabilityModel temporaryDisabilityModel)
         {
+            if (temporaryDisabilityModel == null)
+            {
+                return null;
+            }
+            
             XElement componentElement = new XElement(xmlnsNamespace + "component",
                 new XAttribute("typeCode", "COMP"));
             XElement actElement = new XElement(xmlnsNamespace + "act",
@@ -3817,6 +4086,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "entry" от "Инвалидность".</returns>
         private static XElement GenerateDisabilityElement(DisabilityModel disabilityModel)
         {
+            if (disabilityModel == null)
+            {
+                return null;
+            }
+            
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
             XElement observationElement = new XElement(xmlnsNamespace + "observation",
                 new XAttribute("classCode", "OBS"),
