@@ -22,7 +22,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// [1..1] Номер документа.
         /// </summary>
-        public int Number { get; set; }
+        public string Number { get; set; }
         /// <summary>
         /// [1..1] ИНН организации или физического лица.
         /// </summary>
@@ -34,6 +34,6 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// [1..1] Дата конца действия документа.
         /// </summary>
-        public DateTime FinishDateDocument { get; set; }
+        public DateTime? FinishDateDocument { get; set; }
     }
 }

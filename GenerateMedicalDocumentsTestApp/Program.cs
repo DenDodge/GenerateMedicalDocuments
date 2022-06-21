@@ -436,7 +436,7 @@ namespace GenerateMedicalDocumentsTestApp
                              DisplayName = "Полис ОМС старого образца"
                          },
                          Series = "ЧБ",
-                         Number = 1334602,
+                         Number = "1334602",
                          INN = 213546789,
                          StartDateDocument = new DateTime(2019, 05, 01),
                          FinishDateDocument = new DateTime(2029, 05, 02)

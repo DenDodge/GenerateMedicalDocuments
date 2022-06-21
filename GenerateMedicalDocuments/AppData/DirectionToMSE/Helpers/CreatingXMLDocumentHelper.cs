@@ -973,21 +973,27 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "effectiveTime".</returns>
         private static XElement GenerateEffectiveTimeElement(
             DateTime startDate, 
-            DateTime finishDate, 
+            DateTime? finishDate, 
             XNamespace namespaceValue, 
             bool isUseTime = false)
         {
             string startDateString;
-            string finishDateString;
+            string finishDateString = null;
             if (isUseTime)
             {
                 startDateString = startDate.ToString("yyyyMMddHHmm+0300");
-                finishDateString = finishDate.ToString("yyyyMMddHHmm+0300");
+                if (finishDate != null)
+                {
+                    finishDateString = finishDate.Value.ToString("yyyyMMddHHmm+0300");
+                }
             }
             else
             {
                 startDateString = startDate.ToString("yyyyMMdd");
-                finishDateString = finishDate.ToString("yyyyMMdd");
+                if (finishDate != null)
+                {
+                    finishDateString = finishDate.Value.ToString("yyyyMMdd");
+                }
             }
 
             XElement effectiveTimeElement = new XElement(namespaceValue + "effectiveTime");
@@ -1008,8 +1014,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
                 highElement.Add(typeAttribute);
             }
-            XAttribute highValueAttribute = new XAttribute("value", finishDateString);
-            highElement.Add(highValueAttribute);
+            if (finishDateString != null)
+            {
+                XAttribute highValueAttribute = new XAttribute("value", finishDateString);
+                highElement.Add(highValueAttribute);
+            }
             effectiveTimeElement.Add(highElement);
 
             return effectiveTimeElement;
@@ -1026,7 +1035,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 return null;
             }
-            
+
             XElement documentationOfElement = new XElement(xmlnsNamespace + "documentationOf");
             XElement serviceEventElement = new XElement(xmlnsNamespace + "serviceEvent");
 
@@ -1041,32 +1050,41 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             serviceEventElement.Add(GenerateEffectiveTimeElement(serviceEventModel.StartServiceDate, serviceEventModel.FinishServiceDate, xmlnsNamespace, true));
 
-            XElement serviceFormElement = new XElement(medServiceNamespace + "serviceForm",
+            if (serviceEventModel.ServiceForm != null)
+            {
+                XElement serviceFormElement = new XElement(medServiceNamespace + "serviceForm",
                 GetTypeElementAttributes(
                     codeValue: serviceEventModel.ServiceForm.Code,
                     codeSystemVersionValue: serviceEventModel.ServiceForm.CodeSystemVersion,
                     displayNameValue: serviceEventModel.ServiceForm.DisplayName,
                     codeSystemValue: "1.2.643.5.1.13.13.11.1551",
                     codeSystemNameValue: "Формы оказания медицинской помощи"));
-            serviceEventElement.Add(serviceFormElement);
+                serviceEventElement.Add(serviceFormElement);
+            }
 
-            XElement serviceTypeElement = new XElement(medServiceNamespace + "serviceType",
-                GetTypeElementAttributes(
-                    codeValue: serviceEventModel.ServiceType.Code,
-                    codeSystemVersionValue: serviceEventModel.ServiceType.CodeSystemVersion,
-                    displayNameValue: serviceEventModel.ServiceType.DisplayName,
-                    codeSystemValue: "1.2.643.5.1.13.13.11.1034",
-                    codeSystemNameValue: "Виды медицинской помощи"));
-            serviceEventElement.Add(serviceTypeElement);
+            if (serviceEventModel.ServiceType != null)
+            {
+                XElement serviceTypeElement = new XElement(medServiceNamespace + "serviceType",
+                    GetTypeElementAttributes(
+                        codeValue: serviceEventModel.ServiceType.Code,
+                        codeSystemVersionValue: serviceEventModel.ServiceType.CodeSystemVersion,
+                        displayNameValue: serviceEventModel.ServiceType.DisplayName,
+                        codeSystemValue: "1.2.643.5.1.13.13.11.1034",
+                        codeSystemNameValue: "Виды медицинской помощи"));
+                serviceEventElement.Add(serviceTypeElement);
+            }
 
-            XElement serviceCondElement = new XElement(medServiceNamespace + "serviceCond",
-                GetTypeElementAttributes(
-                    codeValue: serviceEventModel.ServiceCond.Code,
-                    codeSystemVersionValue: serviceEventModel.ServiceCond.CodeSystemVersion,
-                    displayNameValue: serviceEventModel.ServiceCond.DisplayName,
-                    codeSystemValue: "1.2.643.5.1.13.13.99.2.322",
-                    codeSystemNameValue: "Условия оказания медицинской помощи"));
-            serviceEventElement.Add(serviceCondElement);
+            if (serviceEventModel.ServiceCond != null)
+            {
+                XElement serviceCondElement = new XElement(medServiceNamespace + "serviceCond",
+                    GetTypeElementAttributes(
+                        codeValue: serviceEventModel.ServiceCond.Code,
+                        codeSystemVersionValue: serviceEventModel.ServiceCond.CodeSystemVersion,
+                        displayNameValue: serviceEventModel.ServiceCond.DisplayName,
+                        codeSystemValue: "1.2.643.5.1.13.13.99.2.322",
+                        codeSystemNameValue: "Условия оказания медицинской помощи"));
+                serviceEventElement.Add(serviceCondElement);
+            }
 
             serviceEventElement.Add(GeneratePerformerElement(serviceEventModel.Performer, "PPRF"));
 
