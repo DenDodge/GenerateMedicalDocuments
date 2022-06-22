@@ -15,7 +15,7 @@ namespace GenerateMedicalDocumentsTestApp
     {
         static async Task Main(string[] args)
         {
-            var documentModel = await  GetDocumentModel();
+            var documentModel = await GetDocumentModel();
             //var documentModel = await GetDocumentModelOnJson();
 
             DirectionToMSE directionToMSE = new DirectionToMSE();
@@ -961,21 +961,99 @@ namespace GenerateMedicalDocumentsTestApp
                     },
                     VitalParametersSection = new VitalParametersSectionModel()
                     {
-                        BodyMass = 80,
-                        DateMeteringBodyMass = new DateTime(2021, 05, 25, 10, 10, 00),
-                        BirthWeight = 4,
-                        DateMeteringBirthWeight = new DateTime(1985, 03, 31),
-                        Growth = 1.56,
-                        DateMeteringGrowth = new DateTime(2021, 05, 25, 10, 10, 00),
-                        IMT = 32.87,
-                        DateMeteringIMT = new DateTime(2018, 05, 25, 10, 10, 00),
-                        BodyType = "нормостеническое",
-                        PhysiologicalShipmentsVolume = 2000,
-                        DateMeteringPhysiologicalShipmentsVolume = new DateTime(2018, 05, 25, 10, 10, 00),
-                        Waist = 65,
-                        DateMeteringWaist = new DateTime(2018, 05, 25, 10, 10, 00),
-                        Hips = 97,
-                        DateMeteringHips = new DateTime(2018, 05, 25, 10, 10, 00)
+                        VitalParameters = new List<VitalParameterModel>()
+                        {
+                            new VitalParameterModel()
+                            {
+                                Caption = "Масса тела",
+                                EntryDisplayName = "Масса тела",
+                                ID = "vv1_1",
+                                Code = "50",
+                                DateMetering = new DateTime(2021, 05, 25, 10, 10, 00),
+                                Value = "80",
+                                EntryValue = "80000",
+                                Unit = "кг",
+                                EntryUnit = "гр.",
+                                EntryType = "PQ"
+                            },
+                            new VitalParameterModel()
+                            {
+                                Caption = "Масса тела при рождении (в отношении детей в возрасте до 3 лет)",
+                                EntryDisplayName = "Масса тела",
+                                ID = "vv1_11",
+                                Code = "50",
+                                DateMetering = new DateTime(1985, 03, 31),
+                                Value = "4",
+                                EntryValue = "4000",
+                                Unit = "кг",
+                                EntryUnit = "гр.",
+                                EntryType = "PQ"
+                            },
+                            new VitalParameterModel()
+                            {
+                                Caption = "Рост",
+                                EntryDisplayName = "Длина тела",
+                                ID = "vv1_2",
+                                Code = "51",
+                                DateMetering = new DateTime(2021, 05, 25, 10, 10, 00),
+                                Value = "1,56",
+                                EntryValue = "156",
+                                Unit = "м",
+                                EntryUnit = "см",
+                                EntryType = "PQ"
+                            },
+                            new VitalParameterModel()
+                            {
+                                Caption = "ИМТ",
+                                EntryDisplayName = "Индекс массы тела",
+                                ID = "vv1_3",
+                                Code = "10",
+                                DateMetering = new DateTime(2018, 05, 25, 10, 10, 00),
+                                Value = "32,87",
+                                EntryValue = "32.87",
+                                EntryType = "REAL"
+                            },
+                            new VitalParameterModel()
+                            {
+                                Caption = "Суточный объём физиологических отправлений",
+                                EntryDisplayName = "Суточный объём физиологических отправлений",
+                                ID = "vv1_5",
+                                Code = "56",
+                                DateMetering = new DateTime(2018, 05, 25, 10,10, 00),
+                                Value = "2000",
+                                EntryValue = "2000",
+                                Unit = "мл",
+                                EntryUnit = "мл",
+                                EntryType = "PQ"
+                            },
+                            new VitalParameterModel()
+                            {
+                                Caption = "Объём талии",
+                                EntryDisplayName = "Окружность талии",
+                                ID = "vv1_6",
+                                Code = "54",
+                                DateMetering = new DateTime(2018, 05, 25, 10, 10, 00),
+                                Value = "65",
+                                EntryValue = "65",
+                                Unit = "см",
+                                EntryUnit = "см",
+                                EntryType = "PQ"
+                            },
+                            new VitalParameterModel()
+                            {
+                                Caption = "Объём бёдер",
+                                EntryDisplayName = "Окружность бёдер",
+                                ID = "vv1_7",
+                                Code = "55",
+                                DateMetering = new DateTime(2018, 05, 25, 10, 10, 00),
+                                Value = "97",
+                                EntryValue = "97",
+                                Unit = "см",
+                                EntryUnit = "см",
+                                EntryType = "PQ"
+                            }
+                        },
+                        BodyType = "нормостеническое"
                     },
                     DirectionStateSection = new DirectionStateSectionModel()
                     {
