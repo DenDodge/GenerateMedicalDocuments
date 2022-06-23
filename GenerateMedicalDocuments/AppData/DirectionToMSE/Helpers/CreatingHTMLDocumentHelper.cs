@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml.Linq;
-using Aspose.Html;
-using Aspose.Html.Collections;
 using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 
 namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
