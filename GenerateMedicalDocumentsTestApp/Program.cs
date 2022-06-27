@@ -440,7 +440,7 @@ namespace GenerateMedicalDocumentsTestApp
                          },
                          Series = "ЧБ",
                          Number = "1334602",
-                         INN = 213546789,
+                         INN = "213546789",
                          StartDateDocument = new DateTime(2019, 05, 01),
                          FinishDateDocument = new DateTime(2029, 05, 02)
                     },
