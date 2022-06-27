@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 
 namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
@@ -197,6 +198,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.GenerateMedicalOrginazationTable(documentModel.RecordTarget.PatientRole.ProviderOrganization);
             this.StreamWriter.WriteLine($"      <h2>Направление на медико-социальную экспертизу от {documentModel.CreateDate.ToString("dd MMMM yyyy")}</h2>"); // 2 tabs.
             this.GeneratePatientInfoTable(documentModel.RecordTarget.PatientRole, documentModel.Participant.ScopingOrganization.Name);
+            this.GenerateSectionsTable(documentModel.DocumentBody);
             this.StreamWriter.WriteLine("   </body>");
         }
 
@@ -241,7 +243,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         {
             string organizationAddress = $"{organizationModel.Address.PostalCode}, {organizationModel.Address.StreetAddressLine}";
             string organizationLicense = $"{organizationModel.License.Number}, {organizationModel.License.AssigningAuthorityName}";
-            string contacts = GetMedicalOrganizationContactsString(organizationModel.Contacts);
+            string contacts = this.GetContactsString(organizationModel.Contacts);
             
             this.StreamWriter.WriteLine("               <td class=\"outer\">"); // 4 tabs.
             this.StreamWriter.WriteLine($"                   <strong>Название медицинской организации: </strong> {organizationModel.Name} <br/>"); // 5 tabs.
@@ -251,58 +253,6 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.StreamWriter.WriteLine("               </td>");
         }
 
-        /// <summary>
-        /// Создает строку "Контакты" для таблицы "Медицинская организация".
-        /// </summary>
-        /// <param name="contacts">Список контактов.</param>
-        /// <returns>Строка "Контакты" для таблицы "Медицинская организация".</returns>
-        private string GetMedicalOrganizationContactsString(List<TelecomModel> contacts)
-        {
-            if (contacts is null)
-            {
-                return string.Empty;
-            }
-            
-            string resultString = string.Empty;
-            string email = string.Empty;
-            string mobilePhone = string.Empty;
-            string fax = string.Empty;
-
-            foreach (var contact in contacts)
-            {
-                if (contact.Value.Contains("http"))
-                {
-                    email = contact.Value;
-                }
-                else
-                if (contact.Value.Contains("+"))
-                {
-                    mobilePhone = contact.Value;
-                }
-                else
-                {
-                    fax = contact.Value;
-                }
-            }
-            
-            if (!String.IsNullOrEmpty(mobilePhone))
-            {
-                resultString += $"Тел.(раб.): {mobilePhone}; ";
-            }
-
-            if (!String.IsNullOrEmpty(fax))
-            {
-                resultString += $"Факс(раб.): {fax}; ";
-            }
-
-            if (!String.IsNullOrEmpty(email))
-            {
-                resultString += $"{email};";
-            }
-            
-            return resultString;
-        }
-        
         #endregion
 
         #region Patient info table
@@ -324,6 +274,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.StreamWriter.WriteLine("           <col width=\"60%\"/>");
             
             this.GeneratePatientInfoTableRows(patientModel, scopingOrganizationName);
+            
+            this.StreamWriter.WriteLine("       </table>");
+            this.StreamWriter.WriteLine("       <br/>");
         }
 
         /// <summary>
@@ -344,6 +297,14 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             
             this.GeneratePatientInfoTableHead("Идентификаторы пациента:");
             this.GeneratePatientInfoTableDataIdentity(patientModel.SNILS, patientModel.InsurancePolicy, scopingOrganizationName);
+            
+            this.GeneratePatientInfoTableHead("Документ, удостоверяющий личность:");
+            this.GeneratePatientInfoTableDataIdentityDocument(patientModel.IdentityDocument);
+            
+            this.GeneratePatientInfoTableHead("Контактная информация:");
+            var contacts = patientModel.Contacts;
+            contacts.Add(patientModel.ContactPhoneNumber);
+            this.GeneratePatientInfoTableDataContactInfo(patientModel.PermanentAddress, patientModel.ActualAddress, contacts);
         }
 
         /// <summary>
@@ -433,6 +394,77 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             
             this.ClosePatientInfoTableRowTag();
         }
+
+        /// <summary>
+        /// Создает разметку данных документа идентификации пациента таблицы "Информация о пациенте".
+        /// </summary>
+        /// <param name="documentModel">Модель документа идентификации.</param>
+        private void GeneratePatientInfoTableDataIdentityDocument(DocumentModel documentModel)
+        {
+            if (documentModel is null)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("               <td class=\"outer\">"); // 4 tabs.
+            this.StreamWriter.WriteLine("                   <strong>Паспорт гражданина Российской Федерации:</strong>"); // 5 tabs.
+            this.StreamWriter.Write($"                  <br/>Серия документа: {documentModel.Series}");
+            this.StreamWriter.Write($"<br/>Номер документа: {documentModel.Number}");
+            this.StreamWriter.Write($"<br/>Кем выдан документ: {documentModel.IssueOrgName}");
+            this.StreamWriter.Write($"<br/>Код подразделения: {documentModel.IssueOrgCode}");
+            this.StreamWriter.WriteLine($"<br/>Дата выдачи: {documentModel.IssueDate.ToString("dd.MM.yyyy")}");
+            this.StreamWriter.WriteLine("               </td>");
+            
+            this.ClosePatientInfoTableRowTag();
+        }
+
+        /// <summary>
+        /// Создает разметку данных контактной информации пациента таблицы "Информация о пациенте".
+        /// </summary>
+        /// <param name="permanentAddressModel">Модель адреса постоянной регистрации.</param>
+        /// <param name="actualAddressModel">Модель данных фактического адреса проживания.</param>
+        /// <param name="contacts">Контакты.</param>
+        private void GeneratePatientInfoTableDataContactInfo(
+            AddressModel permanentAddressModel,
+            AddressModel actualAddressModel, 
+            List<TelecomModel> contacts)
+        {
+            this.StreamWriter.WriteLine("               <td class=\"outer\">"); // 4 tabs.
+            
+            if (permanentAddressModel is not null)
+            {
+                this.StreamWriter.WriteLine("                   <strong>Адрес постоянной регистрации: </strong>"); // 5 tabs.
+                this.GeneratePatientInfoTableDataContactInfoAddress(permanentAddressModel);
+            }
+            
+            if (actualAddressModel is not null)
+            {
+                this.StreamWriter.WriteLine("                   <strong>Адрес фактического проживания: </strong>"); // 5 tabs.
+                this.GeneratePatientInfoTableDataContactInfoAddress(actualAddressModel);
+            }
+
+            if (contacts is not null || contacts.Count != 0)
+            {
+                this.StreamWriter.WriteLine("                   <strong>Контакты:</strong>"); // 5 tabs.
+                var contactsStr = this.GetContactsString(contacts);
+                this.StreamWriter.WriteLine($"                   <br/>{contactsStr}<br/>");
+            }
+
+            this.StreamWriter.WriteLine("               </td>");
+            
+            this.ClosePatientInfoTableRowTag();
+        }
+
+        /// <summary>
+        /// Создает разметку адреса в таблице контактной информации пациента таблицы "Информация о пациенте".
+        /// </summary>
+        /// <param name="addressModel">Модель адреса.</param>
+        private void GeneratePatientInfoTableDataContactInfoAddress(AddressModel addressModel)
+        {
+            this.StreamWriter.Write($"                  <br/>{addressModel.PostalCode}, {addressModel.StreetAddressLine};"); // 5 tabs.
+            this.StreamWriter.Write($"<strong> Код субъекта РФ: </strong> {addressModel.StateCode.Code}");
+            this.StreamWriter.WriteLine($"<text> ( </text> {addressModel.StateCode.DisplayName} <text> ) </text> <br/>");
+        }
         
         #endregion
 
@@ -520,8 +552,174 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         {
             this.StreamWriter.WriteLine("           </tr>");
         }
+
+        #endregion
+
+        #region Sections
+
+        /// <summary>
+        /// Создает секцию "Секции".
+        /// </summary>
+        /// <param name="documentBodyModel">Модель тела документа.</param>
+        private void GenerateSectionsTable(DocumentBodyModel documentBodyModel)
+        {
+            if (documentBodyModel is null)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("       <table class=\"Sections\">"); // 2 tabs.
+            this.StreamWriter.WriteLine("           <tbody>"); // 3 tabs.
+
+            this.GenerateSentSection(documentBodyModel.SentSection);
+            
+            this.StreamWriter.WriteLine("           </tbody>");
+            this.StreamWriter.WriteLine("       </table>");
+        }
+        
+        #region Sent section
+
+        /// <summary>
+        /// Создает секцию "Направление".
+        /// </summary>
+        /// <param name="sentSectionModel">Модель секции "Направление".</param>
+        private void GenerateSentSection(SentSectionModel sentSectionModel)
+        {
+            this.GenerateSectionTitle("SCOPORG", "НАПРАВЛЕНИЕ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+
+            foreach (var paragraph in sentSectionModel.SentParagraphs)
+            {
+                this.GenerateSentSectionTableDataElement(paragraph.Caption, paragraph.Content);
+            }
+
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        /// <summary>
+        /// Создает элемент секции "Направление".
+        /// </summary>
+        /// <param name="name">Имя элемента.</param>
+        /// <param name="values">Значение элемента.</param>
+        private void GenerateSentSectionTableDataElement(string name, List<string> values)
+        {
+            if (values is null || values.Count == 0)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine($"                       <span style=\"font-weight:bold;\">{name}: </span>"); // 6 tabs.
+            foreach (var value in values)
+            {
+                this.StreamWriter.WriteLine("                       <br/>");
+                this.StreamWriter.WriteLine($"                           {value}");
+                this.StreamWriter.WriteLine("                       <br/>");
+            }
+            this.StreamWriter.WriteLine("                       <p/>");
+        }
         
         #endregion
+
+        /// <summary>
+        /// Создает блок с наименование секции.
+        /// </summary>
+        /// <param name="title">Title секции.</param>
+        /// <param name="name">Наименование секции.</param>
+        private void GenerateSectionTitle(string title, string name)
+        {
+            this.StreamWriter.WriteLine("               <tr>"); // 4 tabs.
+            this.StreamWriter.WriteLine("                   <td colspan=\"2\">"); // 5 tabs.
+            this.StreamWriter.WriteLine("                       <br/>"); // 6 tabs.
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SectionTitle\" colspan=\"2\">");
+            this.StreamWriter.WriteLine($"                       <span style=\"font-weight:bold;\" title=\"{title}\"> {name}</span>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td colspan=\"2\">");
+            this.StreamWriter.WriteLine("                       <br/>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+        
+        #endregion
+        
+        /// <summary>
+        /// Создает строку "Контакты".
+        /// </summary>
+        /// <param name="contacts">Список контактов.</param>
+        /// <returns>Строка "Контакты".</returns>
+        private string GetContactsString(List<TelecomModel> contacts)
+        {
+            if (contacts is null)
+            {
+                return string.Empty;
+            }
+            
+            string resultString = string.Empty;
+            string email = string.Empty;
+            string emailPost = string.Empty;
+            string mobilePhone = string.Empty;
+            string fax = string.Empty;
+            string phone = string.Empty;
+
+            foreach (var contact in contacts)
+            {
+                if (contact.Value.Contains("http"))
+                {
+                    email = contact.Value;
+                }
+                else if (contact.Value.Contains("+79"))
+                {
+                    mobilePhone = contact.Value;
+                }
+                else if (contact.Value.Contains("+7"))
+                {
+                    phone = contact.Value;
+                }
+                else if (contact.Value.Contains("@"))
+                {
+                    emailPost = contact.Value;
+                }
+                else
+                {
+                    fax = contact.Value;
+                }
+            }
+
+            if (!String.IsNullOrEmpty(mobilePhone))
+            {
+                resultString += $"Тел.: {mobilePhone}; ";
+            }
+
+            if (!String.IsNullOrEmpty(fax))
+            {
+                resultString += $"Факс: {fax}; ";
+            }
+
+            if (!String.IsNullOrEmpty(email))
+            {
+                resultString += $"{email}; ";
+            }
+
+            if (!String.IsNullOrEmpty(phone))
+            {
+                resultString += $"Тел.: {phone}; ";
+            }
+
+            if (!String.IsNullOrEmpty(emailPost))
+            {
+                resultString += $"Электронная почта: {emailPost}; ";
+            }
+            
+            return resultString;
+        }
         
         /// <summary>
         /// Начало документа.
