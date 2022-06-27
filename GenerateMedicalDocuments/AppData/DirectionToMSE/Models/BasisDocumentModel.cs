@@ -26,7 +26,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// [1..1] ИНН организации или физического лица.
         /// </summary>
-        public long INN { get; set; }
+        public string INN { get; set; }
         /// <summary>
         /// [1..1] Дата начала действия документа.
         /// </summary>

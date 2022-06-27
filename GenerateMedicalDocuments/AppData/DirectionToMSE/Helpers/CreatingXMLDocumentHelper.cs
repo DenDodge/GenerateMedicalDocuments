@@ -944,21 +944,30 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     displayNameValue: basisDocumentModel.InsurancePolicyType.DisplayName));
             docInfoElement.Add(insurancePolicyTypeElement);
 
-            XElement seriesElement = new XElement(identityNamespace + "Series",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                basisDocumentModel.Series);
-            docInfoElement.Add(seriesElement);
+            if (basisDocumentModel.Series is not null)
+            {
+                XElement seriesElement = new XElement(identityNamespace + "Series",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    basisDocumentModel.Series);
+                docInfoElement.Add(seriesElement);
+            }
 
-            XElement numberElement = new XElement(identityNamespace + "Number",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                basisDocumentModel.Number);
-            docInfoElement.Add(numberElement);
+            if (basisDocumentModel.Number is not null)
+            {
+                XElement numberElement = new XElement(identityNamespace + "Number",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    basisDocumentModel.Number);
+                docInfoElement.Add(numberElement);
+            }
 
-            XElement INNElement = new XElement(identityNamespace + "INN",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                basisDocumentModel.INN);
-            docInfoElement.Add(INNElement);
-
+            if (basisDocumentModel.INN is not null)
+            {
+                XElement INNElement = new XElement(identityNamespace + "INN",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    basisDocumentModel.INN);
+                docInfoElement.Add(INNElement);
+            }
+            
             docInfoElement.Add(GenerateEffectiveTimeElement(basisDocumentModel.StartDateDocument, basisDocumentModel.FinishDateDocument, identityNamespace));
 
             return docInfoElement;
@@ -1014,7 +1023,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
                 highElement.Add(typeAttribute);
             }
-            if (finishDateString != null)
+            if (finishDateString is not null)
             {
                 XAttribute highValueAttribute = new XAttribute("value", finishDateString);
                 highElement.Add(highValueAttribute);
