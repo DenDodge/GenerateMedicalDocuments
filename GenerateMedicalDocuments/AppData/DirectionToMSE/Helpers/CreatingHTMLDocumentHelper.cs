@@ -571,7 +571,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.StreamWriter.WriteLine("       <table class=\"Sections\">"); // 2 tabs.
             this.StreamWriter.WriteLine("           <tbody>"); // 3 tabs.
 
-            this.GenerateSentSection(documentBodyModel.SentSection);
+            this.GenerateSentSection(documentBodyModel.SentSection.SentParagraphs);
+            this.GenerateLaborActivitySection(documentBodyModel.WorkplaceSection.WorkPlaceParagraphs);
+            this.GenerateEducationSection(documentBodyModel.EducationSection.FillingSection);
             
             this.StreamWriter.WriteLine("           </tbody>");
             this.StreamWriter.WriteLine("       </table>");
@@ -582,8 +584,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <summary>
         /// Создает секцию "Направление".
         /// </summary>
-        /// <param name="sentSectionModel">Модель секции "Направление".</param>
-        private void GenerateSentSection(SentSectionModel sentSectionModel)
+        /// <param name="sentParagraphs">Элементы(параграфы) секции "Направление".</param>
+        private void GenerateSentSection(List<ParagraphModel> sentParagraphs)
         {
             this.GenerateSectionTitle("SCOPORG", "НАПРАВЛЕНИЕ");
             
@@ -591,39 +593,64 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
             this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
 
-            foreach (var paragraph in sentSectionModel.SentParagraphs)
+            foreach (var paragraph in sentParagraphs)
             {
-                this.GenerateSentSectionTableDataElement(paragraph.Caption, paragraph.Content);
+                this.GenerateSectionsTableDataParagraphElement(paragraph.Caption, paragraph.Content);
             }
 
             this.StreamWriter.WriteLine("                   </td>");
             this.StreamWriter.WriteLine("               </tr>");
         }
 
-        /// <summary>
-        /// Создает элемент секции "Направление".
-        /// </summary>
-        /// <param name="name">Имя элемента.</param>
-        /// <param name="values">Значение элемента.</param>
-        private void GenerateSentSectionTableDataElement(string name, List<string> values)
-        {
-            if (values is null || values.Count == 0)
-            {
-                return;
-            }
-            
-            this.StreamWriter.WriteLine($"                       <span style=\"font-weight:bold;\">{name}: </span>"); // 6 tabs.
-            foreach (var value in values)
-            {
-                this.StreamWriter.WriteLine("                       <br/>");
-                this.StreamWriter.WriteLine($"                           {value}");
-                this.StreamWriter.WriteLine("                       <br/>");
-            }
-            this.StreamWriter.WriteLine("                       <p/>");
-        }
-        
         #endregion
 
+        #region LaborActivity section
+
+        /// <summary>
+        /// Создает секцию "Трудовая деятельность".
+        /// </summary>
+        /// <param name="laborActivitys">Элементы(параграфы) секции "Трудовая деятельность".</param>
+        private void GenerateLaborActivitySection(List<ParagraphModel> laborActivitys)
+        {
+            this.GenerateSectionTitle("WORK", "ТРУДОВАЯ ДЕЯТЕЛЬНОСТЬ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+
+            foreach (var paragraph in laborActivitys)
+            {
+                this.GenerateSectionsTableDataParagraphElement(paragraph.Caption, paragraph.Content);
+            }
+
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        #endregion
+
+        #region EducationSection
+
+        /// <summary>
+        /// Создает секцию "Образование".
+        /// </summary>
+        /// <param name="educationInformation">Элемент наполнения секции "Образование".</param>
+        private void GenerateEducationSection(ParagraphModel educationInformation)
+        {
+            this.GenerateSectionTitle("EDU", "ОБРАЗОВАНИЕ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+            
+            this.GenerateSectionsTableDataParagraphElement(educationInformation.Caption, educationInformation.Content);
+            
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        #endregion
+        
         /// <summary>
         /// Создает блок с наименование секции.
         /// </summary>
@@ -646,6 +673,28 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.StreamWriter.WriteLine("                       <br/>");
             this.StreamWriter.WriteLine("                   </td>");
             this.StreamWriter.WriteLine("               </tr>");
+        }
+        
+        /// <summary>
+        /// Создает элемент (параграфы) секций.
+        /// </summary>
+        /// <param name="name">Имя элемента.</param>
+        /// <param name="values">Значение элемента.</param>
+        private void GenerateSectionsTableDataParagraphElement(string name, List<string> values)
+        {
+            if (values is null || values.Count == 0)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine($"                       <span style=\"font-weight:bold;\">{name}: </span>"); // 6 tabs.
+            foreach (var value in values)
+            {
+                this.StreamWriter.WriteLine("                       <br/>");
+                this.StreamWriter.WriteLine($"                           {value}");
+                this.StreamWriter.WriteLine("                       <br/>");
+            }
+            this.StreamWriter.WriteLine("                       <p/>");
         }
         
         #endregion
