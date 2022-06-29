@@ -659,13 +659,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 organizationElement.Add(GeneratePropsElements(organizationModel.Props));
             }
-            else
-            {
-                XElement propsElement = new XElement(xmlnsNamespace + "Props",
-                    new XAttribute("nullFlavor", "NI"));//,
-                    //new XAttribute(xsiNamespace + "type", "ST"));
-                organizationElement.Add(propsElement);
-            }
+            //else
+            //{
+            //    XElement propsElement = new XElement(identityNamespace + "Props",
+            //        new XAttribute("nullFlavor", "NI"));//,
+            //        //new XAttribute(xsiNamespace + "type", "ST"));
+            //    organizationElement.Add(propsElement);
+            //}
 
             if (organizationModel.Name != null)
             {
@@ -705,6 +705,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             if(propsModel.OGRN != null)
             {
                 propsElements.Add(GenerateChildPropsElement("Ogrn", propsModel.OGRN));
+            }
+            else
+            {
+                propsElements.Add(new XElement(identityNamespace + "Ogrn",
+                    new XAttribute(xsiNamespace + "nullFlavor", "NI"),
+                    new XAttribute(xsiNamespace + "type", "ST")));
             }
             if(propsModel.OGRNIP != null)
             {
@@ -1107,7 +1113,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     codeSystemNameValue: "Типы документированных событий"));
             serviceEventElement.Add(codeElement);
 
-            serviceEventElement.Add(GenerateEffectiveTimeElement(serviceEventModel.StartServiceDate, serviceEventModel.FinishServiceDate, xmlnsNamespace, true));
+            serviceEventElement.Add(GenerateEffectiveTimeElement(
+                serviceEventModel.StartServiceDate,
+                serviceEventModel.FinishServiceDate, 
+                xmlnsNamespace, 
+                true, 
+                true));
 
             if (serviceEventModel.ServiceForm != null)
             {
