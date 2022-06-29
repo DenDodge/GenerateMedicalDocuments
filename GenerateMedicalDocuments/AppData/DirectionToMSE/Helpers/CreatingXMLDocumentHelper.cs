@@ -662,8 +662,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             else
             {
                 XElement propsElement = new XElement(identityNamespace + "Props",
-                    new XAttribute("nullFlavor", "NI"),
-                    new XAttribute(xsiNamespace + "type", "ST"));
+                    new XAttribute("nullFlavor", "NI"));//,
+                    //new XAttribute(xsiNamespace + "type", "ST"));
                 organizationElement.Add(propsElement);
             }
 
@@ -1053,10 +1053,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             effectiveTimeElement.Add(lowElement);
 
-            XElement highElement = new XElement(namespaceValue + "high");
-            
             if (finishDateString is not null)
             {
+                XElement highElement = new XElement(namespaceValue + "high");
+                
                 if (!isUseTime)
                 {
                     XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
@@ -1065,14 +1065,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 
                 XAttribute highValueAttribute = new XAttribute("value", finishDateString);
                 highElement.Add(highValueAttribute);
+                
+                effectiveTimeElement.Add(highElement);
             }
-            else
-            {
-                XAttribute nullFlavorAttribute = new XAttribute("nullFlavor", "NAV");
-                highElement.Add(nullFlavorAttribute);
-            }
-            
-            effectiveTimeElement.Add(highElement);
 
             return effectiveTimeElement;
         }
