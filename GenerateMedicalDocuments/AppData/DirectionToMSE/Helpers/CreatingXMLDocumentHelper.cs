@@ -1018,7 +1018,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             DateTime startDate, 
             DateTime? finishDate, 
             XNamespace namespaceValue, 
-            bool isUseTime = false)
+            bool isUseTime = false,
+            bool isDocumentationOf = false)
         {
             string startDateString = null;
             string finishDateString = null;
@@ -1067,6 +1068,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 highElement.Add(highValueAttribute);
                 
                 effectiveTimeElement.Add(highElement);
+            }
+            else
+            {
+                if (!isDocumentationOf)
+                {
+                    XElement highElement = new XElement(namespaceValue + "high");
+                    XAttribute nullFlavorAttribute = new XAttribute("nullFlavor", "NAV");
+                    highElement.Add(nullFlavorAttribute);
+                    effectiveTimeElement.Add(highElement);
+                }
             }
 
             return effectiveTimeElement;
