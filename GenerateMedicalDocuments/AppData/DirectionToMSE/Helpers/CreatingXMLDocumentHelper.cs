@@ -661,7 +661,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             }
             else
             {
-                XElement propsElement = new XElement(identityNamespace + "Props",
+                XElement propsElement = new XElement(xmlnsNamespace + "Props",
                     new XAttribute("nullFlavor", "NI"));//,
                     //new XAttribute(xsiNamespace + "type", "ST"));
                 organizationElement.Add(propsElement);
