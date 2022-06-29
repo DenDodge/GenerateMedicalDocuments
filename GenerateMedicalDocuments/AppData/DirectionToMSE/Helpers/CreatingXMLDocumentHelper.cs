@@ -1701,19 +1701,29 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 new XAttribute(xsiNamespace + "type", "ST"), result);
             observationElement.Add(valueElement);
 
-            XElement referenceElement = new XElement(xmlnsNamespace + "reference",
-                new XAttribute("typeCode", "REFR"));
+            XElement referenceElement;
+            if (id is not null)
+            {
+                referenceElement = new XElement(xmlnsNamespace + "reference",
+                    new XAttribute("typeCode", "REFR"));
 
-            XElement externalDocument = new XElement(xmlnsNamespace + "externalDocument",
-                new XAttribute("classCode", "DOCCLIN"),
-                new XAttribute("moodCode", "EVN"));
+                XElement externalDocument = new XElement(xmlnsNamespace + "externalDocument",
+                    new XAttribute("classCode", "DOCCLIN"),
+                    new XAttribute("moodCode", "EVN"));
 
-            XElement idElement = new XElement(xmlnsNamespace + "id",
-                new XAttribute("root", "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.51"),
-                new XAttribute("extension", id));
-            externalDocument.Add(idElement);
+                XElement idElement = new XElement(xmlnsNamespace + "id",
+                    new XAttribute("root", "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.51"),
+                    new XAttribute("extension", id));
+                externalDocument.Add(idElement);
 
-            referenceElement.Add(externalDocument);
+                referenceElement.Add(externalDocument);
+            }
+            else
+            {
+                referenceElement = new XElement(xmlnsNamespace + "reference",
+                    new XAttribute("nullFlavor", "NI"));
+            }
+            
             observationElement.Add(referenceElement);
 
             entryRelationshipElement.Add(observationElement);
