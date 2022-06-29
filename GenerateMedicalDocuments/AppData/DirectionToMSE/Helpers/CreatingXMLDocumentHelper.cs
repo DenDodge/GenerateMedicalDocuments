@@ -333,6 +333,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     insurancePolicyModel.Series);
                 insurancePolicyElement.Add(seriesElement);
             }
+            else
+            {
+                XElement seriesElement = new XElement(identityNamespace + "Series",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    new XAttribute("nullFlavor", "NA"));
+                insurancePolicyElement.Add(seriesElement);
+            }
 
             XElement numberElement = new XElement(identityNamespace + "Number",
                 new XAttribute(xsiNamespace + "type", "ST"),
@@ -954,6 +961,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             else
             {
                 XElement seriesElement = new XElement(identityNamespace + "Series",
+                    new XAttribute(xsiNamespace + "type", "ST"),
                     new XAttribute("nullFlavor", "NA"));
                 docInfoElement.Add(seriesElement);
             }
@@ -971,6 +979,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 XElement INNElement = new XElement(identityNamespace + "INN",
                     new XAttribute(xsiNamespace + "type", "ST"),
                     basisDocumentModel.INN);
+                docInfoElement.Add(INNElement);
+            }
+            else
+            {
+                XElement INNElement = new XElement(identityNamespace + "INN",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    new XAttribute("nullFlavor", "NA"));
                 docInfoElement.Add(INNElement);
             }
             
@@ -3458,6 +3473,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             else
             {
                 participantElement = new XElement(xmlnsNamespace + "participant",
+                    new XAttribute("typeCode", "LOC"),
                     new XAttribute("nullFlavor", "NI"));
             }
             
