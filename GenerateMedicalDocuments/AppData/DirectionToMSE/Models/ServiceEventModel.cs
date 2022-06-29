@@ -19,7 +19,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// [0..1] Дата окончания.
         /// </summary>
-        public DateTime FinishServiceDate { get; set; }
+        public DateTime? FinishServiceDate { get; set; }
         /// <summary>
         /// [0..1] Форма оказания медицинской помощи.
         /// </summary>

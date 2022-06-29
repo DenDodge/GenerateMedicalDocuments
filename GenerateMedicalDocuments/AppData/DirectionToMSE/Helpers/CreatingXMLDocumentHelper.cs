@@ -639,6 +639,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     organizationElement.Add(idElement);
                 }
             }
+            else
+            {
+                XElement idElement = new XElement(xmlnsNamespace + "id",
+                    new XAttribute("nullFlavor", "NI"));
+                organizationElement.Add(idElement);
+            }
 
             if (organizationModel.License != null)
             {
@@ -652,6 +658,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             if (organizationModel.Props != null)
             {
                 organizationElement.Add(GeneratePropsElements(organizationModel.Props));
+            }
+            else
+            {
+                XElement propsElement = new XElement(identityNamespace + "Props",
+                    new XAttribute("nullFlavor", "NI"),
+                    new XAttribute(xsiNamespace + "type", "ST"));
+                organizationElement.Add(propsElement);
             }
 
             if (organizationModel.Name != null)
@@ -3463,19 +3476,19 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             XElement participantElement;
             
-            if (patientLocation is not null)
-            {
+            //if (patientLocation is not null)
+            //{
                 participantElement = new XElement(xmlnsNamespace + "participant",
                     new XAttribute("typeCode", "LOC"));
 
                 participantElement.Add(GenerateOrganizationElement(patientLocation, "participantRole"));
-            }
-            else
-            {
-                participantElement = new XElement(xmlnsNamespace + "participant",
-                    new XAttribute("typeCode", "LOC"),
-                    new XAttribute("nullFlavor", "NI"));
-            }
+            //}
+            //else
+            //{
+            //    participantElement = new XElement(xmlnsNamespace + "participant",
+            //        new XAttribute("typeCode", "LOC"),
+            //        new XAttribute("nullFlavor", "NI"));
+            //}
             
             actElement.Add(participantElement);
 
