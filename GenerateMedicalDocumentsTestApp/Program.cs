@@ -435,11 +435,11 @@ namespace GenerateMedicalDocumentsTestApp
                              CodeSystemVersion = "1.3",
                              DisplayName = "Полис ОМС старого образца"
                          },
-                         Series = "ЧБ",
+                         //Series = "ЧБ",
                          Number = "1334602",
                          INN = "213546789",
-                         StartDateDocument = new DateTime(2019, 05, 01),
-                         FinishDateDocument = new DateTime(2029, 05, 02)
+                         StartDateDocument = new DateTime(2019, 05, 01)//,
+                         //FinishDateDocument = new DateTime(2029, 05, 02)
                     },
                     ScopingOrganization = new OrganizationModel()
                     {
@@ -797,27 +797,27 @@ namespace GenerateMedicalDocumentsTestApp
                             CodeSystemVersion = "1.1",
                             DisplayName = "Иная организация"
                         },
-                        PatientLocation = new OrganizationModel()
-                        {
-                            ID = "1.2.643.5.1.13.13.12.2.77.7973",
-                            Props = new PropsOrganizationModel()
-                            {
-                                OGRN = "1037734008575"
-                            },
-                            Address = new AddressModel()
-                            {
-                                StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                                StateCode = new TypeModel()
-                                {
-                                    Code = "77",
-                                    CodeSystemVersion = "6.3",
-                                    DisplayName = "г. Москва"
-                                },
-                                PostalCode = 123592,
-                                AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
-                                HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
-                            }
-                        },
+                        //PatientLocation = new OrganizationModel()
+                        //{
+                        //    ID = "1.2.643.5.1.13.13.12.2.77.7973",
+                        //    Props = new PropsOrganizationModel()
+                        //    {
+                        //        OGRN = "1037734008575"
+                        //    },
+                        //    Address = new AddressModel()
+                        //    {
+                        //        StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                        //        StateCode = new TypeModel()
+                        //        {
+                        //            Code = "77",
+                        //            CodeSystemVersion = "6.3",
+                        //            DisplayName = "г. Москва"
+                        //        },
+                        //        PostalCode = 123592,
+                        //        AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                        //        HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                        //    }
+                        //},
                         MilitaryDuty = new TypeModel()
                         {
                             Code = "4",
@@ -872,27 +872,27 @@ namespace GenerateMedicalDocumentsTestApp
                         {
                             Caption = "Сведения о получении образования",
                             Content = new List<string>() { "Организация, адрес, курс, профессия." }
-                        },
-                        Organization = new OrganizationModel()
-                        {
-                            ID = "1.2.643.5.1.13.13.12.4.70.184",
-                            Name = "Томское областное медицинское училище",
-                            Address = new AddressModel()
-                            {
-                                StreetAddressLine = "г Томск, ул Смирнова, д 44",
-                                StateCode = new TypeModel()
-                                {
-                                    Code = "70",
-                                    CodeSystemVersion = "6.3",
-                                    DisplayName = "Томская область"
-                                },
-                                PostalCode = 634027,
-                                AOGUID = new Guid("1564e297-fc5d-453f-8b7e-a90d444e01e7"),
-                                HOUSEGUID = new Guid("4e8ed1a2-13a5-4579-a17d-a692625b5aea")
-                            }
-                        },
-                        Class = "2",
-                        Spetiality = "Стоматология"
+                        }//,
+                        //Organization = new OrganizationModel()
+                        //{
+                        //    ID = "1.2.643.5.1.13.13.12.4.70.184",
+                        //    Name = "Томское областное медицинское училище",
+                        //    Address = new AddressModel()
+                        //    {
+                        //        StreetAddressLine = "г Томск, ул Смирнова, д 44",
+                        //        StateCode = new TypeModel()
+                        //        {
+                        //            Code = "70",
+                        //            CodeSystemVersion = "6.3",
+                        //            DisplayName = "Томская область"
+                        //        },
+                        //        PostalCode = 634027,
+                        //        AOGUID = new Guid("1564e297-fc5d-453f-8b7e-a90d444e01e7"),
+                        //        HOUSEGUID = new Guid("4e8ed1a2-13a5-4579-a17d-a692625b5aea")
+                        //    }
+                        //},
+                        //Class = "2",
+                        //Spetiality = "Стоматология"
                     },
                     AnamnezSection = new AnamnezSectionModel()
                     {

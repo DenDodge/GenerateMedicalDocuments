@@ -608,7 +608,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 return null;
             }
-            
+
             XElement organizationElement = new XElement(xmlnsNamespace + elementName);
             if (classCodeAttributValue != null)
             {
@@ -951,6 +951,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     basisDocumentModel.Series);
                 docInfoElement.Add(seriesElement);
             }
+            else
+            {
+                XElement seriesElement = new XElement(identityNamespace + "Series",
+                    new XAttribute("nullFlavor", "NA"));
+                docInfoElement.Add(seriesElement);
+            }
 
             if (basisDocumentModel.Number is not null)
             {
@@ -986,7 +992,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             XNamespace namespaceValue, 
             bool isUseTime = false)
         {
-            string startDateString;
+            string startDateString = null;
             string finishDateString = null;
             if (isUseTime)
             {
@@ -1008,6 +1014,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             XElement effectiveTimeElement = new XElement(namespaceValue + "effectiveTime");
 
             XElement lowElement = new XElement(namespaceValue + "low");
+            
             if (!isUseTime)
             {
                 XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
@@ -1015,19 +1022,28 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             }
             XAttribute lowValueAttribute = new XAttribute("value", startDateString);
             lowElement.Add(lowValueAttribute);
+
             effectiveTimeElement.Add(lowElement);
 
             XElement highElement = new XElement(namespaceValue + "high");
-            if (!isUseTime)
-            {
-                XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
-                highElement.Add(typeAttribute);
-            }
+            
             if (finishDateString is not null)
             {
+                if (!isUseTime)
+                {
+                    XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
+                    highElement.Add(typeAttribute);
+                }
+                
                 XAttribute highValueAttribute = new XAttribute("value", finishDateString);
                 highElement.Add(highValueAttribute);
             }
+            else
+            {
+                XAttribute nullFlavorAttribute = new XAttribute("nullFlavor", "NAV");
+                highElement.Add(nullFlavorAttribute);
+            }
+            
             effectiveTimeElement.Add(highElement);
 
             return effectiveTimeElement;
@@ -2870,94 +2886,104 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             #region entry organization
 
-            XElement entryElement = new XElement(xmlnsNamespace + "entry");
-            XElement observationElement = new XElement(xmlnsNamespace + "observation",
-                new XAttribute("classCode", "OBS"),
-                new XAttribute("moodCode", "EVN"));
-
-            XElement observationCodeElement = new XElement(xmlnsNamespace + "code",
-                GetTypeElementAttributes(
-                    codeValue: "4100",
-                    codeSystemVersionValue: "1.69",
-                    displayNameValue: "Сведения о получении образования",
-                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
-                    codeSystemNameValue: "Кодируемые поля CDA документов"));
-            observationElement.Add(observationCodeElement);
-
-            XElement performerElement = new XElement(xmlnsNamespace + "performer");
-            XElement assignedEntityElement = new XElement(xmlnsNamespace + "assignedEntity");
-
-            XElement idElement = new XElement(xmlnsNamespace + "id",
-                new XAttribute("nullFlavor", "NI"));
-            assignedEntityElement.Add(idElement);
-
-            var representedOrganizationElement = GenerateOrganizationElement(educationSectionModel.Organization, "representedOrganization", classCodeAttributValue: "ORG");
-            if (representedOrganizationElement != null)
+            if (educationSectionModel.Organization is not null)
             {
-                foreach (var element in representedOrganizationElement.Elements(xmlnsNamespace + "id"))
-                {
-                    element.Add(new XAttribute("extension", "1145"));
-                }
-                assignedEntityElement.Add(representedOrganizationElement);
-            }
+                XElement entryElement = new XElement(xmlnsNamespace + "entry");
+                XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                    new XAttribute("classCode", "OBS"),
+                    new XAttribute("moodCode", "EVN"));
 
-            performerElement.Add(assignedEntityElement);
-            observationElement.Add(performerElement);
-            entryElement.Add(observationElement);
-            sectionElement.Add(entryElement);
+                XElement observationCodeElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: "4100",
+                        codeSystemVersionValue: "1.69",
+                        displayNameValue: "Сведения о получении образования",
+                        codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                        codeSystemNameValue: "Кодируемые поля CDA документов"));
+                observationElement.Add(observationCodeElement);
+
+                XElement performerElement = new XElement(xmlnsNamespace + "performer");
+                XElement assignedEntityElement = new XElement(xmlnsNamespace + "assignedEntity");
+
+                XElement idElement = new XElement(xmlnsNamespace + "id",
+                    new XAttribute("nullFlavor", "NI"));
+                assignedEntityElement.Add(idElement);
+
+                var representedOrganizationElement = GenerateOrganizationElement(educationSectionModel.Organization, "representedOrganization", classCodeAttributValue: "ORG");
+                if (representedOrganizationElement != null)
+                {
+                    foreach (var element in representedOrganizationElement.Elements(xmlnsNamespace + "id"))
+                    {
+                        element.Add(new XAttribute("extension", "1145"));
+                    }
+                    assignedEntityElement.Add(representedOrganizationElement);
+                }
+
+                performerElement.Add(assignedEntityElement);
+                observationElement.Add(performerElement);
+                entryElement.Add(observationElement);
+                sectionElement.Add(entryElement);
+            }
 
             #endregion
 
             #region entry class
 
-            XElement entryClassElement = new XElement(xmlnsNamespace + "entry");
-            XElement observationClassElement = new XElement(xmlnsNamespace + "observation",
-                new XAttribute("classCode", "OBS"),
-                new XAttribute("moodCode", "EVN"));
+            if (educationSectionModel.Class is not null)
+            {
+                XElement entryClassElement = new XElement(xmlnsNamespace + "entry");
+                XElement observationClassElement = new XElement(xmlnsNamespace + "observation",
+                    new XAttribute("classCode", "OBS"),
+                    new XAttribute("moodCode", "EVN"));
 
-            XElement observationCodeClassElement = new XElement(xmlnsNamespace + "code",
-                GetTypeElementAttributes(
-                    codeValue: "12137",
-                    codeSystemVersionValue: "1.69",
-                    displayNameValue: "Курс",
-                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
-                    codeSystemNameValue: "Кодируемые поля CDA документов"));
-            observationClassElement.Add(observationCodeClassElement);
+                XElement observationCodeClassElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: "12137",
+                        codeSystemVersionValue: "1.69",
+                        displayNameValue: "Курс",
+                        codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                        codeSystemNameValue: "Кодируемые поля CDA документов"));
+                observationClassElement.Add(observationCodeClassElement);
 
-            XElement valueClassElement = new XElement(xmlnsNamespace + "value",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                educationSectionModel.Class);
-            observationClassElement.Add(valueClassElement);
+                XElement valueClassElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    educationSectionModel.Class);
+                observationClassElement.Add(valueClassElement);
 
-            entryClassElement.Add(observationClassElement);
-            sectionElement.Add(entryClassElement);
+                entryClassElement.Add(observationClassElement);
+                sectionElement.Add(entryClassElement);
+            }
 
             #endregion
 
             #region entry spetiality
 
-            XElement entrySpetialityElement = new XElement(xmlnsNamespace + "entry");
-            XElement observationSpetialityElement = new XElement(xmlnsNamespace + "observation",
-                new XAttribute("classCode", "OBS"),
-                new XAttribute("moodCode", "EVN"));
+            if (educationSectionModel.Spetiality is not null)
+            {
+                XElement entrySpetialityElement = new XElement(xmlnsNamespace + "entry");
+                XElement observationSpetialityElement = new XElement(xmlnsNamespace + "observation",
+                    new XAttribute("classCode", "OBS"),
+                    new XAttribute("moodCode", "EVN"));
 
-            XElement observationCodeSpetialityElement = new XElement(xmlnsNamespace + "code",
-                GetTypeElementAttributes(
-                    codeValue: "4078",
-                    codeSystemVersionValue: "1.69",
-                    displayNameValue: "Профессия",
-                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
-                    codeSystemNameValue: "Кодируемые поля CDA документов"));
-            observationSpetialityElement.Add(observationCodeSpetialityElement);
+                XElement observationCodeSpetialityElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: "4078",
+                        codeSystemVersionValue: "1.69",
+                        displayNameValue: "Профессия",
+                        codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                        codeSystemNameValue: "Кодируемые поля CDA документов"));
+                observationSpetialityElement.Add(observationCodeSpetialityElement);
 
-            XElement valueSpetialityElement = new XElement(xmlnsNamespace + "value",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                educationSectionModel.Spetiality);
-            observationSpetialityElement.Add(valueSpetialityElement);
+                XElement valueSpetialityElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    educationSectionModel.Spetiality);
+                observationSpetialityElement.Add(valueSpetialityElement);
 
-            entrySpetialityElement.Add(observationSpetialityElement);
-            sectionElement.Add(entrySpetialityElement);
+                entrySpetialityElement.Add(observationSpetialityElement);
+                sectionElement.Add(entrySpetialityElement);
 
+            }
+            
             #endregion
 
             componentElement.Add(sectionElement);
@@ -3391,11 +3417,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "Местонахождение гражданина"</returns>
         private static XElement GeneratePatienLocationElement(TypeModel patientLocationCode, OrganizationModel patientLocation)
         {
-            if (patientLocation == null)
-            {
-                return null;
-            }
-            
+            //if (patientLocation == null)
+            //{
+            //    return null;
+            //}
+
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
             XElement actElement = new XElement(xmlnsNamespace + "act",
                 new XAttribute("classCode", "ACT"),
@@ -3410,11 +3436,21 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     displayNameValue: patientLocationCode.DisplayName));
             actElement.Add(codeElement);
 
-            XElement participantElement = new XElement(xmlnsNamespace + "participant",
-                new XAttribute("typeCode", "LOC"));
+            XElement participantElement;
+            
+            if (patientLocation is not null)
+            {
+                participantElement = new XElement(xmlnsNamespace + "participant",
+                    new XAttribute("typeCode", "LOC"));
 
-            participantElement.Add(GenerateOrganizationElement(patientLocation, "participantRole"));
-
+                participantElement.Add(GenerateOrganizationElement(patientLocation, "participantRole"));
+            }
+            else
+            {
+                participantElement = new XElement(xmlnsNamespace + "participant",
+                    new XAttribute("nullFlavor", "NI"));
+            }
+            
             actElement.Add(participantElement);
 
             entryElement.Add(actElement);
