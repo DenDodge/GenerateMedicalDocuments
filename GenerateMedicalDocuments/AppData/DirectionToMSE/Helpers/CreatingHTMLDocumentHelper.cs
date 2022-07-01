@@ -574,6 +574,14 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.GenerateSentSection(documentBodyModel.SentSection.SentParagraphs);
             this.GenerateLaborActivitySection(documentBodyModel.WorkplaceSection.WorkPlaceParagraphs);
             this.GenerateEducationSection(documentBodyModel.EducationSection.FillingSection);
+            this.GenerateAnamnezSection(documentBodyModel.AnamnezSection);
+            this.GenerateVitalParametersSection(documentBodyModel.VitalParametersSection);
+            this.GenerateDirectionStateSection(documentBodyModel.DirectionStateSection);
+            this.GenerateDiagnosticStudiesSection(documentBodyModel.DiagnosticStudiesSection);
+            this.GenerateDiagnosisSection(documentBodyModel.DiagnosisSection);
+            this.GenerateConditionAssessmentSection(documentBodyModel.ConditionAssessmentSection);
+            this.GenerateRecommendationsSection(documentBodyModel.RecommendationsSection);
+            this.GenerateOutsideSpecialMedicalCareSection(documentBodyModel.OutsideSpecialMedicalCareSection);
             
             this.StreamWriter.WriteLine("           </tbody>");
             this.StreamWriter.WriteLine("       </table>");
@@ -587,6 +595,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="sentParagraphs">Элементы(параграфы) секции "Направление".</param>
         private void GenerateSentSection(List<ParagraphModel> sentParagraphs)
         {
+            if (sentParagraphs is null || sentParagraphs.Count == 0)
+            {
+                return;
+            }
+            
             this.GenerateSectionTitle("SCOPORG", "НАПРАВЛЕНИЕ");
             
             this.StreamWriter.WriteLine("               <tr>");
@@ -612,6 +625,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="laborActivitys">Элементы(параграфы) секции "Трудовая деятельность".</param>
         private void GenerateLaborActivitySection(List<ParagraphModel> laborActivitys)
         {
+            if (laborActivitys is null || laborActivitys.Count == 0)
+            {
+                return;
+            }
+            
             this.GenerateSectionTitle("WORK", "ТРУДОВАЯ ДЕЯТЕЛЬНОСТЬ");
             
             this.StreamWriter.WriteLine("               <tr>");
@@ -637,6 +655,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="educationInformation">Элемент наполнения секции "Образование".</param>
         private void GenerateEducationSection(ParagraphModel educationInformation)
         {
+            if (educationInformation is null)
+            {
+                return;
+            }
+            
             this.GenerateSectionTitle("EDU", "ОБРАЗОВАНИЕ");
             
             this.StreamWriter.WriteLine("               <tr>");
@@ -645,6 +668,691 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             
             this.GenerateSectionsTableDataParagraphElement(educationInformation.Caption, educationInformation.Content);
             
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        #endregion
+
+        #region Anamnez Section
+
+        /// <summary>
+        /// Создает секцию "Анамнез".
+        /// </summary>
+        /// <param name="anamnezSectionModel">Модель секции "Анамнез".</param>
+        private void GenerateAnamnezSection(AnamnezSectionModel anamnezSectionModel)
+        {
+            if (anamnezSectionModel is null)
+            {
+                return;
+            }
+            
+            this.GenerateSectionTitle("SOCANAM", "АНАМНЕЗ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+            
+            this.GenerateAnamnezSectionTableData(anamnezSectionModel);
+            
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        /// <summary>
+        /// Создает элементы таблицы данные секции "Анамнез".
+        /// </summary>
+        /// <param name="anamnezSectionModel">Модель секции "Анамнез".</param>
+        private void GenerateAnamnezSectionTableData(AnamnezSectionModel anamnezSectionModel)
+        {
+            if (anamnezSectionModel.Disability is not null)
+            {
+                this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Инвалидность: </span><br/>");
+                this.StreamWriter.WriteLine($"{anamnezSectionModel.Disability.GroupText}<br/>");
+                this.StreamWriter.WriteLine($"Находился на инвалидности на момент направления: {anamnezSectionModel.Disability.TimeDisability}<br/>");
+                this.StreamWriter.WriteLine("                       <p/>");
+            }
+
+            if (anamnezSectionModel.DegreeDisability is not null)
+            {
+                this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Степень утраты профессиональной трудоспособности: </span><br/>");
+                if (anamnezSectionModel.DegreeDisability.Section31Text is not null)
+                {
+                    this.StreamWriter.WriteLine($"{anamnezSectionModel.DegreeDisability.Section31Text}<br/>");
+                }
+
+                if (anamnezSectionModel.DegreeDisability.Section32Text is not null)
+                {
+                    this.StreamWriter.WriteLine($"{anamnezSectionModel.DegreeDisability.Section32Text}<br/>");
+                }
+
+                if (anamnezSectionModel.DegreeDisability.Section33Text is not null)
+                {
+                    this.StreamWriter.WriteLine($"{anamnezSectionModel.DegreeDisability.Section33Text}<br/>");
+                }
+                this.StreamWriter.WriteLine("                       <p/>");
+            }
+            
+            if (anamnezSectionModel.SeenOrganizations is not null)
+            {
+                this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Наблюдается в организациях, оказывающих лечебно-профилактическую помощь: </span><br/>");
+                this.StreamWriter.WriteLine($"{anamnezSectionModel.SeenOrganizations}<br/>");
+                this.StreamWriter.WriteLine("                       <p/>");
+            }
+
+            if (anamnezSectionModel.MedicalAnamnez is not null)
+            {
+                this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Анамнез заболевания: </span><br/>");
+                this.StreamWriter.WriteLine($"{anamnezSectionModel.MedicalAnamnez}<br/>");
+                this.StreamWriter.WriteLine("                       <p/>");
+            }
+
+            if (anamnezSectionModel.LifeAnamnez is not null)
+            {
+                this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Анамнез жизни: </span><br/>");
+                this.StreamWriter.WriteLine($"{anamnezSectionModel.LifeAnamnez}<br/>");
+                this.StreamWriter.WriteLine("                       <p/>");
+            }
+
+            if (anamnezSectionModel.ActualDevelopment is not null)
+            {
+                this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Физическое развитие (в отношении детей в возрасте до 3 лет): </span><br/>");
+                this.StreamWriter.WriteLine($"{anamnezSectionModel.ActualDevelopment}<br/>");
+                this.StreamWriter.WriteLine("                       <p/>");
+            }
+            
+            this.GenerateTemporaryDisabilityTable(anamnezSectionModel.TemporaryDisabilitys);
+            
+            if (anamnezSectionModel.CertificateDisabilityNumber is not null)
+            {
+                this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Листок нетрудоспособности в форме электронного документа: </span><br/>");
+                this.StreamWriter.WriteLine($"{anamnezSectionModel.CertificateDisabilityNumber}<br/>");
+                this.StreamWriter.WriteLine("                       <p/>");
+            }
+            
+            if (anamnezSectionModel.EffectityAction is not null && anamnezSectionModel.EffectityAction.Count != 0)
+            {
+                this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Результаты и эффективность проведенных мероприятий медицинской реабилитации: </span><br/>");
+                foreach (var effectityAction in anamnezSectionModel.EffectityAction)   
+                {
+                    this.StreamWriter.WriteLine($"{effectityAction}<br/>");
+                }
+                this.StreamWriter.WriteLine("                       <p/>");
+            }
+        }
+
+        /// <summary>
+        /// Создает таблицу "Временная нетрудоспособность" секции "Анамнез".
+        /// </summary>
+        /// <param name="temporaryDisabilitys">Список моделей элементов "Временная нетрудоспособность".</param>
+        private void GenerateTemporaryDisabilityTable(List<TemporaryDisabilityModel> temporaryDisabilitys)
+        {
+            if (temporaryDisabilitys is null || temporaryDisabilitys.Count == 0)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("                       <table class=\"inner\" width=\"100%\">");
+            this.StreamWriter.WriteLine("                           <span style=\"font-weight:bold; \">Временная нетрудоспособность: </span>");
+            this.StreamWriter.WriteLine("                           <col xmlns=\"urn:hl7-org:v3\" xmlns:fias=\"urn:hl7-ru:fias\" xmlns:medService=\"urn:hl7-ru:medService\" width=\"10%\"/>");
+            this.StreamWriter.WriteLine("                           <col xmlns=\"urn:hl7-org:v3\" xmlns:fias=\"urn:hl7-ru:fias\" xmlns:medService=\"urn:hl7-ru:medService\" width=\"20%\"/>");
+            this.StreamWriter.WriteLine("                           <col xmlns=\"urn:hl7-org:v3\" xmlns:fias=\"urn:hl7-ru:fias\" xmlns:medService=\"urn:hl7-ru:medService\" width=\"70%\"/>");
+            this.StreamWriter.WriteLine("                           <tbody>");
+            this.StreamWriter.WriteLine("                               <tr>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Дата начала</th>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Дата окончания</th>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Число дней</th>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Шифр МКБ</th>");
+            this.StreamWriter.WriteLine("                               </tr>");
+            foreach (var temporaryDisability in temporaryDisabilitys)
+            {
+                this.GenerateTemporaryDisabilityeTableRowTable(temporaryDisability);
+            }
+            this.StreamWriter.WriteLine("                           </tbody>");
+            this.StreamWriter.WriteLine("                       </table>");
+            this.StreamWriter.WriteLine("                       <br/>");
+        }
+
+        /// <summary>
+        /// Создает строки таблицы "Временная нетрудоспособность" секции "Анамнез".
+        /// </summary>
+        /// <param name="temporaryDisabilitys">Модель элмента "Временная нетрудоспособность".</param>
+        private void GenerateTemporaryDisabilityeTableRowTable(TemporaryDisabilityModel temporaryDisabilitys)
+        {
+            this.StreamWriter.WriteLine("                               <tr>");
+            this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DateStart.ToString("dd.MM.yyyy")}</th>");
+            this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DateFinish.ToString("dd.MM.yyyy")}</th>");
+            this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DayCount}</th>");
+            this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.CipherMKB}</th>");
+            this.StreamWriter.WriteLine("                               </tr>");
+        }
+        
+        #endregion
+
+        #region Vital parameters section
+
+        /// <summary>
+        /// Создает секцию "Витальные параметры".
+        /// </summary>
+        /// <param name="vitalParametersSectionModel">Модель секции "Витальные параметры".</param>
+        private void GenerateVitalParametersSection(VitalParametersSectionModel vitalParametersSectionModel)
+        {
+            if (vitalParametersSectionModel is null)
+            {
+                return;
+            }
+            
+            this.GenerateSectionTitle("VITALPARAM", "АНТРОПОМЕТРИЧЕСКИЕ ДАННЫЕ И ФИЗИОЛОГИЧЕСКИЕ ПАРАМЕТРЫ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+            
+            this.GenerateVitalParametersSectionTable(vitalParametersSectionModel);
+            
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        /// <summary>
+        /// Создает таблицу секции "Витальные параметры".
+        /// </summary>
+        /// <param name="vitalParametersSectionModel">Модель секции "Витальные параметры".</param>
+        private void GenerateVitalParametersSectionTable(VitalParametersSectionModel vitalParametersSectionModel)
+        {
+            if (vitalParametersSectionModel is null)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("                       <table class=\"inner\" width=\"100%\">");
+            this.StreamWriter.WriteLine("                           <col xmlns=\"urn:hl7-org:v3\" xmlns:fias=\"urn:hl7-ru:fias\" xmlns:medService=\"urn:hl7-ru:medService\" width=\"30%\"/>");
+            this.StreamWriter.WriteLine("                           <col xmlns=\"urn:hl7-org:v3\" xmlns:fias=\"urn:hl7-ru:fias\" xmlns:medService=\"urn:hl7-ru:medService\" width=\"70%\"/>");
+            this.StreamWriter.WriteLine("                           <tbody>");
+
+            if (vitalParametersSectionModel.VitalParameters is not null 
+                && vitalParametersSectionModel.VitalParameters.Count != 0)
+            {
+                foreach (var vitalParameter in vitalParametersSectionModel.VitalParameters)
+                {
+                    this.GenerateVitalParametersSectionTableRow(vitalParameter);
+                }
+            }
+
+            this.StreamWriter.WriteLine("                                   <td class=\"inner\" colspan=\"\">Телосложение</td>");
+            this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{vitalParametersSectionModel.BodyType}</td>");
+            
+            this.StreamWriter.WriteLine("                           </tbody>");
+            this.StreamWriter.WriteLine("                       </table>");
+        }
+
+        /// <summary>
+        /// Создает строки таблицы секции "Витальные параметры".
+        /// </summary>
+        /// <param name="vitalParameterModel">Модель витального параметра.</param>
+        private void GenerateVitalParametersSectionTableRow(VitalParameterModel vitalParameterModel)
+        {
+            if (vitalParameterModel is null)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("                               <tr>");
+            this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{vitalParameterModel.EntryDisplayName}</td>");
+            this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{vitalParameterModel.Value} {vitalParameterModel.Unit}</td>");
+            this.StreamWriter.WriteLine("                               </tr>");
+        }
+
+        #endregion
+
+        #region Direction State Section
+
+        /// <summary>
+        /// Создает секцию "Состояние при направлении".
+        /// </summary>
+        /// <param name="directionStateSectionModel">Модель секции "Состояние при направлении".</param>
+        private void GenerateDirectionStateSection(DirectionStateSectionModel directionStateSectionModel)
+        {
+            if (directionStateSectionModel is null || String.IsNullOrWhiteSpace(directionStateSectionModel.StateText))
+            {
+                return;
+            }
+            
+            this.GenerateSectionTitle("STATECUR", "СОСТОЯНИЕ ПРИ НАПРАВЛЕНИИ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+            
+            this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Состояние здоровья гражданина при направлении на медико-социальную экспертизу: </span><br/>");
+            this.StreamWriter.WriteLine($"{directionStateSectionModel.StateText}<br/><p/>");
+            
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        #endregion
+        
+        #region Diagnostic Studies Section
+
+        /// <summary>
+        /// Создает секцию "Медецинские обследования".
+        /// </summary>
+        /// <param name="diagnosticStudiesSectionModel">Модель секции "Медицинские обследования".</param>
+        private void GenerateDiagnosticStudiesSection(DiagnosticStudiesSectionModel diagnosticStudiesSectionModel)
+        {
+            if (diagnosticStudiesSectionModel is null)
+            {
+                return;
+            }
+            
+            this.GenerateSectionTitle("PROC", "МЕДИЦИНСКИЕ ОБСЛЕДОВАНИЯ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+
+            this.GenerateDiagnosticStudiesSectionTable(diagnosticStudiesSectionModel);
+            
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        /// <summary>
+        /// Создает таблицу секции "Медецинские обследования".
+        /// </summary>
+        /// <param name="diagnosticStudiesSectionModel">Модель секции "Медицинские обследования".</param>
+        private void GenerateDiagnosticStudiesSectionTable(DiagnosticStudiesSectionModel diagnosticStudiesSectionModel)
+        {
+            if (diagnosticStudiesSectionModel is null)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("                       <table class=\"inner\" width=\"\">");
+            this.StreamWriter.WriteLine("                           <span style=\"font-weight:bold;\">Сведения о медицинских обследованиях, необходимых для получения клинико-функциональных данных в зависимости от заболевания при проведении медико-социальной экспертизы:</span>");
+            this.StreamWriter.WriteLine("                           <tbody>");
+            
+            this.StreamWriter.WriteLine("                               <tr>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Дата</th>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Код</th>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Наименование</th>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Результат</th>");
+            this.StreamWriter.WriteLine("                               </tr>");
+
+            this.GenerateDiagnosticStudiesSectionTableRows(diagnosticStudiesSectionModel.MedicalExaminations);
+            
+            this.StreamWriter.WriteLine("                           </tbody>");
+            this.StreamWriter.WriteLine("                       </table>");
+        }
+
+        /// <summary>
+        /// Создает строки таблицы секции "Медицинское обследование".
+        /// </summary>
+        /// <param name="medicalExaminations">Список медицинских обследований.</param>
+        private void GenerateDiagnosticStudiesSectionTableRows(List<MedicalExaminationModel> medicalExaminations)
+        {
+            if (medicalExaminations is null || medicalExaminations.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var medicalExamination in medicalExaminations)
+            {
+                this.StreamWriter.WriteLine("                               <tr>");
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Date.ToString("dd.MM.yyyy")}</td>");
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Number}</td>");
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Name}</td>");
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Result}</td>");
+                this.StreamWriter.WriteLine("                               </tr>");
+            }
+        }
+
+        #endregion
+        
+        #region Diagnosis Section
+
+        /// <summary>
+        /// Создает секцию "Диагнозы".
+        /// </summary>
+        /// <param name="diagnosisSectionModel">Модель секции "Диагнозы".</param>
+        private void GenerateDiagnosisSection(DiagnosisSectionModel diagnosisSectionModel)
+        {
+            if (diagnosisSectionModel is null)
+            {
+                return;
+            }
+            
+            this.GenerateSectionTitle("DGN", "ДИАГНОЗЫ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+
+            this.GenerateGenerateDiagnosisSectionTable(diagnosisSectionModel);
+            
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        /// <summary>
+        /// Создает таблицу секции "Диагнозы".
+        /// </summary>
+        /// <param name="diagnosisSectionModel">Модель секции "Диагнозы".</param>
+        private void GenerateGenerateDiagnosisSectionTable(DiagnosisSectionModel diagnosisSectionModel)
+        {
+            this.StreamWriter.WriteLine("                       <table class=\"inner\" width=\"\">");
+            this.StreamWriter.WriteLine("                           <span style=\"font-weight:bold;\">Диагноз при направлении на медико-социальную экспертизу:</span>");
+            this.StreamWriter.WriteLine("                           <tbody>");
+            
+            this.StreamWriter.WriteLine("                               <tr>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Шифр</th>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Тип</th>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Текст</th>");
+            this.StreamWriter.WriteLine("                               </tr>");
+
+            this.GenerateGenerateDiagnosisSectionTableRows(diagnosisSectionModel.Diagnosis);
+            
+            this.StreamWriter.WriteLine("                           </tbody>");
+            this.StreamWriter.WriteLine("                       </table>");
+        }
+
+        /// <summary>
+        /// Создать строки таблицы секции "Диагнозы".
+        /// </summary>
+        /// <param name="diagnostics">Список диагнозов.</param>
+        private void GenerateGenerateDiagnosisSectionTableRows(List<DiagnosticModel> diagnostics)
+        {
+            if (diagnostics is null || diagnostics.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var diagnostic in diagnostics)
+            {
+                this.StreamWriter.WriteLine("                               <tr>");
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{diagnostic.ID}</td>");
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{diagnostic.Caption}</td>");
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{diagnostic.Result}</td>");
+                this.StreamWriter.WriteLine("                               </tr>");
+            }
+        }
+        
+        #endregion
+        
+        #region Condition Assessment Section
+
+        /// <summary>
+        /// Создает секцию "Объектизированная оценка состояния".
+        /// </summary>
+        /// <param name="conditionAssessmentSectionModel">Модель секции "Объектизированная оценка состояния".</param>
+        private void GenerateConditionAssessmentSection(ConditionAssessmentSection conditionAssessmentSectionModel)
+        {
+            if (conditionAssessmentSectionModel is null)
+            {
+                return;
+            }
+            
+            this.GenerateSectionTitle("SCORES", "ОБЪЕКТИВИЗИРОВАННАЯ ОЦЕНКА СОСТОЯНИЯ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+
+            this.GenerateConditionAssessmentSectionTable(conditionAssessmentSectionModel);
+            
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        /// <summary>
+        /// Создает таблицу секции "Объектизированная оценка состояния".
+        /// </summary>
+        /// <param name="conditionAssessmentSectionModel">Модель секции "Объектизированная оценка состояния".</param>
+        private void GenerateConditionAssessmentSectionTable(ConditionAssessmentSection conditionAssessmentSectionModel)
+        {
+            if (conditionAssessmentSectionModel is null)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("                       <table class=\"inner\" width=\"\">");
+
+            this.StreamWriter.WriteLine("                           <thead>");
+            this.StreamWriter.WriteLine("                               <tr>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Тип оценки</th>");
+            this.StreamWriter.WriteLine("                                   <th class=\"inner\">Результат</th>");
+            this.StreamWriter.WriteLine("                               </tr>");
+            this.StreamWriter.WriteLine("                           <thead>");
+
+            this.StreamWriter.WriteLine("                           <tbody>");
+            
+            if (conditionAssessmentSectionModel.ClinicalPrognosis is not null)
+            {
+                this.GenerateConditionAssessmentSectionTableRow(
+                    conditionAssessmentSectionModel.ClinicalPrognosis.GrateType,
+                    conditionAssessmentSectionModel.ClinicalPrognosis.GrateResult);
+            }
+
+            if (conditionAssessmentSectionModel.RehabilitationPotential is not null)
+            {
+                this.GenerateConditionAssessmentSectionTableRow(
+                    conditionAssessmentSectionModel.RehabilitationPotential.GrateType,
+                    conditionAssessmentSectionModel.RehabilitationPotential.GrateResult);
+            }
+
+            if (conditionAssessmentSectionModel.RehabilitationPrognosis is not null)
+            {
+                this.GenerateConditionAssessmentSectionTableRow(
+                    conditionAssessmentSectionModel.RehabilitationPrognosis.GrateType,
+                    conditionAssessmentSectionModel.RehabilitationPrognosis.GrateResult);
+            }
+            
+            this.StreamWriter.WriteLine("                           </tbody>");
+            
+            this.StreamWriter.WriteLine("                       </table>");
+        }
+
+        /// <summary>
+        /// Создает строку таблицы секции "Объектизированная оценка состояния".
+        /// </summary>
+        /// <param name="type">Тип.</param>
+        /// <param name="result">Результат.</param>
+        private void GenerateConditionAssessmentSectionTableRow(string type, string result)
+        {
+            this.StreamWriter.WriteLine("                               <tr>");
+            this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{type}</td>");
+            this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{result}</td>");
+            this.StreamWriter.WriteLine("                               </tr>");
+        }
+
+        #endregion
+        
+        #region Condition Assessment Section
+
+        /// <summary>
+        /// Создает секцию "Рекомендации".
+        /// </summary>
+        /// <param name="recommendationsSectionModel">Модель секции "Рекомендации".</param>
+        private void GenerateRecommendationsSection(RecommendationsSectionModel recommendationsSectionModel)
+        {
+            if (recommendationsSectionModel is null)
+            {
+                return;
+            }
+            
+            this.GenerateSectionTitle("REGIME", "РЕКОМЕНДАЦИИ");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\">");
+            this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\" title=\"RECTREAT\">Рекомендованное лечение</span>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+
+            this.GenerateRecommendationsSectionTable(recommendationsSectionModel);
+            
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+
+            this.GenerateRecommendationsSectionOtherRecommendatons(recommendationsSectionModel.OtherRecommendatons);
+        }
+
+        /// <summary>
+        /// Создает таблицу секции "Рекомендации".
+        /// </summary>
+        /// <param name="recommendationsSectionModel">Модель секции "Рекомендации".</param>
+        private void GenerateRecommendationsSectionTable(RecommendationsSectionModel recommendationsSectionModel)
+        {
+            if (recommendationsSectionModel is null)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("                       <table class=\"inner\" width=\"\">");
+            this.StreamWriter.WriteLine("                           <tbody>");
+
+            if (recommendationsSectionModel.RecommendedMeasuresReconstructiveSurgery is not null)
+            {
+                this.GenerateRecommendationsSectionTableRow(
+                    "Рекомендуемые мероприятия по реконструктивной хирургии",
+                    recommendationsSectionModel.RecommendedMeasuresReconstructiveSurgery);
+            }
+            
+            if (recommendationsSectionModel.RecommendedMeasuresProstheticsAndOrthotics is not null)
+            {
+                this.GenerateRecommendationsSectionTableRow(
+                    "Рекомендуемые мероприятия по протезированию и ортезированию, техническим средствам реабилитации",
+                    recommendationsSectionModel.RecommendedMeasuresProstheticsAndOrthotics);
+            }
+            
+            if (recommendationsSectionModel.SpaTreatment is not null)
+            {
+                this.GenerateRecommendationsSectionTableRow(
+                    "Санаторно-курортное лечение",
+                    recommendationsSectionModel.SpaTreatment);
+            }
+
+            this.GenerateRecommendationsSectionMedicationTableRow(recommendationsSectionModel.Medications);
+
+            if (recommendationsSectionModel.MedicalDevices is not null)
+            {
+                this.GenerateRecommendationsSectionTableRow(
+                    "Перечень медицинских изделий для медицинского применения",
+                    recommendationsSectionModel.MedicalDevices);
+            }
+            
+            this.StreamWriter.WriteLine("                           </tbody>");
+            this.StreamWriter.WriteLine("                       </table>");
+        }
+
+        /// <summary>
+        /// Создает строку таблицы секции "Рекомендации".
+        /// </summary>
+        /// <param name="caption">Описание.</param>
+        /// <param name="value">Значение.</param>
+        private void GenerateRecommendationsSectionTableRow(string caption, string value)
+        {
+            this.StreamWriter.WriteLine("                               <tr>");
+            this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{caption}</td>");
+            this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{value}</td>");
+            this.StreamWriter.WriteLine("                               </tr>");
+        }
+
+        /// <summary>
+        /// Создает строку таблицы секции "Рекомендации" с перечнем лекарств.
+        /// </summary>
+        /// <param name="medications">Перечень лекарств.</param>
+        private void GenerateRecommendationsSectionMedicationTableRow(List<MedicationModel> medications)
+        {
+            if (medications is null || medications.Count == 0)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("                                   <td class=\"inner\" colspan=\"\">");
+            this.StreamWriter.WriteLine("Перечень лекарственных препаратов для медицинского применения (заполняется в отношении граждан, пострадавших в результате несчастных случаев на производстве и профессиональных заболеваний)");
+            this.StreamWriter.WriteLine("                                   </td>");
+            
+            this.StreamWriter.WriteLine("                                   <td class=\"inner\" colspan=\"\">");
+            foreach (var medication in medications)
+            {
+                this.StreamWriter.WriteLine($"{this.GenerateValueMedicationTableRow(medication)}");
+            }
+            this.StreamWriter.WriteLine("                                   </td>");
+        }
+
+        /// <summary>
+        /// Создает струку с информацией о лекарстве.
+        /// </summary>
+        /// <param name="medicationModel">Модель лекарства.</param>
+        /// <returns></returns>
+        private string GenerateValueMedicationTableRow(MedicationModel medicationModel)
+        {
+            return $"Международное название:<br/> {medicationModel.InternationalName} <br/> " +
+                   $"Лекарственная форма:<br/> {medicationModel.DosageForm} <br/> " +
+                   $"Лекарственная доза:<br/> {medicationModel.Dose} <br/> " +
+                   $"Код КТРУ:<br/> {medicationModel.KTRUCode} <br/> " +
+                   $"Продолжительность приема:<br/> {medicationModel.DurationAdmission} <br/> " +
+                   $"Кратность курсов лечения:<br/> {medicationModel.MultiplicityCoursesTreatment} <br/> " +
+                   $"Кратность приема: <br/> {medicationModel.ReceptionFrequency} <br/> <p/>";
+        }
+
+        /// <summary>
+        /// Создает подсекцию "Прочие рекомендации" секции "Рекомендации".
+        /// </summary>
+        /// <param name="otherRecommendatons">Текст поля "Прочие рекомендации".</param>
+        private void GenerateRecommendationsSectionOtherRecommendatons(string otherRecommendatons)
+        {
+            if (String.IsNullOrWhiteSpace(otherRecommendatons))
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("               <tr><td colspan=\"2\"><br/></td></tr>");
+            this.StreamWriter.WriteLine("               <tr><td><br/></td></tr>");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\">");
+            this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\" title=\"RECOTHER\">Прочие рекомендации</span>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+            this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Рекомендуемые мероприятия по медицинской реабилитации: </span>");
+            this.StreamWriter.WriteLine($"                       <br/>{otherRecommendatons}<br/>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               <tr><td colspan=\"2\"><br/></td></tr>");
+        }
+        
+        #endregion
+
+        #region Outside Special Medical Care Section
+
+        /// <summary>
+        /// Создает секцию "Посторонний специальный медицинский уход".
+        /// </summary>
+        /// <param name="outsideSpecialMedicalCareSectionModel">Модель секции "Посторонний специальный медицинский уход".</param>
+        private void GenerateOutsideSpecialMedicalCareSection(OutsideSpecialMedicalCareSectionModel outsideSpecialMedicalCareSectionModel)
+        {
+            if (outsideSpecialMedicalCareSectionModel is null)
+            {
+                return;
+            }
+            
+            this.GenerateSectionTitle("OUTSPECMEDCARE", "ПОСТОРОННИЙ СПЕЦИАЛЬНЫЙ МЕДИЦИНСКИЙ УХОД");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+            
+            this.StreamWriter.WriteLine($"{outsideSpecialMedicalCareSectionModel.Text} <p/>");
+            
+            this.StreamWriter.WriteLine("                   </td>");
             this.StreamWriter.WriteLine("                   </td>");
             this.StreamWriter.WriteLine("               </tr>");
         }
