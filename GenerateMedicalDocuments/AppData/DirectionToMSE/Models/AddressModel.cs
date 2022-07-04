@@ -24,7 +24,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// [1..1] Почтовый индекс.
         /// </summary>
-        public int PostalCode { get; set; }
+        public int? PostalCode { get; set; }
         /// <summary>
         /// [1..1] Кодирование адреса по ФИАС.
         /// [1..1] Глобальный уникальный идентификатор адресного объекта
@@ -34,6 +34,6 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// [1..1] Кодирование адреса по ФИАС.
         /// [1..1] Глобальный уникальный идентификатор дома.
         /// </summary>
-        public Guid HOUSEGUID { get; set; }
+        public Guid? HOUSEGUID { get; set; }
     }
 }

@@ -15,11 +15,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// [1..1] Серия документа.
         /// </summary>
-        public int Series { get; set; }
+        public string Series { get; set; }
         /// <summary>
         /// [1..1] Номер документа.
         /// </summary>
-        public int Number { get; set; }
+        public string Number { get; set; }
         /// <summary>
         /// [1..1] Кем выдан документ.
         /// </summary>
