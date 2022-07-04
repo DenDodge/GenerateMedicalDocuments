@@ -150,61 +150,6 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
     /// </summary>
     public class DegreeDisabilityModel
     {
-        /// <summary>
-        /// Секция 1\3 полный текст.
-        /// </summary>
-        public string Section31Text { get; set; } = null;
-
-        /// <summary>
-        /// Секция 1\3 дата до которой установлена степень утраты профессиональной трудоспособности.
-        /// </summary>
-        public DateTime? Section31DateTo { get; set; } = null;
-        /// <summary>
-        /// Секция 1\3 Срок.
-        /// </summary>
-        public string Section31Time { get; set; } = null;
-
-        /// <summary>
-        /// Секция 1\3 Процент.
-        /// </summary>
-        public int? Section31Percent { get; set; } = null;
-
-        /// <summary>
-        /// Секция 2\3.
-        /// </summary>
-        public string Section32Text { get; set; } = null;
-
-        /// <summary>
-        /// Секция 2\3 дата до которой установлена степень утраты профессиональной трудоспособности.
-        /// </summary>
-        public DateTime? Section32DateTo { get; set; } = null;
-        /// <summary>
-        /// Секция 2\3 Срок.
-        /// </summary>
-        public string Section32Time { get; set; } = null;
-
-        /// <summary>
-        /// Секция 2\3 Процент.
-        /// </summary>
-        public int? Section32Percent { get; set; } = null;
-
-        /// <summary>
-        /// Секция 3\3.
-        /// </summary>
-        public string Section33Text { get; set; } = null;
-
-        /// <summary>
-        /// Секция 3\3 дата до которой установлена степень утраты профессиональной трудоспособности.
-        /// </summary>
-        public DateTime? Section33DateTo { get; set; } = null;
-        /// <summary>
-        /// Секция 3\3 Срок.
-        /// </summary>
-        public string Section33Time { get; set; } = null;
-
-        /// <summary>
-        /// Секция 3\3 Процент.
-        /// </summary>
-        public int? Section33Percent { get; set; } = null;
+        public List<DegreeDisabilityElementModel> DegreeDisabilities { get; set; } = null;
     }
 }

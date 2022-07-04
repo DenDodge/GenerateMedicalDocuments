@@ -2945,13 +2945,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "Место работы и должность".</returns>
         private static XElement GenerateWorkLocationSectionElement(WorkplaceSectionModel workplaceSectionModel)
         {
-            if (workplaceSectionModel == null)
-            {
-                return null;
-            }
-            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
+            
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
+            if (workplaceSectionModel is null)
+            {
+                XAttribute nullFlavorSectionAttribute = new XAttribute("nullFlavor", "NA");
+                sectionElement.Add(nullFlavorSectionAttribute);
+                componentElement.Add(sectionElement);
+                return componentElement;
+            }
 
             XElement codeElement = new XElement(xmlnsNamespace + "code",
                 GetTypeElementAttributes(
@@ -3657,33 +3660,19 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 textElement.Add(NewLineElement);
             }
 
-            if (anamnezSectionModel.DegreeDisability != null)
+            if (anamnezSectionModel.DegreeDisability is not null 
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities is not null 
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities.Count != 0)
             {
                 XElement degreeDisabilityParagraphElement = new XElement(xmlnsNamespace + "paragraph");
 
                 XElement degreeDisabilityCaptionElement = new XElement(xmlnsNamespace + "caption", "Степень утраты профессиональной трудоспособности");
                 degreeDisabilityParagraphElement.Add(degreeDisabilityCaptionElement);
 
-                if (anamnezSectionModel.DegreeDisability.Section31Text != null)
+                foreach (var degreeDisability in anamnezSectionModel.DegreeDisability.DegreeDisabilities)
                 {
                     XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
-                        new XAttribute("ID", "socanam31"), anamnezSectionModel.DegreeDisability.Section31Text);
-                    degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
-                    degreeDisabilityParagraphElement.Add(NewLineElement);
-                }
-
-                if (anamnezSectionModel.DegreeDisability.Section32Text != null)
-                {
-                    XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
-                        new XAttribute("ID", "socanam32"), anamnezSectionModel.DegreeDisability.Section32Text);
-                    degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
-                    degreeDisabilityParagraphElement.Add(NewLineElement);
-                }
-
-                if (anamnezSectionModel.DegreeDisability.Section33Text != null)
-                {
-                    XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
-                        new XAttribute("ID", "socanam33"), anamnezSectionModel.DegreeDisability.Section33Text);
+                        new XAttribute("ID", degreeDisability.ID), degreeDisability.FullText);
                     degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
                     degreeDisabilityParagraphElement.Add(NewLineElement);
                 }
@@ -3921,40 +3910,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 temporaryDisabilitysEntryElement.Add(temporaryDisabilitysOrganizerElement);
                 entryElements.Add(temporaryDisabilitysEntryElement);
             }
-            if (anamnezSectionModel.DegreeDisability != null)
+            if (anamnezSectionModel.DegreeDisability is not null
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities is not null
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities.Count != 0)
             {
-                if (anamnezSectionModel.DegreeDisability.Section31Text != null &&
-                    anamnezSectionModel.DegreeDisability.Section31DateTo != null &&
-                    anamnezSectionModel.DegreeDisability.Section31Time != null &&
-                    anamnezSectionModel.DegreeDisability.Section31Percent != null)
+                foreach (var degreeDisability in anamnezSectionModel.DegreeDisability.DegreeDisabilities)
                 {
                     entryElements.Add(GenerateDegreeDisabilityElement(
-                        anamnezSectionModel.DegreeDisability.Section31DateTo, 
-                        anamnezSectionModel.DegreeDisability.Section31Time, 
-                        anamnezSectionModel.DegreeDisability.Section31Percent,
-                        "socanam31"));
-                }
-                if (anamnezSectionModel.DegreeDisability.Section32Text != null &&
-                    anamnezSectionModel.DegreeDisability.Section32DateTo != null &&
-                    anamnezSectionModel.DegreeDisability.Section32Time != null &&
-                    anamnezSectionModel.DegreeDisability.Section32Percent != null)
-                {
-                    entryElements.Add(GenerateDegreeDisabilityElement(
-                        anamnezSectionModel.DegreeDisability.Section32DateTo,
-                        anamnezSectionModel.DegreeDisability.Section32Time,
-                        anamnezSectionModel.DegreeDisability.Section32Percent,
-                        "socanam32"));
-                }
-                if (anamnezSectionModel.DegreeDisability.Section33Text != null &&
-                    anamnezSectionModel.DegreeDisability.Section33DateTo != null &&
-                    anamnezSectionModel.DegreeDisability.Section33Time != null &&
-                    anamnezSectionModel.DegreeDisability.Section33Percent != null)
-                {
-                    entryElements.Add(GenerateDegreeDisabilityElement(
-                        anamnezSectionModel.DegreeDisability.Section33DateTo,
-                        anamnezSectionModel.DegreeDisability.Section33Time,
-                        anamnezSectionModel.DegreeDisability.Section33Percent,
-                        "socanam33"));
+                        degreeDisability.DateTo,
+                        degreeDisability.Term,
+                        degreeDisability.Percent,
+                        degreeDisability.ID));
                 }
             }
             if (anamnezSectionModel.Disability != null)
