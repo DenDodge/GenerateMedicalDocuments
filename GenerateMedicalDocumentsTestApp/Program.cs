@@ -5,10 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text.Encodings.Web;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Newtonsoft.Json;
-using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GenerateMedicalDocumentsTestApp
 {
@@ -20,10 +17,16 @@ namespace GenerateMedicalDocumentsTestApp
             //var documentModel = await GetDocumentModelOnJson();
 
             DirectionToMSE directionToMSE = new DirectionToMSE();
-            var xmlDocument = directionToMSE.GetDirectionTOMSEDocumentXML(documentModel);
-            directionToMSE.SaveDocument(xmlDocument, "testDocument.xml");
+            // var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
+            // directionToMSE.SaveDocument(xmlDocument, "xmlDocument.xml");
+
+            directionToMSE.CreationHTMLDocument(documentModel, "htmlDocument.html");
         }
 
+        /// <summary>
+        /// Получение тестовых данных документа.
+        /// </summary>
+        /// <returns>Тестовые данные документа.</returns>
         private static async Task<DirectionToMSEDocumentModel> GetDocumentModel()
         {
             DirectionToMSEDocumentModel documentModel = new DirectionToMSEDocumentModel();
