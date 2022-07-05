@@ -25,6 +25,11 @@ namespace GenerateMedicalDocuments
             return document;
         }
 
+        /// <summary>
+        /// Генерирует HTML документ и созраняет файл по указанному пути.
+        /// </summary>
+        /// <param name="documentModel">Модель документа.</param>
+        /// <param name="savePatch">Путь для сохранения HTML файла.</param>
         public void CreationHTMLDocument(DirectionToMSEDocumentModel documentModel, string savePatch)
         {
             if (documentModel == null)
