@@ -14,7 +14,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
         #endregion
 
-        #region Construector
+        #region Constructor
 
         public CreatingHTMLDocumentHelper(string saveFilePatch)
         {
@@ -42,6 +42,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         private void GenerateHtmlTag(DirectionToMSEDocumentModel documentModel)
         {
+            if (documentModel is null)
+            {
+                return;
+            }
+            
             this.OpenHtmlTag();
             this.GenerateHeadTag(documentModel.CreateDate);
             this.GenerateBodyTag(documentModel);
@@ -194,11 +199,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         private void GenerateBodyTag(DirectionToMSEDocumentModel documentModel)
         {
+            if (documentModel is null)
+            {
+                return;
+            }
+            
             this.StreamWriter.WriteLine("   <body>"); // 1 tab.
             this.GenerateMedicalOrginazationTable(documentModel.RecordTarget.PatientRole.ProviderOrganization);
             this.StreamWriter.WriteLine($"      <h2>Направление на медико-социальную экспертизу от {documentModel.CreateDate.ToString("dd MMMM yyyy")}</h2>"); // 2 tabs.
             this.GeneratePatientInfoTable(documentModel.RecordTarget.PatientRole, documentModel.Participant.ScopingOrganization.Name);
-            this.GenerateSectionsTable(documentModel.DocumentBody);
+            this.GenerateSectionsTable(documentModel);
             this.StreamWriter.WriteLine("   </body>");
         }
 
@@ -241,15 +251,60 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="organizationModel">Модель организации.</param>
         private void GenerateMedicalOrginazationTableData(OrganizationModel organizationModel)
         {
-            string organizationAddress = $"{organizationModel.Address.PostalCode}, {organizationModel.Address.StreetAddressLine}";
-            string organizationLicense = $"{organizationModel.License.Number}, {organizationModel.License.AssigningAuthorityName}";
+            if (organizationModel is null)
+            {
+                return;
+            }
+            
+            string organizationAddress = String.Empty;
+            string organizationLicense = String.Empty;
+
+            if (organizationModel.Address is not null)
+            {
+                if (organizationModel.Address.PostalCode is not null)
+                {
+                    organizationAddress += organizationModel.Address.PostalCode + ", ";
+                }
+
+                if (organizationModel.Address.StreetAddressLine is not null)
+                {
+                    organizationAddress += organizationModel.Address.StreetAddressLine;
+                }
+            }
+
+            if (organizationModel.License is not null)
+            {
+                if (organizationModel.License.Number is not null)
+                {
+                    organizationLicense += organizationModel.License.Number + ", ";
+                }
+
+                if (organizationModel.License.AssigningAuthorityName is not null)
+                {
+                    organizationLicense += organizationModel.License.AssigningAuthorityName;
+                }
+            }
+
             string contacts = this.GetContactsString(organizationModel.Contacts);
             
             this.StreamWriter.WriteLine("               <td class=\"outer\">"); // 4 tabs.
             this.StreamWriter.WriteLine($"                   <strong>Название медицинской организации: </strong> {organizationModel.Name} <br/>"); // 5 tabs.
-            this.StreamWriter.WriteLine($"                   <strong>Адрес: </strong> {organizationAddress} <br/>");
-            this.StreamWriter.WriteLine($"                   <strong>Лицензия: </strong> {organizationLicense} <br/>");
-            this.StreamWriter.WriteLine($"                   <strong>Контакты: </strong> {contacts} <br/>");
+            
+            if (!String.IsNullOrEmpty(organizationAddress))
+            {
+                this.StreamWriter.WriteLine($"                   <strong>Адрес: </strong> {organizationAddress} <br/>");
+            }
+
+            if (!String.IsNullOrEmpty(organizationLicense))
+            {
+                this.StreamWriter.WriteLine($"                   <strong>Лицензия: </strong> {organizationLicense} <br/>");
+            }
+
+            if (!String.IsNullOrEmpty(contacts))
+            {
+                this.StreamWriter.WriteLine($"                   <strong>Контакты: </strong> {contacts} <br/>");
+            }
+            
             this.StreamWriter.WriteLine("               </td>");
         }
 
@@ -303,7 +358,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             
             this.GeneratePatientInfoTableHead("Контактная информация:");
             var contacts = patientModel.Contacts;
-            contacts.Add(patientModel.ContactPhoneNumber);
+            if (patientModel.ContactPhoneNumber is not null)
+            {
+                contacts.Add(patientModel.ContactPhoneNumber);
+            }
             this.GeneratePatientInfoTableDataContactInfo(patientModel.PermanentAddress, patientModel.ActualAddress, contacts);
         }
 
@@ -332,8 +390,25 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 return;
             }
             
+            string nameString = String.Empty;
+
+            if (nameModel.Family is not null)
+            {
+                nameString += nameModel.Family + " ";
+            }
+
+            if (nameModel.Given is not null)
+            {
+                nameString += nameModel.Given + " ";
+            }
+            
+            if (nameModel.Patronymic is not null)
+            {
+                nameString += nameModel.Patronymic;
+            }
+            
             this.StreamWriter.WriteLine("               <td class=\"outer\">"); // 4 tabs.
-            this.StreamWriter.WriteLine($"                   <b>{nameModel.Family} {nameModel.Given} {nameModel.Patronymic}</b>"); // 5 tabs.
+            this.StreamWriter.WriteLine($"                   <b>{nameString}</b>"); // 5 tabs.
             this.StreamWriter.WriteLine("               </td>");
             
             this.ClosePatientInfoTableRowTag();
@@ -345,15 +420,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="gender">Пол пациента.</param>
         private void GeneratePatientInfoTableDataGender(string gender)
         {
-            if (String.IsNullOrWhiteSpace(gender))
+            if (!String.IsNullOrWhiteSpace(gender))
             {
-                return;
+                this.StreamWriter.Write("               <td class=\"outer\">"); // 4 tabs.
+                this.StreamWriter.Write(gender); // 5 tabs.
+                this.StreamWriter.WriteLine("</td>");
             }
-            
-            this.StreamWriter.Write("               <td class=\"outer\">"); // 4 tabs.
-            this.StreamWriter.Write(gender); // 5 tabs.
-            this.StreamWriter.WriteLine("</td>");
-            
+
             this.ClosePatientInfoTableRowTag();
         }
 
@@ -363,7 +436,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="birthday">Дата рождения.</param>
         private void GeneratePatientInfoTableDataBirtday(DateTime birthday)
         {
-            var age = GetPatientAge(birthday);
+            var age = this.GetPatientAge(birthday);
             
             this.StreamWriter.Write("               <td class=\"outer\">"); // 4 tabs.
             this.StreamWriter.Write($"{birthday.ToString("dd.MM.yyyy")} ({age})");
@@ -380,18 +453,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="scopingOrganizationName">Наименование страховой организации.</param>
         private void GeneratePatientInfoTableDataIdentity(string snils, InsurancePolicyModel insurancePolicyModel, string scopingOrganizationName)
         {
-            if (String.IsNullOrWhiteSpace(snils) || insurancePolicyModel is null)
+            if (!String.IsNullOrWhiteSpace(snils) || insurancePolicyModel is not null)
             {
-                return;
+                this.StreamWriter.WriteLine("               <td class=\"outer\">"); // 4 tabs.
+                this.StreamWriter.WriteLine($"                  <strong>СНИЛС: </strong> {snils} <br/>"); // 5 tabs.
+                this.StreamWriter.WriteLine("                   <strong>Полис ОМС: </strong><br/>");
+                this.StreamWriter.WriteLine($"                  <strong>(Серия) </strong> {insurancePolicyModel.Series} <strong>" +
+                                            $"(Номер) </strong> {insurancePolicyModel.Number} ({scopingOrganizationName})");
+                this.StreamWriter.WriteLine("               </td>");
             }
-            
-            this.StreamWriter.WriteLine("               <td class=\"outer\">"); // 4 tabs.
-            this.StreamWriter.WriteLine($"                  <strong>СНИЛС: </strong> {snils} <br/>"); // 5 tabs.
-            this.StreamWriter.WriteLine("                   <strong>Полис ОМС: </strong><br/>");
-            this.StreamWriter.WriteLine($"                  <strong>(Серия) </strong> {insurancePolicyModel.Series} <strong>" +
-                                        $"(Номер) </strong> {insurancePolicyModel.Number} ({scopingOrganizationName})");
-            this.StreamWriter.WriteLine("               </td>");
-            
+
             this.ClosePatientInfoTableRowTag();
         }
 
@@ -408,10 +479,26 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             
             this.StreamWriter.WriteLine("               <td class=\"outer\">"); // 4 tabs.
             this.StreamWriter.WriteLine("                   <strong>Паспорт гражданина Российской Федерации:</strong>"); // 5 tabs.
-            this.StreamWriter.Write($"                  <br/>Серия документа: {documentModel.Series}");
-            this.StreamWriter.Write($"<br/>Номер документа: {documentModel.Number}");
-            this.StreamWriter.Write($"<br/>Кем выдан документ: {documentModel.IssueOrgName}");
-            this.StreamWriter.Write($"<br/>Код подразделения: {documentModel.IssueOrgCode}");
+            if (documentModel.Series is not null)
+            {
+                this.StreamWriter.Write($"                  <br/>Серия документа: {documentModel.Series}");
+            }
+
+            if (documentModel.Number is not null)
+            {
+                this.StreamWriter.Write($"<br/>Номер документа: {documentModel.Number}");
+            }
+
+            if (documentModel.IssueOrgName is not null)
+            {
+                this.StreamWriter.Write($"<br/>Кем выдан документ: {documentModel.IssueOrgName}");
+            }
+
+            if (documentModel.IssueOrgCode is not null)
+            {
+                this.StreamWriter.Write($"<br/>Код подразделения: {documentModel.IssueOrgCode}");
+            }
+
             this.StreamWriter.WriteLine($"<br/>Дата выдачи: {documentModel.IssueDate.ToString("dd.MM.yyyy")}");
             this.StreamWriter.WriteLine("               </td>");
             
@@ -443,7 +530,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 this.GeneratePatientInfoTableDataContactInfoAddress(actualAddressModel);
             }
 
-            if (contacts is not null || contacts.Count != 0)
+            if (contacts is not null && contacts.Count != 0)
             {
                 this.StreamWriter.WriteLine("                   <strong>Контакты:</strong>"); // 5 tabs.
                 var contactsStr = this.GetContactsString(contacts);
@@ -461,9 +548,35 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="addressModel">Модель адреса.</param>
         private void GeneratePatientInfoTableDataContactInfoAddress(AddressModel addressModel)
         {
-            this.StreamWriter.Write($"                  <br/>{addressModel.PostalCode}, {addressModel.StreetAddressLine};"); // 5 tabs.
-            this.StreamWriter.Write($"<strong> Код субъекта РФ: </strong> {addressModel.StateCode.Code}");
-            this.StreamWriter.WriteLine($"<text> ( </text> {addressModel.StateCode.DisplayName} <text> ) </text> <br/>");
+            if (addressModel is not null)
+            {
+                string addressString = String.Empty;
+                
+                if (addressModel.PostalCode is not null)
+                {
+                    addressString += addressModel.PostalCode + ", ";
+                }
+
+                if (addressModel.StreetAddressLine is not null)
+                {
+                    addressString += addressModel.StreetAddressLine;
+                }
+
+                if (!String.IsNullOrEmpty(addressString))
+                {
+                    this.StreamWriter.Write($"                  <br/>{addressString}"); // 5 tabs.
+                }
+
+                if (addressModel.StateCode.Code is not null)
+                {
+                    this.StreamWriter.Write($"<strong> Код субъекта РФ: </strong> {addressModel.StateCode.Code}");
+                }
+
+                if (addressModel.StateCode.DisplayName is not null)
+                {
+                    this.StreamWriter.WriteLine($"<text> ( </text> {addressModel.StateCode.DisplayName} <text> ) </text> <br/>");
+                }
+            }
         }
         
         #endregion
@@ -484,7 +597,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <summary>
         /// Получить склонение возраста.
         /// </summary>
-        /// <param name="num">Возраст.</param>
+        /// <param name="age">Возраст.</param>
         /// <returns>Склонение возраста.</returns>
         private string GetAgeDeclination(int age)
         {
@@ -561,8 +674,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// Создает секцию "Секции".
         /// </summary>
         /// <param name="documentBodyModel">Модель тела документа.</param>
-        private void GenerateSectionsTable(DocumentBodyModel documentBodyModel)
+        private void GenerateSectionsTable(DirectionToMSEDocumentModel documentModel)
         {
+            if (documentModel is null)
+            {
+                return;
+            }
+            var documentBodyModel = documentModel.DocumentBody;
             if (documentBodyModel is null)
             {
                 return;
@@ -582,9 +700,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.GenerateConditionAssessmentSection(documentBodyModel.ConditionAssessmentSection);
             this.GenerateRecommendationsSection(documentBodyModel.RecommendationsSection);
             this.GenerateOutsideSpecialMedicalCareSection(documentBodyModel.OutsideSpecialMedicalCareSection);
+            this.GenerateAttachmentDocumentsSection(documentBodyModel.AttachmentDocumentsSection);
             
             this.StreamWriter.WriteLine("           </tbody>");
             this.StreamWriter.WriteLine("       </table>");
+            this.StreamWriter.WriteLine("       <br/>");
+            this.StreamWriter.WriteLine("       <hr/>");
+
+            this.GeneratePerformersSection(documentModel.ServiceEvent.Performer,
+                documentModel.ServiceEvent.OtherPerformers);
+            this.GenerateAuthorAndLegalAuthenticatorSection(documentModel.Author, documentModel.LegalAuthenticator);
         }
         
         #region Sent section
@@ -709,28 +834,34 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             if (anamnezSectionModel.Disability is not null)
             {
                 this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Инвалидность: </span><br/>");
-                this.StreamWriter.WriteLine($"{anamnezSectionModel.Disability.GroupText}<br/>");
-                this.StreamWriter.WriteLine($"Находился на инвалидности на момент направления: {anamnezSectionModel.Disability.TimeDisability}<br/>");
+                
+                if (anamnezSectionModel.Disability.GroupText is not null)
+                {
+                    this.StreamWriter.WriteLine($"{anamnezSectionModel.Disability.GroupText}<br/>");
+                }
+
+                if (anamnezSectionModel.Disability.TimeDisability is not null)
+                {
+                    this.StreamWriter.WriteLine($"Находился на инвалидности на момент направления: {anamnezSectionModel.Disability.TimeDisability}<br/>");
+                }
+                
                 this.StreamWriter.WriteLine("                       <p/>");
             }
 
-            if (anamnezSectionModel.DegreeDisability is not null)
+            if (anamnezSectionModel.DegreeDisability is not null
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities is not null
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities.Count != 0)
             {
                 this.StreamWriter.WriteLine("                       <span style=\"font-weight:bold;\">Степень утраты профессиональной трудоспособности: </span><br/>");
-                if (anamnezSectionModel.DegreeDisability.Section31Text is not null)
-                {
-                    this.StreamWriter.WriteLine($"{anamnezSectionModel.DegreeDisability.Section31Text}<br/>");
-                }
 
-                if (anamnezSectionModel.DegreeDisability.Section32Text is not null)
+                foreach (var degreeDisability in anamnezSectionModel.DegreeDisability.DegreeDisabilities)
                 {
-                    this.StreamWriter.WriteLine($"{anamnezSectionModel.DegreeDisability.Section32Text}<br/>");
+                    if (degreeDisability.FullText is not null)
+                    {
+                        this.StreamWriter.WriteLine($"{degreeDisability.FullText}<br/>");
+                    }
                 }
-
-                if (anamnezSectionModel.DegreeDisability.Section33Text is not null)
-                {
-                    this.StreamWriter.WriteLine($"{anamnezSectionModel.DegreeDisability.Section33Text}<br/>");
-                }
+                
                 this.StreamWriter.WriteLine("                       <p/>");
             }
             
@@ -823,8 +954,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.StreamWriter.WriteLine("                               <tr>");
             this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DateStart.ToString("dd.MM.yyyy")}</th>");
             this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DateFinish.ToString("dd.MM.yyyy")}</th>");
-            this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DayCount}</th>");
-            this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.CipherMKB}</th>");
+            
+            if (temporaryDisabilitys.DayCount is not null)
+            {
+                this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DayCount}</th>");
+            }
+
+            if (temporaryDisabilitys.CipherMKB is not null)
+            {
+                this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.CipherMKB}</th>");
+            }
+            
             this.StreamWriter.WriteLine("                               </tr>");
         }
         
@@ -882,8 +1022,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             }
 
             this.StreamWriter.WriteLine("                                   <td class=\"inner\" colspan=\"\">Телосложение</td>");
-            this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{vitalParametersSectionModel.BodyType}</td>");
             
+            if (vitalParametersSectionModel.BodyType is not null)
+            {
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{vitalParametersSectionModel.BodyType}</td>");
+            }
+
             this.StreamWriter.WriteLine("                           </tbody>");
             this.StreamWriter.WriteLine("                       </table>");
         }
@@ -900,8 +1044,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             }
             
             this.StreamWriter.WriteLine("                               <tr>");
-            this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{vitalParameterModel.EntryDisplayName}</td>");
-            this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{vitalParameterModel.Value} {vitalParameterModel.Unit}</td>");
+            
+            if (vitalParameterModel.EntryDisplayName is not null)
+            {
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{vitalParameterModel.EntryDisplayName}</td>");
+            }
+
+            if (vitalParameterModel.Value is not null && vitalParameterModel.Unit is not null)
+            {
+                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{vitalParameterModel.Value} {vitalParameterModel.Unit}</td>");
+            }
+            
             this.StreamWriter.WriteLine("                               </tr>");
         }
 
@@ -1005,9 +1158,22 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 this.StreamWriter.WriteLine("                               <tr>");
                 this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Date.ToString("dd.MM.yyyy")}</td>");
-                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Number}</td>");
-                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Name}</td>");
-                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Result}</td>");
+                
+                if (medicalExamination.Number is not null)
+                {
+                    this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Number}</td>");
+                }
+
+                if (medicalExamination.Name is not null)
+                {
+                    this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Name}</td>");
+                }
+
+                if (medicalExamination.Result is not null)
+                {
+                    this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{medicalExamination.Result}</td>");
+                }
+                
                 this.StreamWriter.WriteLine("                               </tr>");
             }
         }
@@ -1076,9 +1242,21 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             foreach (var diagnostic in diagnostics)
             {
                 this.StreamWriter.WriteLine("                               <tr>");
-                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{diagnostic.ID}</td>");
-                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{diagnostic.Caption}</td>");
-                this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{diagnostic.Result}</td>");
+                if (diagnostic.ID is not null)
+                {
+                    this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{diagnostic.ID}</td>");
+                }
+
+                if (diagnostic.Caption is not null)
+                {
+                    this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{diagnostic.Caption}</td>");
+                }
+
+                if (diagnostic.Result is not null)
+                {
+                    this.StreamWriter.WriteLine($"                                   <td class=\"inner\" colspan=\"\">{diagnostic.Result}</td>");
+                }
+                
                 this.StreamWriter.WriteLine("                               </tr>");
             }
         }
@@ -1167,8 +1345,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         private void GenerateConditionAssessmentSectionTableRow(string type, string result)
         {
             this.StreamWriter.WriteLine("                               <tr>");
-            this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{type}</td>");
-            this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{result}</td>");
+            if (type is not null)
+            {
+                this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{type}</td>");
+            }
+
+            if (result is not null)
+            {
+                this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{result}</td>");
+            }
+            
             this.StreamWriter.WriteLine("                               </tr>");
         }
 
@@ -1260,8 +1446,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         private void GenerateRecommendationsSectionTableRow(string caption, string value)
         {
             this.StreamWriter.WriteLine("                               <tr>");
-            this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{caption}</td>");
-            this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{value}</td>");
+            if (caption is not null)
+            {
+                this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{caption}</td>");
+            }
+
+            if (value is not null)
+            {
+                this.StreamWriter.WriteLine($"                                  <td class=\"inner\" colspan=\"\">{value}</td>");
+            }
+
             this.StreamWriter.WriteLine("                               </tr>");
         }
 
@@ -1295,13 +1489,46 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns></returns>
         private string GenerateValueMedicationTableRow(MedicationModel medicationModel)
         {
-            return $"Международное название:<br/> {medicationModel.InternationalName} <br/> " +
-                   $"Лекарственная форма:<br/> {medicationModel.DosageForm} <br/> " +
-                   $"Лекарственная доза:<br/> {medicationModel.Dose} <br/> " +
-                   $"Код КТРУ:<br/> {medicationModel.KTRUCode} <br/> " +
-                   $"Продолжительность приема:<br/> {medicationModel.DurationAdmission} <br/> " +
-                   $"Кратность курсов лечения:<br/> {medicationModel.MultiplicityCoursesTreatment} <br/> " +
-                   $"Кратность приема: <br/> {medicationModel.ReceptionFrequency} <br/> <p/>";
+            string resultString = String.Empty;
+            
+            if (medicationModel.InternationalName is not null)
+            {
+                resultString += $"Международное название:<br/> {medicationModel.InternationalName} <br/> ";
+            }
+
+            if (medicationModel.InternationalName is not null)
+            {
+                resultString += $"Лекарственная форма:<br/> {medicationModel.DosageForm} <br/> ";
+            }
+
+            if (medicationModel.Dose is not null)
+            {
+                resultString += $"Лекарственная доза:<br/> {medicationModel.Dose} <br/> ";
+            }
+
+            if (medicationModel.KTRUCode is not null)
+            {
+                resultString += $"Код КТРУ:<br/> {medicationModel.KTRUCode} <br/> ";
+            }
+
+            if (medicationModel.DurationAdmission is not null)
+            {
+                resultString += $"Продолжительность приема:<br/> {medicationModel.DurationAdmission} <br/> ";
+            }
+
+            if (medicationModel.MultiplicityCoursesTreatment is not null)
+            {
+                resultString += $"Кратность курсов лечения:<br/> {medicationModel.MultiplicityCoursesTreatment} <br/> ";
+            }
+
+            if (medicationModel.ReceptionFrequency is not null)
+            {
+                resultString += $"Кратность приема: <br/> {medicationModel.ReceptionFrequency} <br/> ";
+            }
+
+            resultString += "<p/>";
+
+            return resultString;
         }
 
         /// <summary>
@@ -1339,7 +1566,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="outsideSpecialMedicalCareSectionModel">Модель секции "Посторонний специальный медицинский уход".</param>
         private void GenerateOutsideSpecialMedicalCareSection(OutsideSpecialMedicalCareSectionModel outsideSpecialMedicalCareSectionModel)
         {
-            if (outsideSpecialMedicalCareSectionModel is null)
+            if (outsideSpecialMedicalCareSectionModel is null
+                || String.IsNullOrWhiteSpace(outsideSpecialMedicalCareSectionModel.Text))
             {
                 return;
             }
@@ -1358,6 +1586,293 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         #endregion
+
+        #region Attachment documents
+
+        /// <summary>
+        /// Создает секцию прикрепленых документов обследования.
+        /// </summary>
+        /// <param name="attachmentDocumentsSectionModel">Модель секции прикрепленных документов обследования.</param>
+        private void GenerateAttachmentDocumentsSection(AttachmentDocumentsSectionModel attachmentDocumentsSectionModel)
+        {
+            if (attachmentDocumentsSectionModel is null
+                || attachmentDocumentsSectionModel.AttachmentDocuments is null
+                || attachmentDocumentsSectionModel.AttachmentDocuments.Count == 0)
+            {
+                return;
+            }
+            
+            this.GenerateSectionTitle("LINKDOCS", "Связанные документы");
+            
+            this.StreamWriter.WriteLine("               <tr>");
+            this.StreamWriter.WriteLine("                   <td class=\"SubSectionTitle\" />");
+            this.StreamWriter.WriteLine("                   <td class=\"Rest\">");
+            
+            this.StreamWriter.WriteLine("                       <table class=\"inner\" width=\"\">");
+            this.StreamWriter.WriteLine("                           <tbody>");
+            foreach (var attachmentDocument in attachmentDocumentsSectionModel.AttachmentDocuments)
+            {
+                this.StreamWriter.WriteLine("                               <tr>");
+                
+                if (attachmentDocument.Name is not null)
+                {
+                    this.StreamWriter.WriteLine($"                                   <th class=\"inner\">{attachmentDocument.Name}</th>");
+                }
+
+                if (attachmentDocument.Result is not null)
+                {
+                    this.StreamWriter.WriteLine($"                                   <th class=\"inner\">{attachmentDocument.Result}</th>");
+                }
+
+                this.StreamWriter.WriteLine("                               </tr>");
+            }
+            this.StreamWriter.WriteLine("                           </tbody>");
+            this.StreamWriter.WriteLine("                       </table>");
+            
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("                   </td>");
+            this.StreamWriter.WriteLine("               </tr>");
+        }
+
+        #endregion
+
+        #region Performers
+
+        /// <summary>
+        /// Создает секцию "Участники врачебной комисии".
+        /// </summary>
+        /// <param name="performer">Модель председателя врачебной комисии.</param>
+        /// <param name="otherPerformers">Список моделей участников врачебной комисии.</param>
+        private void GeneratePerformersSection(PerformerModel performer, List<PerformerModel> otherPerformers)
+        {
+            this.StreamWriter.WriteLine("       <table class=\"outer\" width=\"100%\">");
+            this.StreamWriter.WriteLine("           <col width=\"40%\"/>");
+            this.StreamWriter.WriteLine("           <col width=\"60%\"/>");
+
+            this.GeneratePerformerSection(performer);
+
+            this.GenerateOtherPerformersSection(otherPerformers);
+            
+            this.StreamWriter.WriteLine("       </table>");
+        }
+
+        /// <summary>
+        /// Генерирует разметку для председателя комиссии.
+        /// </summary>
+        /// <param name="performerModel">Модель председателя комисии.</param>
+        private void GeneratePerformerSection(PerformerModel performerModel)
+        {
+            if (performerModel is null)
+            {
+                return;
+            }
+
+            string nameString = String.Empty;
+
+            if (performerModel.Position is not null)
+            {
+                if (performerModel.Position.DisplayName is not null)
+                {
+                    nameString += performerModel.Position.DisplayName + " ";
+                }
+            }
+
+            if (performerModel.Name is not null)
+            {
+                if (performerModel.Name.Family is not null)
+                {
+                    nameString += performerModel.Name.Family + " ";
+                }
+                if (performerModel.Name.Given is not null)
+                {
+                    nameString += performerModel.Name.Given + " ";
+                }
+                if (performerModel.Name.Patronymic is not null)
+                {
+                    nameString += performerModel.Name.Patronymic + " ";
+                }
+            }
+            
+            this.StreamWriter.WriteLine("           <tr class=\"outer\">");
+            this.StreamWriter.WriteLine("               <th class=\"outer\" width=\"20%\">Председатель комиссии:</th>");
+            this.StreamWriter.WriteLine($"               <td class=\"outer\">{nameString}<br/>");
+            this.StreamWriter.WriteLine("           </tr>");
+        }
+
+        /// <summary>
+        /// Генерирует разметку для других участников комисии.
+        /// </summary>
+        /// <param name="otherPerformers">Список моделей участников комисии.</param>
+        private void GenerateOtherPerformersSection(List<PerformerModel> otherPerformers)
+        {
+            if (otherPerformers is null
+                || otherPerformers.Count == 0)
+            {
+                return;
+            }
+            
+            this.StreamWriter.WriteLine("           <tr class=\"outer\">");
+            this.StreamWriter.WriteLine("               <th class=\"outer\" width=\"20%\">Члены врачебной комиссии:</th>");
+            
+            foreach (var performer in otherPerformers)
+            {
+                string nameString = String.Empty;
+                
+                if (performer.Position is not null)
+                {
+                    if (performer.Position.DisplayName is not null)
+                    {
+                        nameString += performer.Position.DisplayName + " ";
+                    }
+                }
+
+                if (performer.Name is not null)
+                {
+                    if (performer.Name.Family is not null)
+                    {
+                        nameString += performer.Name.Family + " ";
+                    }
+                    if (performer.Name.Given is not null)
+                    {
+                        nameString += performer.Name.Given + " ";
+                    }
+                    if (performer.Name.Patronymic is not null)
+                    {
+                        nameString += performer.Name.Patronymic + " ";
+                    }
+                }
+
+                this.StreamWriter.WriteLine($"               <td class=\"outer\"><strong>- </strong>{nameString}<br/>");
+            }
+            
+            this.StreamWriter.WriteLine("           </tr>");
+        }
+
+        #endregion
+
+        #region Author and Legal authenticator
+
+        /// <summary>
+        /// Создает секции "Автор и лицо, придавшее юридическую силу документу".
+        /// </summary>
+        /// <param name="author">Модель автора доумента.</param>
+        /// <param name="legalAuthenticatorModel">Модель лица, придавшего юридическую силу документу.</param>
+        private void GenerateAuthorAndLegalAuthenticatorSection(
+            AuthorDataModel author,
+            LegalAuthenticatorModel legalAuthenticatorModel)
+        {
+            if (author is null || legalAuthenticatorModel is null)
+            {
+                return;
+            }
+            this.StreamWriter.WriteLine("       <br/>");
+            this.StreamWriter.WriteLine("       <hr/>");
+            this.StreamWriter.WriteLine("       <table class=\"outer\" width=\"100%\">");
+            this.StreamWriter.WriteLine("           <col width=\"40%\"/>");
+            this.StreamWriter.WriteLine("           <col width=\"60%\"/>");
+
+            this.GenerateAutorSection(author);
+            this.GenerateLegalAuthenticator(legalAuthenticatorModel);
+            
+            this.StreamWriter.WriteLine("       </table>");
+        }
+
+        /// <summary>
+        /// Создает разметку для автора документа.
+        /// </summary>
+        /// <param name="authorDataModel">Модель автора документа.</param>
+        private void GenerateAutorSection(AuthorDataModel authorDataModel)
+        {
+            if (authorDataModel is null)
+            {
+                return;
+            }
+
+            string nameString = String.Empty;
+            if (authorDataModel.Author.Position is not null)
+            {
+                if (authorDataModel.Author.Position.DisplayName is not null)
+                {
+                    nameString += authorDataModel.Author.Position.DisplayName + " ";
+                }
+            }
+            
+            if (authorDataModel.Author.Name is not null)
+            {
+                if (authorDataModel.Author.Name.Family is not null)
+                {
+                    nameString += authorDataModel.Author.Name.Family + " ";
+                }
+                if (authorDataModel.Author.Name.Given is not null)
+                {
+                    nameString += authorDataModel.Author.Name.Given + " ";
+                }
+                if (authorDataModel.Author.Name.Patronymic is not null)
+                {
+                    nameString += authorDataModel.Author.Name.Patronymic + " ";
+                }
+            }
+            
+            var authorContacts = authorDataModel.Author.Contacts;
+            authorContacts.Add(authorDataModel.Author.ContactPhoneNumber);
+
+            string authorString = "<strong>Должность, ФИО: </strong> " +
+                                  $"<br/> {nameString} <br/> " +
+                                  "<strong>Контакты: </strong>" +
+                                  $"{this.GetContactsString(authorContacts)}";
+            
+            this.StreamWriter.WriteLine("           <tr class=\"outer\">");
+            this.StreamWriter.WriteLine("               <th class=\"outer\" width=\"20%\">Документ составил:</th>");
+            this.StreamWriter.WriteLine($"               <td class=\"outer\">{authorString}<br/>");
+            this.StreamWriter.WriteLine("           </tr>");
+        }
+
+        /// <summary>
+        /// Создает разметку для лица, придавшего юридическую силу документу.
+        /// </summary>
+        /// <param name="legalAuthenticatorModel">Модель лица, придавшего юридическую силу документу.</param>
+        private void GenerateLegalAuthenticator(LegalAuthenticatorModel legalAuthenticatorModel)
+        {
+            string nameString = String.Empty;
+            if (legalAuthenticatorModel.AssignedEntity.Position is not null)
+            {
+                if (legalAuthenticatorModel.AssignedEntity.Position.DisplayName is not null)
+                {
+                    nameString += legalAuthenticatorModel.AssignedEntity.Position.DisplayName + " ";
+                }
+            }
+            
+            if (legalAuthenticatorModel.AssignedEntity.Name is not null)
+            {
+                if (legalAuthenticatorModel.AssignedEntity.Name.Family is not null)
+                {
+                    nameString += legalAuthenticatorModel.AssignedEntity.Name.Family + " ";
+                }
+                if (legalAuthenticatorModel.AssignedEntity.Name.Given is not null)
+                {
+                    nameString += legalAuthenticatorModel.AssignedEntity.Name.Given + " ";
+                }
+                if (legalAuthenticatorModel.AssignedEntity.Name.Patronymic is not null)
+                {
+                    nameString += legalAuthenticatorModel.AssignedEntity.Name.Patronymic + " ";
+                }
+            }
+            
+            var authorContacts = legalAuthenticatorModel.AssignedEntity.Contacts;
+            authorContacts.Add(legalAuthenticatorModel.AssignedEntity.ContactPhoneNumber);
+
+            string authorString = "<strong>Должность, ФИО: </strong> " +
+                                  $"<br/> {nameString} <br/> " +
+                                  "<strong>Контакты: </strong>" +
+                                  $"{this.GetContactsString(authorContacts)}";
+            
+            this.StreamWriter.WriteLine("           <tr class=\"outer\">");
+            this.StreamWriter.WriteLine("               <th class=\"outer\" width=\"20%\">Документ заверил:</th>");
+            this.StreamWriter.WriteLine($"               <td class=\"outer\">{authorString}<br/>");
+            this.StreamWriter.WriteLine("           </tr>");
+        }
+        
+        #endregion
         
         /// <summary>
         /// Создает блок с наименование секции.
@@ -1366,6 +1881,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="name">Наименование секции.</param>
         private void GenerateSectionTitle(string title, string name)
         {
+            if (String.IsNullOrWhiteSpace(title) || String.IsNullOrWhiteSpace(name))
+            {
+                return;
+            }
+            
             this.StreamWriter.WriteLine("               <tr>"); // 4 tabs.
             this.StreamWriter.WriteLine("                   <td colspan=\"2\">"); // 5 tabs.
             this.StreamWriter.WriteLine("                       <br/>"); // 6 tabs.
@@ -1390,7 +1910,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="values">Значение элемента.</param>
         private void GenerateSectionsTableDataParagraphElement(string name, List<string> values)
         {
-            if (values is null || values.Count == 0)
+            if (values is null || values.Count == 0 || String.IsNullOrWhiteSpace(name))
             {
                 return;
             }
@@ -1406,7 +1926,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
         
         #endregion
-        
+
         /// <summary>
         /// Создает строку "Контакты".
         /// </summary>
@@ -1414,7 +1934,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Строка "Контакты".</returns>
         private string GetContactsString(List<TelecomModel> contacts)
         {
-            if (contacts is null)
+            if (contacts is null || contacts.Count == 0)
             {
                 return string.Empty;
             }
