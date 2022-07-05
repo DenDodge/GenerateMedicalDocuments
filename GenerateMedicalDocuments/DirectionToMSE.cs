@@ -14,7 +14,7 @@ namespace GenerateMedicalDocuments
         /// </summary>
         /// <param name="documentModel">Модель документа.</param>
         /// <returns>XML документ "Направление на медико-социальную экспертизу" по модели документа.</returns>
-        public XDocument GetDirectionTOMSEDocumentXML(DirectionToMSEDocumentModel documentModel)
+        public XDocument GetDirectionToMSEDocumentXML(DirectionToMSEDocumentModel documentModel)
         {
             if (documentModel == null)
             {
@@ -25,6 +25,17 @@ namespace GenerateMedicalDocuments
             return document;
         }
 
+        public void CreationHTMLDocument(DirectionToMSEDocumentModel documentModel, string savePatch)
+        {
+            if (documentModel == null)
+            {
+                return;
+            }
+
+            CreatingHTMLDocumentHelper creatingHtmlDocumentHelper = new CreatingHTMLDocumentHelper(savePatch);
+            creatingHtmlDocumentHelper.CreateHTMLDocument(documentModel);
+        }
+        
         /// <summary>
         /// Сохранить XML файл.
         /// </summary>
