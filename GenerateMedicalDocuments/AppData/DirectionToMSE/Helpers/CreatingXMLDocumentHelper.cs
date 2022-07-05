@@ -270,26 +270,53 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     codeSystemVersionValue: documentModel.IdentityCardType.CodeSystemVersion));
             identityDocElement.Add(identityCardTypeElement);
 
-            XElement seriesElement = new XElement(identityNamespace + "Series",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                documentModel.Series);
-            identityDocElement.Add(seriesElement);
+            if (documentModel.Series is not null)
+            {
+                XElement seriesElement = new XElement(identityNamespace + "Series",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    documentModel.Series);
+                identityDocElement.Add(seriesElement);
+            }
+            else
+            {
+                XElement seriesElement = new XElement(identityNamespace + "Series",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    new XAttribute("nullFlavor", "NA"));
+                identityDocElement.Add(seriesElement);
+            }
 
             XElement numberElement = new XElement(identityNamespace + "Number",
                 new XAttribute(xsiNamespace + "type", "ST"),
                 documentModel.Number);
             identityDocElement.Add(numberElement);
 
-            XElement issueOrgNameElement = new XElement(identityNamespace + "IssueOrgName",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                documentModel.IssueOrgName);
-            identityDocElement.Add(issueOrgNameElement);
+            if (documentModel.IssueOrgName is not null)
+            {
+                XElement issueOrgNameElement = new XElement(identityNamespace + "IssueOrgName",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    documentModel.IssueOrgName);
+                identityDocElement.Add(issueOrgNameElement);
+            }
+            else
+            {
+                XElement issueOrgNameElement = new XElement(identityNamespace + "IssueOrgName",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    new XAttribute("nullFlavor", "NA"));
+                identityDocElement.Add(issueOrgNameElement);
+            }
 
-            if(documentModel.IssueOrgCode != null)
+            if(documentModel.IssueOrgCode is not null)
             {
                 XElement issueOrgCodeElement = new XElement(identityNamespace + "IssueOrgCode",
                 new XAttribute(xsiNamespace + "type", "ST"),
                 documentModel.IssueOrgCode);
+                identityDocElement.Add(issueOrgCodeElement);
+            }
+            else
+            {
+                XElement issueOrgCodeElement = new XElement(identityNamespace + "IssueOrgCode",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    new XAttribute("nullFlavor", "NA"));
                 identityDocElement.Add(issueOrgCodeElement);
             }
 
@@ -326,13 +353,20 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     displayNameValue: insurancePolicyModel.InsurancePolicyType.DisplayName));
             insurancePolicyElement.Add(insurancePolicyTypeElement);
 
-            if (insurancePolicyModel.Series != null)
+            if (insurancePolicyModel.Series is not null)
             {
                 XElement seriesElement = new XElement(identityNamespace + "Series",
                     new XAttribute(xsiNamespace + "type", "ST"),
                     insurancePolicyModel.Series);
                 insurancePolicyElement.Add(seriesElement);
             }
+            // else
+            // {
+            //     XElement seriesElement = new XElement(identityNamespace + "Series",
+            //         new XAttribute(xsiNamespace + "type", "ST"),
+            //         new XAttribute("nullFlavor", "NA"));
+            //     insurancePolicyElement.Add(seriesElement);
+            // }
 
             XElement numberElement = new XElement(identityNamespace + "Number",
                 new XAttribute(xsiNamespace + "type", "ST"),
@@ -349,12 +383,14 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "addr".</returns>
         private static XElement GenerateAddrElement(AddressModel addressModel)
         {
-            if (addressModel == null)
-            {
-                return null;
-            }
-            
             XElement addrElement = new XElement(xmlnsNamespace + "addr");
+            
+            if (addressModel is null)
+            {
+                XAttribute nullFlavorAddressAttribute = new XAttribute("nullFlavor", "NI");
+                addrElement.Add(nullFlavorAddressAttribute);
+                return addrElement;
+            }
 
             if (addressModel.Type != null)
             {
@@ -382,7 +418,18 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     displayNameValue: addressModel.StateCode.DisplayName));
             addrElement.Add(stateCodeElement);
 
-            XElement postalCodeElement = new XElement(xmlnsNamespace + "postalCode", addressModel.PostalCode);
+            XElement postalCodeElement;
+            if (addressModel.PostalCode is not null)
+            {
+                postalCodeElement = new XElement(xmlnsNamespace + "postalCode", addressModel.PostalCode);
+            }
+            else
+            {
+                postalCodeElement = new XElement(xmlnsNamespace + "postalCode", addressModel.PostalCode);
+                XAttribute nullFlavorPostalCodeAttribute = new XAttribute("nullFlavor", "NI");
+                postalCodeElement.Add(nullFlavorPostalCodeAttribute);
+            }
+            
             addrElement.Add(postalCodeElement);
 
             addrElement.Add(GenerateAddressElement(addressModel.AOGUID, addressModel.HOUSEGUID));
@@ -397,7 +444,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="AOGUID">[1..1] Глобальный уникальный идентификатор адресного объекта.</param>
         /// <param name="HOUSEGUID">[1..1] Глобальный уникальный идентификатор дома.</param>
         /// <returns>Элемент "fias:Address".</returns>
-        private static XElement GenerateAddressElement(Guid AOGUID, Guid HOUSEGUID)
+        private static XElement GenerateAddressElement(Guid AOGUID, Guid? HOUSEGUID)
         {
             XElement addressElement = new XElement(fiasNamespace + "Address");
 
@@ -405,8 +452,19 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 AOGUID.ToString());
             addressElement.Add(AOGUIDElement);
 
-            XElement HOUSEGUIDElement = new XElement(fiasNamespace + "HOUSEGUID",
-                HOUSEGUID.ToString());
+            XElement HOUSEGUIDElement;
+            if (HOUSEGUID is not null)
+            {
+                HOUSEGUIDElement = new XElement(fiasNamespace + "HOUSEGUID",
+                    HOUSEGUID.ToString());
+            }
+            else
+            {
+                HOUSEGUIDElement = new XElement(fiasNamespace + "HOUSEGUID");
+                XAttribute nullFlavorHOUSEGUIDEAttribute = new XAttribute("nullFlavor", "NI");
+                HOUSEGUIDElement.Add(nullFlavorHOUSEGUIDEAttribute);
+            }
+            
             addressElement.Add(HOUSEGUIDElement);
 
             return addressElement;
@@ -421,9 +479,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "telecom".</returns>
         private static XElement GenerateTelecomElement(TelecomModel telecomModel, bool isOrgnization = false)
         {
-            if (telecomModel == null)
+            if (telecomModel is null)
             {
-                return null;
+                XElement nullFlavorTelecomElement = new XElement(xmlnsNamespace + "telecom");
+                XAttribute nullFlavorTelecomAttribute = new XAttribute("nullFlavor", "NI");
+                nullFlavorTelecomElement.Add(nullFlavorTelecomAttribute);
+                return nullFlavorTelecomElement;
             }
             
             XElement telecomElement = new XElement(xmlnsNamespace + "telecom");
@@ -533,8 +594,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             nameElement.Add(givenElement);
 
             XElement patronymicElement = new XElement(identityNamespace + "Patronymic",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                nameModel.Patronymic);
+                new XAttribute(xsiNamespace + "type", "ST"));
+            if (nameModel.Patronymic is not null)
+            {
+                patronymicElement.Add(nameModel.Patronymic);
+            }
+            else
+            {
+                XAttribute nullFlavorPatronymicAttribute = new XAttribute("nullFlavor", "NI");
+                patronymicElement.Add(nullFlavorPatronymicAttribute);
+            }
+            
             nameElement.Add(patronymicElement);
 
             return nameElement;
@@ -555,8 +625,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             XElement guardianElement = new XElement(xmlnsNamespace + "guardian",
                 new XAttribute("classCode", "GUARD"));
 
-            XElement snilsElement = new XElement(xmlnsNamespace + "id", GetIdAttributes("1.2.643.100.3", guardianModel.SNILS));
-            guardianElement.Add(snilsElement);
+            if (guardianModel.SNILS is not null)
+            {
+                XElement snilsElement = new XElement(xmlnsNamespace + "id", GetIdAttributes("1.2.643.100.3", guardianModel.SNILS));
+                guardianElement.Add(snilsElement);
+            }
 
             if (guardianModel.IdentityDocument != null)
             {
@@ -608,7 +681,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 return null;
             }
-            
+
             XElement organizationElement = new XElement(xmlnsNamespace + elementName);
             if (classCodeAttributValue != null)
             {
@@ -632,6 +705,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     organizationElement.Add(idElement);
                 }
             }
+            else
+            {
+                XElement idElement = new XElement(xmlnsNamespace + "id",
+                    new XAttribute("nullFlavor", "NI"));
+                organizationElement.Add(idElement);
+            }
 
             if (organizationModel.License != null)
             {
@@ -646,6 +725,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 organizationElement.Add(GeneratePropsElements(organizationModel.Props));
             }
+            //else
+            //{
+            //    XElement propsElement = new XElement(identityNamespace + "Props",
+            //        new XAttribute("nullFlavor", "NI"));//,
+            //        //new XAttribute(xsiNamespace + "type", "ST"));
+            //    organizationElement.Add(propsElement);
+            //}
 
             if (organizationModel.Name != null)
             {
@@ -653,10 +739,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 organizationElement.Add(nameElement);
             }
 
-            if (organizationModel.ContactPhoneNumber != null)
-            {
-                organizationElement.Add(GenerateTelecomElement(organizationModel.ContactPhoneNumber, true));
-            }
+            organizationElement.Add(GenerateTelecomElement(organizationModel.ContactPhoneNumber, true));
 
             if (organizationModel.Contacts != null)
             {
@@ -685,6 +768,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             if(propsModel.OGRN != null)
             {
                 propsElements.Add(GenerateChildPropsElement("Ogrn", propsModel.OGRN));
+            }
+            else
+            {
+                propsElements.Add(new XElement(identityNamespace + "Ogrn",
+                    new XAttribute(xsiNamespace + "nullFlavor", "NI"),
+                    new XAttribute(xsiNamespace + "type", "ST")));
             }
             if(propsModel.OGRNIP != null)
             {
@@ -782,10 +871,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 assignedElement.Add(GenerateAddrElement(authorModel.Address));
             }
 
-            if (authorModel.ContactPhoneNumber != null)
-            {
-                assignedElement.Add(GenerateTelecomElement(authorModel.ContactPhoneNumber));
-            }
+            assignedElement.Add(GenerateTelecomElement(authorModel.ContactPhoneNumber));
 
             if (authorModel.Contacts != null)
             {
@@ -919,7 +1005,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         {
             if (basisDocumentModel == null)
             {
-                return null;
+                XElement nullFlavorDocInfoElement = new XElement(identityNamespace + "DocInfo");
+                XAttribute nullFlavorDocInfoAttribute = new XAttribute("nullFlavor", "INV");
+                nullFlavorDocInfoElement.Add(nullFlavorDocInfoAttribute);
+                return nullFlavorDocInfoElement;
             }
             
             XElement docInfoElement = new XElement(identityNamespace + "DocInfo");
@@ -934,21 +1023,38 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     displayNameValue: basisDocumentModel.IdentityDocType.DisplayName));
             docInfoElement.Add(identityDocTypeElement);
 
-            XElement insurancePolicyTypeElement = new XElement(identityNamespace + "InsurancePolicyType",
-                GetTypeElementAttributes(
-                    typeValue: "CD",
-                    codeValue: basisDocumentModel.InsurancePolicyType.Code,
-                    codeSystemValue: "1.2.643.5.1.13.13.11.1035",
-                    codeSystemVersionValue: basisDocumentModel.InsurancePolicyType.CodeSystemVersion,
-                    codeSystemNameValue: "Виды полиса обязательного медицинского страхования",
-                    displayNameValue: basisDocumentModel.InsurancePolicyType.DisplayName));
-            docInfoElement.Add(insurancePolicyTypeElement);
+            if (basisDocumentModel.InsurancePolicyType is not null)
+            {
+                XElement insurancePolicyTypeElement = new XElement(identityNamespace + "InsurancePolicyType",
+                    GetTypeElementAttributes(
+                        typeValue: "CD",
+                        codeValue: basisDocumentModel.InsurancePolicyType.Code,
+                        codeSystemValue: "1.2.643.5.1.13.13.11.1035",
+                        codeSystemVersionValue: basisDocumentModel.InsurancePolicyType.CodeSystemVersion,
+                        codeSystemNameValue: "Виды полиса обязательного медицинского страхования",
+                        displayNameValue: basisDocumentModel.InsurancePolicyType.DisplayName));
+                docInfoElement.Add(insurancePolicyTypeElement);
+            }
+            else
+            {
+                XElement insurancePolicyTypeElement = new XElement(identityNamespace + "InsurancePolicyType");
+                XAttribute nullFlavorInsurancePolicyTypeAttribute = new XAttribute("nullFlavor", "NA");
+                insurancePolicyTypeElement.Add(nullFlavorInsurancePolicyTypeAttribute);
+                docInfoElement.Add(insurancePolicyTypeElement);
+            }
 
             if (basisDocumentModel.Series is not null)
             {
                 XElement seriesElement = new XElement(identityNamespace + "Series",
                     new XAttribute(xsiNamespace + "type", "ST"),
                     basisDocumentModel.Series);
+                docInfoElement.Add(seriesElement);
+            }
+            else
+            {
+                XElement seriesElement = new XElement(identityNamespace + "Series",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    new XAttribute("nullFlavor", "NA"));
                 docInfoElement.Add(seriesElement);
             }
 
@@ -965,6 +1071,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 XElement INNElement = new XElement(identityNamespace + "INN",
                     new XAttribute(xsiNamespace + "type", "ST"),
                     basisDocumentModel.INN);
+                docInfoElement.Add(INNElement);
+            }
+            else
+            {
+                XElement INNElement = new XElement(identityNamespace + "INN",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    new XAttribute("nullFlavor", "NA"));
                 docInfoElement.Add(INNElement);
             }
             
@@ -984,9 +1097,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             DateTime startDate, 
             DateTime? finishDate, 
             XNamespace namespaceValue, 
-            bool isUseTime = false)
+            bool isUseTime = false,
+            bool isDocumentationOf = false)
         {
-            string startDateString;
+            string startDateString = null;
             string finishDateString = null;
             if (isUseTime)
             {
@@ -1008,6 +1122,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             XElement effectiveTimeElement = new XElement(namespaceValue + "effectiveTime");
 
             XElement lowElement = new XElement(namespaceValue + "low");
+            
             if (!isUseTime)
             {
                 XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
@@ -1015,20 +1130,34 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             }
             XAttribute lowValueAttribute = new XAttribute("value", startDateString);
             lowElement.Add(lowValueAttribute);
+
             effectiveTimeElement.Add(lowElement);
 
-            XElement highElement = new XElement(namespaceValue + "high");
-            if (!isUseTime)
-            {
-                XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
-                highElement.Add(typeAttribute);
-            }
             if (finishDateString is not null)
             {
+                XElement highElement = new XElement(namespaceValue + "high");
+                
+                if (!isUseTime)
+                {
+                    XAttribute typeAttribute = new XAttribute(xsiNamespace + "type", "TS");
+                    highElement.Add(typeAttribute);
+                }
+                
                 XAttribute highValueAttribute = new XAttribute("value", finishDateString);
                 highElement.Add(highValueAttribute);
+                
+                effectiveTimeElement.Add(highElement);
             }
-            effectiveTimeElement.Add(highElement);
+            else
+            {
+                if (!isDocumentationOf)
+                {
+                    XElement highElement = new XElement(namespaceValue + "high");
+                    XAttribute nullFlavorAttribute = new XAttribute("nullFlavor", "NAV");
+                    highElement.Add(nullFlavorAttribute);
+                    effectiveTimeElement.Add(highElement);
+                }
+            }
 
             return effectiveTimeElement;
         }
@@ -1057,7 +1186,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     codeSystemNameValue: "Типы документированных событий"));
             serviceEventElement.Add(codeElement);
 
-            serviceEventElement.Add(GenerateEffectiveTimeElement(serviceEventModel.StartServiceDate, serviceEventModel.FinishServiceDate, xmlnsNamespace, true));
+            serviceEventElement.Add(GenerateEffectiveTimeElement(
+                serviceEventModel.StartServiceDate,
+                serviceEventModel.FinishServiceDate, 
+                xmlnsNamespace, 
+                true, 
+                true));
 
             if (serviceEventModel.ServiceForm != null)
             {
@@ -1685,19 +1819,29 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 new XAttribute(xsiNamespace + "type", "ST"), result);
             observationElement.Add(valueElement);
 
-            XElement referenceElement = new XElement(xmlnsNamespace + "reference",
-                new XAttribute("typeCode", "REFR"));
+            XElement referenceElement;
+            if (id is not null)
+            {
+                referenceElement = new XElement(xmlnsNamespace + "reference",
+                    new XAttribute("typeCode", "REFR"));
 
-            XElement externalDocument = new XElement(xmlnsNamespace + "externalDocument",
-                new XAttribute("classCode", "DOCCLIN"),
-                new XAttribute("moodCode", "EVN"));
+                XElement externalDocument = new XElement(xmlnsNamespace + "externalDocument",
+                    new XAttribute("classCode", "DOCCLIN"),
+                    new XAttribute("moodCode", "EVN"));
 
-            XElement idElement = new XElement(xmlnsNamespace + "id",
-                new XAttribute("root", "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.51"),
-                new XAttribute("extension", id));
-            externalDocument.Add(idElement);
+                XElement idElement = new XElement(xmlnsNamespace + "id",
+                    new XAttribute("root", "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.51"),
+                    new XAttribute("extension", id));
+                externalDocument.Add(idElement);
 
-            referenceElement.Add(externalDocument);
+                referenceElement.Add(externalDocument);
+            }
+            else
+            {
+                referenceElement = new XElement(xmlnsNamespace + "reference",
+                    new XAttribute("nullFlavor", "NI"));
+            }
+            
             observationElement.Add(referenceElement);
 
             entryRelationshipElement.Add(observationElement);
@@ -2801,13 +2945,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "Место работы и должность".</returns>
         private static XElement GenerateWorkLocationSectionElement(WorkplaceSectionModel workplaceSectionModel)
         {
-            if (workplaceSectionModel == null)
-            {
-                return null;
-            }
-            
             XElement componentElement = new XElement(xmlnsNamespace + "component");
+            
             XElement sectionElement = new XElement(xmlnsNamespace + "section");
+            if (workplaceSectionModel is null)
+            {
+                XAttribute nullFlavorSectionAttribute = new XAttribute("nullFlavor", "NA");
+                sectionElement.Add(nullFlavorSectionAttribute);
+                componentElement.Add(sectionElement);
+                return componentElement;
+            }
 
             XElement codeElement = new XElement(xmlnsNamespace + "code",
                 GetTypeElementAttributes(
@@ -2870,94 +3017,104 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             #region entry organization
 
-            XElement entryElement = new XElement(xmlnsNamespace + "entry");
-            XElement observationElement = new XElement(xmlnsNamespace + "observation",
-                new XAttribute("classCode", "OBS"),
-                new XAttribute("moodCode", "EVN"));
-
-            XElement observationCodeElement = new XElement(xmlnsNamespace + "code",
-                GetTypeElementAttributes(
-                    codeValue: "4100",
-                    codeSystemVersionValue: "1.69",
-                    displayNameValue: "Сведения о получении образования",
-                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
-                    codeSystemNameValue: "Кодируемые поля CDA документов"));
-            observationElement.Add(observationCodeElement);
-
-            XElement performerElement = new XElement(xmlnsNamespace + "performer");
-            XElement assignedEntityElement = new XElement(xmlnsNamespace + "assignedEntity");
-
-            XElement idElement = new XElement(xmlnsNamespace + "id",
-                new XAttribute("nullFlavor", "NI"));
-            assignedEntityElement.Add(idElement);
-
-            var representedOrganizationElement = GenerateOrganizationElement(educationSectionModel.Organization, "representedOrganization", classCodeAttributValue: "ORG");
-            if (representedOrganizationElement != null)
+            if (educationSectionModel.Organization is not null)
             {
-                foreach (var element in representedOrganizationElement.Elements(xmlnsNamespace + "id"))
-                {
-                    element.Add(new XAttribute("extension", "1145"));
-                }
-                assignedEntityElement.Add(representedOrganizationElement);
-            }
+                XElement entryElement = new XElement(xmlnsNamespace + "entry");
+                XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                    new XAttribute("classCode", "OBS"),
+                    new XAttribute("moodCode", "EVN"));
 
-            performerElement.Add(assignedEntityElement);
-            observationElement.Add(performerElement);
-            entryElement.Add(observationElement);
-            sectionElement.Add(entryElement);
+                XElement observationCodeElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: "4100",
+                        codeSystemVersionValue: "1.69",
+                        displayNameValue: "Сведения о получении образования",
+                        codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                        codeSystemNameValue: "Кодируемые поля CDA документов"));
+                observationElement.Add(observationCodeElement);
+
+                XElement performerElement = new XElement(xmlnsNamespace + "performer");
+                XElement assignedEntityElement = new XElement(xmlnsNamespace + "assignedEntity");
+
+                XElement idElement = new XElement(xmlnsNamespace + "id",
+                    new XAttribute("nullFlavor", "NI"));
+                assignedEntityElement.Add(idElement);
+
+                var representedOrganizationElement = GenerateOrganizationElement(educationSectionModel.Organization, "representedOrganization", classCodeAttributValue: "ORG");
+                if (representedOrganizationElement != null)
+                {
+                    foreach (var element in representedOrganizationElement.Elements(xmlnsNamespace + "id"))
+                    {
+                        element.Add(new XAttribute("extension", "1145"));
+                    }
+                    assignedEntityElement.Add(representedOrganizationElement);
+                }
+
+                performerElement.Add(assignedEntityElement);
+                observationElement.Add(performerElement);
+                entryElement.Add(observationElement);
+                sectionElement.Add(entryElement);
+            }
 
             #endregion
 
             #region entry class
 
-            XElement entryClassElement = new XElement(xmlnsNamespace + "entry");
-            XElement observationClassElement = new XElement(xmlnsNamespace + "observation",
-                new XAttribute("classCode", "OBS"),
-                new XAttribute("moodCode", "EVN"));
+            if (educationSectionModel.Class is not null)
+            {
+                XElement entryClassElement = new XElement(xmlnsNamespace + "entry");
+                XElement observationClassElement = new XElement(xmlnsNamespace + "observation",
+                    new XAttribute("classCode", "OBS"),
+                    new XAttribute("moodCode", "EVN"));
 
-            XElement observationCodeClassElement = new XElement(xmlnsNamespace + "code",
-                GetTypeElementAttributes(
-                    codeValue: "12137",
-                    codeSystemVersionValue: "1.69",
-                    displayNameValue: "Курс",
-                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
-                    codeSystemNameValue: "Кодируемые поля CDA документов"));
-            observationClassElement.Add(observationCodeClassElement);
+                XElement observationCodeClassElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: "12137",
+                        codeSystemVersionValue: "1.69",
+                        displayNameValue: "Курс",
+                        codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                        codeSystemNameValue: "Кодируемые поля CDA документов"));
+                observationClassElement.Add(observationCodeClassElement);
 
-            XElement valueClassElement = new XElement(xmlnsNamespace + "value",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                educationSectionModel.Class);
-            observationClassElement.Add(valueClassElement);
+                XElement valueClassElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    educationSectionModel.Class);
+                observationClassElement.Add(valueClassElement);
 
-            entryClassElement.Add(observationClassElement);
-            sectionElement.Add(entryClassElement);
+                entryClassElement.Add(observationClassElement);
+                sectionElement.Add(entryClassElement);
+            }
 
             #endregion
 
             #region entry spetiality
 
-            XElement entrySpetialityElement = new XElement(xmlnsNamespace + "entry");
-            XElement observationSpetialityElement = new XElement(xmlnsNamespace + "observation",
-                new XAttribute("classCode", "OBS"),
-                new XAttribute("moodCode", "EVN"));
+            if (educationSectionModel.Spetiality is not null)
+            {
+                XElement entrySpetialityElement = new XElement(xmlnsNamespace + "entry");
+                XElement observationSpetialityElement = new XElement(xmlnsNamespace + "observation",
+                    new XAttribute("classCode", "OBS"),
+                    new XAttribute("moodCode", "EVN"));
 
-            XElement observationCodeSpetialityElement = new XElement(xmlnsNamespace + "code",
-                GetTypeElementAttributes(
-                    codeValue: "4078",
-                    codeSystemVersionValue: "1.69",
-                    displayNameValue: "Профессия",
-                    codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
-                    codeSystemNameValue: "Кодируемые поля CDA документов"));
-            observationSpetialityElement.Add(observationCodeSpetialityElement);
+                XElement observationCodeSpetialityElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: "4078",
+                        codeSystemVersionValue: "1.69",
+                        displayNameValue: "Профессия",
+                        codeSystemValue: "1.2.643.5.1.13.13.99.2.166",
+                        codeSystemNameValue: "Кодируемые поля CDA документов"));
+                observationSpetialityElement.Add(observationCodeSpetialityElement);
 
-            XElement valueSpetialityElement = new XElement(xmlnsNamespace + "value",
-                new XAttribute(xsiNamespace + "type", "ST"),
-                educationSectionModel.Spetiality);
-            observationSpetialityElement.Add(valueSpetialityElement);
+                XElement valueSpetialityElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    educationSectionModel.Spetiality);
+                observationSpetialityElement.Add(valueSpetialityElement);
 
-            entrySpetialityElement.Add(observationSpetialityElement);
-            sectionElement.Add(entrySpetialityElement);
+                entrySpetialityElement.Add(observationSpetialityElement);
+                sectionElement.Add(entrySpetialityElement);
 
+            }
+            
             #endregion
 
             componentElement.Add(sectionElement);
@@ -3391,11 +3548,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "Местонахождение гражданина"</returns>
         private static XElement GeneratePatienLocationElement(TypeModel patientLocationCode, OrganizationModel patientLocation)
         {
-            if (patientLocation == null)
-            {
-                return null;
-            }
-            
+            //if (patientLocation == null)
+            //{
+            //    return null;
+            //}
+
             XElement entryElement = new XElement(xmlnsNamespace + "entry");
             XElement actElement = new XElement(xmlnsNamespace + "act",
                 new XAttribute("classCode", "ACT"),
@@ -3410,11 +3567,22 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     displayNameValue: patientLocationCode.DisplayName));
             actElement.Add(codeElement);
 
-            XElement participantElement = new XElement(xmlnsNamespace + "participant",
-                new XAttribute("typeCode", "LOC"));
+            XElement participantElement;
+            
+            //if (patientLocation is not null)
+            //{
+                participantElement = new XElement(xmlnsNamespace + "participant",
+                    new XAttribute("typeCode", "LOC"));
 
-            participantElement.Add(GenerateOrganizationElement(patientLocation, "participantRole"));
-
+                participantElement.Add(GenerateOrganizationElement(patientLocation, "participantRole"));
+            //}
+            //else
+            //{
+            //    participantElement = new XElement(xmlnsNamespace + "participant",
+            //        new XAttribute("typeCode", "LOC"),
+            //        new XAttribute("nullFlavor", "NI"));
+            //}
+            
             actElement.Add(participantElement);
 
             entryElement.Add(actElement);
@@ -3492,33 +3660,19 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 textElement.Add(NewLineElement);
             }
 
-            if (anamnezSectionModel.DegreeDisability != null)
+            if (anamnezSectionModel.DegreeDisability is not null 
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities is not null 
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities.Count != 0)
             {
                 XElement degreeDisabilityParagraphElement = new XElement(xmlnsNamespace + "paragraph");
 
                 XElement degreeDisabilityCaptionElement = new XElement(xmlnsNamespace + "caption", "Степень утраты профессиональной трудоспособности");
                 degreeDisabilityParagraphElement.Add(degreeDisabilityCaptionElement);
 
-                if (anamnezSectionModel.DegreeDisability.Section31Text != null)
+                foreach (var degreeDisability in anamnezSectionModel.DegreeDisability.DegreeDisabilities)
                 {
                     XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
-                        new XAttribute("ID", "socanam31"), anamnezSectionModel.DegreeDisability.Section31Text);
-                    degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
-                    degreeDisabilityParagraphElement.Add(NewLineElement);
-                }
-
-                if (anamnezSectionModel.DegreeDisability.Section32Text != null)
-                {
-                    XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
-                        new XAttribute("ID", "socanam32"), anamnezSectionModel.DegreeDisability.Section32Text);
-                    degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
-                    degreeDisabilityParagraphElement.Add(NewLineElement);
-                }
-
-                if (anamnezSectionModel.DegreeDisability.Section33Text != null)
-                {
-                    XElement degreeDisabilityContentElement = new XElement(xmlnsNamespace + "content",
-                        new XAttribute("ID", "socanam33"), anamnezSectionModel.DegreeDisability.Section33Text);
+                        new XAttribute("ID", degreeDisability.ID), degreeDisability.FullText);
                     degreeDisabilityParagraphElement.Add(degreeDisabilityContentElement);
                     degreeDisabilityParagraphElement.Add(NewLineElement);
                 }
@@ -3756,40 +3910,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 temporaryDisabilitysEntryElement.Add(temporaryDisabilitysOrganizerElement);
                 entryElements.Add(temporaryDisabilitysEntryElement);
             }
-            if (anamnezSectionModel.DegreeDisability != null)
+            if (anamnezSectionModel.DegreeDisability is not null
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities is not null
+                && anamnezSectionModel.DegreeDisability.DegreeDisabilities.Count != 0)
             {
-                if (anamnezSectionModel.DegreeDisability.Section31Text != null &&
-                    anamnezSectionModel.DegreeDisability.Section31DateTo != null &&
-                    anamnezSectionModel.DegreeDisability.Section31Time != null &&
-                    anamnezSectionModel.DegreeDisability.Section31Percent != null)
+                foreach (var degreeDisability in anamnezSectionModel.DegreeDisability.DegreeDisabilities)
                 {
                     entryElements.Add(GenerateDegreeDisabilityElement(
-                        anamnezSectionModel.DegreeDisability.Section31DateTo, 
-                        anamnezSectionModel.DegreeDisability.Section31Time, 
-                        anamnezSectionModel.DegreeDisability.Section31Percent,
-                        "socanam31"));
-                }
-                if (anamnezSectionModel.DegreeDisability.Section32Text != null &&
-                    anamnezSectionModel.DegreeDisability.Section32DateTo != null &&
-                    anamnezSectionModel.DegreeDisability.Section32Time != null &&
-                    anamnezSectionModel.DegreeDisability.Section32Percent != null)
-                {
-                    entryElements.Add(GenerateDegreeDisabilityElement(
-                        anamnezSectionModel.DegreeDisability.Section32DateTo,
-                        anamnezSectionModel.DegreeDisability.Section32Time,
-                        anamnezSectionModel.DegreeDisability.Section32Percent,
-                        "socanam32"));
-                }
-                if (anamnezSectionModel.DegreeDisability.Section33Text != null &&
-                    anamnezSectionModel.DegreeDisability.Section33DateTo != null &&
-                    anamnezSectionModel.DegreeDisability.Section33Time != null &&
-                    anamnezSectionModel.DegreeDisability.Section33Percent != null)
-                {
-                    entryElements.Add(GenerateDegreeDisabilityElement(
-                        anamnezSectionModel.DegreeDisability.Section33DateTo,
-                        anamnezSectionModel.DegreeDisability.Section33Time,
-                        anamnezSectionModel.DegreeDisability.Section33Percent,
-                        "socanam33"));
+                        degreeDisability.DateTo,
+                        degreeDisability.Term,
+                        degreeDisability.Percent,
+                        degreeDisability.ID));
                 }
             }
             if (anamnezSectionModel.Disability != null)

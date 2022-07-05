@@ -3,6 +3,7 @@ using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -30,47 +31,47 @@ namespace GenerateMedicalDocumentsTestApp
         {
             DirectionToMSEDocumentModel documentModel = new DirectionToMSEDocumentModel();
 
-            documentModel = new DirectionToMSEDocumentModel()
+            documentModel = new DirectionToMSEDocumentModel
             {
                 CreateDate = new DateTime(2021, 06, 20, 16, 10, 00),
                 VersionNumber = 2,
-                ID = new IDType()
+                ID = new IDType
                 {
                     Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.51",
                     Extension = "7854321"
                 },
-                SetID = new IDType()
+                SetID = new IDType
                 {
                     Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.50",
                     Extension = "7854321"
                 },
-                RecordTarget = new RecordTargetModel()
+                RecordTarget = new RecordTargetModel
                 {
-                    PatientRole = new PatientModel()
+                    PatientRole = new PatientModel
                     {
-                        ID = new IDType()
+                        ID = new IDType
                         {
                             Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.10",
                             Extension = "585233"
                         },
                         SNILS = "44578444510",
-                        IdentityDocument = new DocumentModel()
+                        IdentityDocument = new DocumentModel
                         {
-                            IdentityCardType = new TypeModel()
+                            IdentityCardType = new TypeModel
                             {
                                 Code = "1",
                                 CodeSystemVersion = "5.1",
                                 DisplayName = "Паспорт гражданина Российской Федерации"
                             },
-                            Series = 1234,
-                            Number = 123456,
+                            Series = "1234",
+                            Number = "123456",
                             IssueOrgName = "ОВД 'Твардовское' ОУФМС России по городу Москве",
                             IssueOrgCode = "770-095",
                             IssueDate = new DateTime(2005, 02, 18)
                         },
-                        InsurancePolicy = new InsurancePolicyModel()
+                        InsurancePolicy = new InsurancePolicyModel
                         {
-                            InsurancePolicyType = new TypeModel()
+                            InsurancePolicyType = new TypeModel
                             {
                                 Code = "1",
                                 CodeSystemVersion = "1.3",
@@ -79,7 +80,7 @@ namespace GenerateMedicalDocumentsTestApp
                             Series = "ЧБ",
                             Number = "1334602"
                         },
-                        PermanentAddress = new AddressModel()
+                        PermanentAddress = new AddressModel
                         {
                             Type = new TypeModel
                             {
@@ -98,16 +99,16 @@ namespace GenerateMedicalDocumentsTestApp
                             AOGUID = new Guid("d1c8d6db-f1b9-49db-895e-c3a93997da77"),
                             HOUSEGUID = new Guid("6e9eda8d-22d9-481a-bb4f-a5c221c194a4")
                         },
-                        ActualAddress = new AddressModel()
+                        ActualAddress = new AddressModel
                         {
-                            Type = new TypeModel()
+                            Type = new TypeModel
                             {
                                 Code = "3",
                                 CodeSystemVersion = "1.3",
                                 DisplayName = "Адрес фактического проживания (пребывания)"
                             },
                             StreetAddressLine = "г Москва, ул Исаковского, д 28 к 2, кв 589",
-                            StateCode = new TypeModel()
+                            StateCode = new TypeModel
                             {
                                 Code = "77",
                                 CodeSystemVersion = "6.3",
@@ -117,24 +118,24 @@ namespace GenerateMedicalDocumentsTestApp
                             AOGUID = new Guid("d1c8d6db-f1b9-49db-895e-c3a93997da77"),
                             HOUSEGUID = new Guid("6e9eda8d-22d9-481a-bb4f-a5c221c194a4")
                         },
-                        ContactPhoneNumber = new TelecomModel()
+                        //ContactPhoneNumber = new TelecomModel()
+                        //{
+                        //    Value = "+74954243210"
+                        //},
+                        // Contacts = new List<TelecomModel>()
+                        // {
+                        //     { new TelecomModel() { Value = "+79161234567", Use = "MC" } },
+                        //     { new TelecomModel() { Value = "bogekat@mail.ru" } }
+                        // },
+                        PatientData = new PeopleDataModel
                         {
-                            Value = "+74954243210"
-                        },
-                        Contacts = new List<TelecomModel>()
-                        {
-                            { new TelecomModel() { Value = "+79161234567", Use = "MC" } },
-                            { new TelecomModel() { Value = "bogekat@mail.ru" } }
-                        },
-                        PatientData = new PeopleDataModel()
-                        {
-                            Name = new NameModel()
+                            Name = new NameModel
                             {
                                 Family = "Богатырева",
                                 Given = "Екатерина",
                                 Patronymic = "Ивановна"
                             },
-                            Gender = new TypeModel()
+                            Gender = new TypeModel
                             {
                                 Code = "2",
                                 CodeSystemVersion = "2.1",
@@ -142,40 +143,40 @@ namespace GenerateMedicalDocumentsTestApp
                             },
                             BirthDate = new DateTime(1985, 03, 31)
                         },
-                        Guardian = new GuardianModel()
+                        Guardian = new GuardianModel
                         {
                             SNILS = "44578444510",
-                            IdentityDocument = new DocumentModel()
+                            IdentityDocument = new DocumentModel
                             {
-                                IdentityCardType = new TypeModel()
+                                IdentityCardType = new TypeModel
                                 {
                                     Code = "1",
                                     CodeSystemVersion = "5.1",
                                     DisplayName = "Паспорт гражданина Российской Федерации"
                                 },
-                                Series = 4509,
-                                Number = 356432,
-                                IssueOrgName = "ОВД 'Твардовское' ОУФМС России по городу Москве",
-                                IssueOrgCode = "770-095",
+                                Series = "4509",
+                                Number = "356432",
+                                //IssueOrgName = "ОВД 'Твардовское' ОУФМС России по городу Москве",
+                                //IssueOrgCode = "770-095",
                                 IssueDate = new DateTime(1992, 02, 18)
                             },
-                            AuthorityDocument = new DocumentModel()
+                            AuthorityDocument = new DocumentModel
                             {
-                                IdentityCardType = new TypeModel()
+                                IdentityCardType = new TypeModel
                                 {
                                     Code = "2",
                                     CodeSystemVersion = "1.2",
                                     DisplayName = "Решение о назначении лица опекуном"
                                 },
-                                Series = 1122,
-                                Number = 334455,
+                                Series = "1122",
+                                Number = "334455",
                                 IssueOrgName = "Орган опеки и попечительства",
                                 IssueDate = new DateTime(2000, 02, 18)
                             },
-                            ActualAddress = new AddressModel()
+                            ActualAddress = new AddressModel
                             {
                                 StreetAddressLine = "г Москва, ул Исаковского, д 28 к 2, кв 589",
-                                StateCode = new TypeModel()
+                                StateCode = new TypeModel
                                 {
                                     Code = "77",
                                     CodeSystemVersion = "6.3",
@@ -185,126 +186,126 @@ namespace GenerateMedicalDocumentsTestApp
                                 AOGUID = new Guid("d1c8d6db-f1b9-49db-895e-c3a93997da77"),
                                 HOUSEGUID = new Guid("6e9eda8d-22d9-481a-bb4f-a5c221c194a4")
                             },
-                            ContactPhoneNumber = new TelecomModel()
+                            ContactPhoneNumber = new TelecomModel
                             {
                                 Value = "+74954243201"
                             },
-                            Contacts = new List<TelecomModel>()
+                            Contacts = new List<TelecomModel>
                             {
-                                { new TelecomModel() { Value = "+79161234576", Use = "MC" } },
-                                { new TelecomModel() { Value = "bogelen@mail.ru" } }
+                                new TelecomModel { Value = "+79161234576", Use = "MC" },
+                                new TelecomModel { Value = "bogelen@mail.ru" }
                             },
-                            Name = new NameModel()
+                            Name = new NameModel
                             {
                                 Family = "Богатырева",
                                 Given = "Елена",
-                                Patronymic = "Николаевна"
+                                //Patronymic = "Николаевна"
                             }
                         },
-                        ProviderOrganization = new OrganizationModel()
+                        ProviderOrganization = new OrganizationModel
                         {
                             ID = "1.2.643.5.1.13.13.12.2.77.7973",
-                            License = new LicenseModel()
+                            License = new LicenseModel
                             {
                                 Number = "ЛО-77-01-018109",
                                 AssigningAuthorityName = "Департамент здравоохранения города Москвы. Дата регистрации: 23.05.2019"
                             },
-                            Props = new PropsOrganizationModel()
+                            Props = new PropsOrganizationModel
                             {
                                 OGRN = "1037734008575",
                                 OKATO = "45283577000"
                             },
                             Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
-                            ContactPhoneNumber = new TelecomModel()
+                            ContactPhoneNumber = new TelecomModel
                             {
                                 Value = "+74957503971",
                                 Use = "WP"
                             },
-                            Contacts = new List<TelecomModel>()
+                            Contacts = new List<TelecomModel>
                             {
-                                { new TelecomModel() { Value = "74957503971", Use = "WP" } },
-                                { new TelecomModel() { Value = "https://gp180.mos.ru/" } }
+                                new TelecomModel { Value = "74957503971", Use = "WP" },
+                                new TelecomModel { Value = "https://gp180.mos.ru/" }
                             },
-                            Address = new AddressModel()
-                            {
-                                StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                                StateCode = new TypeModel()
-                                {
-                                    Code = "77",
-                                    CodeSystemVersion = "6.3",
-                                    DisplayName = "г. Москва"
-                                },
-                                PostalCode = 123592,
-                                AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
-                                HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
-                            }
+                            // Address = new AddressModel()
+                            // {
+                            //     StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                            //     StateCode = new TypeModel()
+                            //     {
+                            //         Code = "77",
+                            //         CodeSystemVersion = "6.3",
+                            //         DisplayName = "г. Москва"
+                            //     },
+                            //     PostalCode = 123592,
+                            //     AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                            //     HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                            // }
                         }
                     }
                 },
-                Author = new AuthorDataModel()
+                Author = new AuthorDataModel
                 {
                     SignatureDate = new DateTime(2021, 06, 20, 12, 20, 00),
-                    Author = new AuthorModel()
+                    Author = new AuthorModel
                     {
-                        ID = new IDType()
+                        ID = new IDType
                         {
                             Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.70",
                             Extension = "2341"
                         },
                         SNILS = "32165477709",
-                        Position = new TypeModel()
+                        Position = new TypeModel
                         {
                             Code = "122",
                             CodeSystemVersion = "7.5",
                             DisplayName = "врач-хирург"
                         },
-                        ActualAddress = new AddressModel()
+                        ActualAddress = new AddressModel
                         {
                             StreetAddressLine = "г Москва, Ленинградский пр-кт, д 78 к 3, кв 12",
-                            StateCode = new TypeModel()
+                            StateCode = new TypeModel
                             {
                                 Code = "77",
                                 CodeSystemVersion = "6.3",
                                 DisplayName = "г. Москва"
                             },
-                            PostalCode = 125315,
+                            //PostalCode = 125315,
                             AOGUID = new Guid("9c3e9392-0324-4d21-9cf5-70076f1b5e15"),
-                            HOUSEGUID = new Guid("417432da-c526-4158-aa01-fb083797ac5e")
+                            //HOUSEGUID = new Guid("417432da-c526-4158-aa01-fb083797ac5e")
                         },
-                        ContactPhoneNumber = new TelecomModel()
+                        ContactPhoneNumber = new TelecomModel
                         {
                             Value = "+74954241311"
                         },
-                        Contacts = new List<TelecomModel>()
+                        Contacts = new List<TelecomModel>
                         {
-                            { new TelecomModel() { Use = "WP", Value = "+79261234588"} },
-                            { new TelecomModel() { Value = "a.privalov@oblhosp.volgograd.ru" } },
-                            { new TelecomModel() { Value = "74954241311" } }
+                            new TelecomModel { Use = "WP", Value = "+79261234588"},
+                            new TelecomModel { Value = "a.privalov@oblhosp.volgograd.ru" },
+                            new TelecomModel { Value = "74954241311" }
                         },
-                        Name = new NameModel()
+                        Name = new NameModel
                         {
                             Family = "Привалов",
                             Given = "Александр",
                             Patronymic = "Иванович"
                         },
-                        RepresentedOrganization = new OrganizationModel()
+                        RepresentedOrganization = new OrganizationModel
                         {
                             ID = "1.2.643.5.1.13.13.12.2.77.7973",
                             Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
-                            ContactPhoneNumber = new TelecomModel()
+                            ContactPhoneNumber = new TelecomModel
                             {
                                 Use = "WP",
                                 Value = "+74957503971"
                             },
-                            Contacts = new List<TelecomModel>()
+                            Contacts = new List<TelecomModel>
                             {
-                                { new TelecomModel() { Use = "WP", Value = "74957503971" } },
-                                { new TelecomModel() { Value = "https://gp180.mos.ru/"} }
+                                new TelecomModel { Use = "WP", Value = "74957503971" },
+                                new TelecomModel { Value = "https://gp180.mos.ru/"}
                             },
-                            Address = new AddressModel()
+                            Address = new AddressModel
                             {
                                 StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                                StateCode = new TypeModel()
+                                StateCode = new TypeModel
                                 {
                                     Code = "77",
                                     CodeSystemVersion = "6.3",
@@ -317,19 +318,19 @@ namespace GenerateMedicalDocumentsTestApp
                         }
                     }
                 },
-                RepresentedCustodianOrganization = new OrganizationModel()
+                RepresentedCustodianOrganization = new OrganizationModel
                 {
                     ID = "1.2.643.5.1.13.13.12.2.77.7973",
                     Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
-                    ContactPhoneNumber = new TelecomModel()
+                    ContactPhoneNumber = new TelecomModel
                     {
                         Use = "WP",
                         Value = "+74957503971"
                     },
-                    Address = new AddressModel()
+                    Address = new AddressModel
                     {
                         StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                        StateCode = new TypeModel()
+                        StateCode = new TypeModel
                         {
                             Code = "77",
                             CodeSystemVersion = "6.3",
@@ -340,27 +341,27 @@ namespace GenerateMedicalDocumentsTestApp
                         HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
                     }
                 },
-                LegalAuthenticator = new LegalAuthenticatorModel()
+                LegalAuthenticator = new LegalAuthenticatorModel
                 {
                     SignatureDate = new DateTime(2021, 06, 20, 16, 10, 00),
-                    AssignedEntity = new AuthorModel()
+                    AssignedEntity = new AuthorModel
                     {
-                        ID = new IDType()
+                        ID = new IDType
                         {
                             Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.70",
                             Extension = "2341"
                         },
                         SNILS = "88599674111",
-                        Position = new TypeModel()
+                        Position = new TypeModel
                         {
                             Code = "7",
                             CodeSystemVersion = "7.5",
                             DisplayName = "Заведующий отделением"
                         },
-                        ActualAddress = new AddressModel()
+                        ActualAddress = new AddressModel
                         {
                             StreetAddressLine = "г Москва, Мичуринский пр-кт, д 16, кв 9",
-                            StateCode = new TypeModel()
+                            StateCode = new TypeModel
                             {
                                 Code = "77",
                                 CodeSystemVersion = "6.3",
@@ -370,40 +371,40 @@ namespace GenerateMedicalDocumentsTestApp
                             AOGUID = new Guid("0f072841-643f-4081-baf0-b16760fede91"),
                             HOUSEGUID = new Guid("4f22318c-43a4-4040-872d-6d0b88bbe000")
                         },
-                        ContactPhoneNumber = new TelecomModel()
+                        ContactPhoneNumber = new TelecomModel
                         {
                             Value = "+74954244567"
                         },
-                        Contacts = new List<TelecomModel>()
+                        Contacts = new List<TelecomModel>
                         {
-                            { new TelecomModel() { Use = "MC", Value = "+79031234588" } },
-                            { new TelecomModel() { Value = "steaf@gmail.com" } },
-                            { new TelecomModel() { Value = "74954244567"} }
+                            new TelecomModel { Use = "MC", Value = "+79031234588" },
+                            new TelecomModel { Value = "steaf@gmail.com" },
+                            new TelecomModel { Value = "74954244567"}
                         },
-                        Name = new NameModel()
+                        Name = new NameModel
                         {
                             Family = "Степанов",
                             Given = "Андрей",
                             Patronymic = "Фёдорович"
                         },
-                        RepresentedOrganization = new OrganizationModel()
+                        RepresentedOrganization = new OrganizationModel
                         {
                             ID = "1.2.643.5.1.13.13.12.2.77.7973",
                             Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
-                            ContactPhoneNumber = new TelecomModel()
+                            ContactPhoneNumber = new TelecomModel
                             {
                                 Use = "WP",
                                 Value = "+74957503971"
                             },
-                            Contacts = new List<TelecomModel>()
+                            Contacts = new List<TelecomModel>
                             {
-                                { new TelecomModel() { Use = "WP", Value = "74957503971" } },
-                                { new TelecomModel() { Value = "https://gp180.mos.ru/"} }
+                                new TelecomModel { Use = "WP", Value = "74957503971" },
+                                new TelecomModel { Value = "https://gp180.mos.ru/"}
                             },
-                            Address = new AddressModel()
+                            Address = new AddressModel
                             {
                                 StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                                StateCode = new TypeModel()
+                                StateCode = new TypeModel
                                 {
                                     Code = "77",
                                     CodeSystemVersion = "6.3",
@@ -416,47 +417,47 @@ namespace GenerateMedicalDocumentsTestApp
                         }
                     }
                 },
-                Participant = new ParticipantModel()
+                Participant = new ParticipantModel
                 {
-                    Code = new TypeModel()
+                    Code = new TypeModel
                     {
                         Code = "1",
                         CodeSystemVersion = "5.1",
                         DisplayName = "ОМС"
                     },
-                    DocInfo = new BasisDocumentModel()
+                    DocInfo = new BasisDocumentModel
                     {
-                         IdentityDocType = new TypeModel()
+                         IdentityDocType = new TypeModel
                          {
                              Code = "1",
                              CodeSystemVersion = "1.1",
                              DisplayName = "Полис ОМС"
                          },
-                         InsurancePolicyType = new TypeModel()
+                         InsurancePolicyType = new TypeModel
                          {
                              Code = "1",
                              CodeSystemVersion = "1.3",
                              DisplayName = "Полис ОМС старого образца"
                          },
-                         Series = "ЧБ",
+                         //Series = "ЧБ",
                          Number = "1334602",
                          INN = "213546789",
-                         StartDateDocument = new DateTime(2019, 05, 01),
-                         FinishDateDocument = new DateTime(2029, 05, 02)
+                         StartDateDocument = new DateTime(2019, 05, 01)//,
+                         //FinishDateDocument = new DateTime(2029, 05, 02)
                     },
-                    ScopingOrganization = new OrganizationModel()
+                    ScopingOrganization = new OrganizationModel
                     {
                         ID = "77013",
                         Name = "ООО \"СК \"ИНГОССТРАХ-М\"",
-                        ContactPhoneNumber = new TelecomModel()
+                        ContactPhoneNumber = new TelecomModel
                         {
                             Use = "WP",
                             Value = "+74957295571"
                         },
-                        Address = new AddressModel()
+                        Address = new AddressModel
                         {
                             StreetAddressLine = "г Москва, ул Рочдельская, д 15 стр 35",
-                            StateCode = new TypeModel()
+                            StateCode = new TypeModel
                             {
                                 Code = "77",
                                 CodeSystemVersion = "6.3",
@@ -468,52 +469,52 @@ namespace GenerateMedicalDocumentsTestApp
                         }
                     }
                 },
-                ServiceEvent = new ServiceEventModel()
+                ServiceEvent = new ServiceEventModel
                 {
-                    Code = new TypeModel()
+                    Code = new TypeModel
                     {
                         Code = "5",
                         CodeSystemVersion = "2.3",
                         DisplayName = "Врачебная комиссия"
                     },
                     StartServiceDate = new DateTime(2021, 06, 20, 10, 10, 00),
-                    FinishServiceDate = new DateTime(2021, 06, 20, 16, 10, 00),
-                    ServiceForm = new TypeModel()
+                    //FinishServiceDate = new DateTime(2021, 06, 20, 16, 10, 00),
+                    ServiceForm = new TypeModel
                     {
                         Code = "1",
                         CodeSystemVersion = "1.1",
                         DisplayName = "плановая"
                     },
-                    ServiceType = new TypeModel()
+                    ServiceType = new TypeModel
                     {
                         Code = "2",
                         CodeSystemVersion = "4.2",
                         DisplayName = "Первичная врачебная медико-санитарная помощь"
                     },
-                    ServiceCond = new TypeModel()
+                    ServiceCond = new TypeModel
                     {
                         Code = "2",
                         CodeSystemVersion = "1.2",
                         DisplayName = "Амбулаторно"
                     },
-                    Performer = new PerformerModel()
+                    Performer = new PerformerModel
                     {
-                        ID = new IDType()
+                        ID = new IDType
                         {
                             Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.70",
                             Extension = "2341"
                         },
                         SNILS = "88599674111",
-                        Position = new TypeModel()
+                        Position = new TypeModel
                         {
                             Code = "7",
                             CodeSystemVersion = "7.5",
                             DisplayName = "заведующий (начальник) структурного подразделения (отдела, отделения, лаборатории, кабинета, отряда и другое) медицинской организации - врач-специалист"
                         },
-                        Address = new AddressModel()
+                        Address = new AddressModel
                         {
                             StreetAddressLine = "г Москва, Мичуринский пр-кт, д 16, кв 9",
-                            StateCode = new TypeModel()
+                            StateCode = new TypeModel
                             {
                                 Code = "77",
                                 CodeSystemVersion = "6.3",
@@ -523,40 +524,40 @@ namespace GenerateMedicalDocumentsTestApp
                             AOGUID = new Guid("0f072841-643f-4081-baf0-b16760fede91"),
                             HOUSEGUID = new Guid("4f22318c-43a4-4040-872d-6d0b88bbe000")
                         },
-                        ContactPhoneNumber = new TelecomModel()
+                        ContactPhoneNumber = new TelecomModel
                         {
                             Value = "+74954244567"
                         },
-                        Contacts = new List<TelecomModel>()
+                        Contacts = new List<TelecomModel>
                         {
-                            { new TelecomModel() { Use = "MC", Value = "+79031234588" } },
-                            { new TelecomModel() { Value = "steaf@gmail.com" } },
-                            { new TelecomModel() { Value = "74954244567" } }
+                            new TelecomModel { Use = "MC", Value = "+79031234588" },
+                            new TelecomModel { Value = "steaf@gmail.com" },
+                            new TelecomModel { Value = "74954244567" }
                         },
-                        Name = new NameModel()
+                        Name = new NameModel
                         {
                             Family = "Степанов",
                             Given = "Андрей",
                             Patronymic = "Фёдорович"
                         },
-                        RepresentedOrganization = new OrganizationModel()
+                        RepresentedOrganization = new OrganizationModel
                         {
                             ID = "1.2.643.5.1.13.13.12.2.77.7973",
                             Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
-                            ContactPhoneNumber = new TelecomModel()
+                            ContactPhoneNumber = new TelecomModel
                             {
                                 Use = "WP",
                                 Value = "+74957503971"
                             },
-                            Contacts = new List<TelecomModel>()
+                            Contacts = new List<TelecomModel>
                             {
-                                { new TelecomModel() { Use = "WP", Value = "74957503971"} },
-                                { new TelecomModel() { Value = "https://gp180.mos.ru/" } }
+                                new TelecomModel { Use = "WP", Value = "74957503971"},
+                                new TelecomModel { Value = "https://gp180.mos.ru/" }
                             },
-                            Address = new AddressModel()
+                            Address = new AddressModel
                             {
                                 StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                                StateCode = new TypeModel()
+                                StateCode = new TypeModel
                                 {
                                     Code = "77",
                                     CodeSystemVersion = "6.3",
@@ -568,188 +569,166 @@ namespace GenerateMedicalDocumentsTestApp
                             }
                         }
                     },
-                    OtherPerformers = new List<PerformerModel>()
+                    OtherPerformers = new List<PerformerModel>
                     {
+                        new PerformerModel
                         {
-                            new PerformerModel()
+                            ID = new IDType
                             {
-                                ID = new IDType()
+                                Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.70",
+                                Extension = "2341"
+                            },
+                            SNILS = "32165477709",
+                            Position = new TypeModel
+                            {
+                                Code = "122",
+                                CodeSystemVersion = "7.5",
+                                DisplayName = "врач-хирург"
+                            },
+                            ActualAddress = new AddressModel
+                            {
+                                StreetAddressLine = "г Москва, Ленинградский пр-кт, д 78 к 3, кв 12",
+                                StateCode = new TypeModel
                                 {
-                                    Root = "1.2.643.5.1.13.13.12.2.77.7973.100.1.1.70",
-                                    Extension = "2341"
+                                    Code = "77",
+                                    CodeSystemVersion = "6.3",
+                                    DisplayName = "г. Москва"
                                 },
-                                SNILS = "32165477709",
-                                Position = new TypeModel()
+                                PostalCode = 125315,
+                                AOGUID = new Guid("9c3e9392-0324-4d21-9cf5-70076f1b5e15"),
+                                HOUSEGUID = new Guid("417432da-c526-4158-aa01-fb083797ac5e")
+                            },
+                            ContactPhoneNumber = new TelecomModel
+                            {
+                                Value = "+74954241311"
+                            },
+                            Contacts = new List<TelecomModel>
+                            {
+                                new TelecomModel { Use = "MC", Value = "+79261234588" },
+                                new TelecomModel { Value = "a.privalov@oblhosp.volgograd.ru" },
+                                new TelecomModel { Value = "74954241311" }
+                            },
+                            Name = new NameModel
+                            {
+                                Family = "Привалов",
+                                Given = "Александр",
+                                Patronymic = "Иванович"
+                            },
+                            RepresentedOrganization = new OrganizationModel
+                            {
+                                ID = "1.2.643.5.1.13.13.12.2.77.7973",
+                                Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
+                                ContactPhoneNumber = new TelecomModel
                                 {
-                                    Code = "122",
-                                    CodeSystemVersion = "7.5",
-                                    DisplayName = "врач-хирург"
+                                    Use = "WP",
+                                    Value = "+74957503971"
                                 },
-                                ActualAddress = new AddressModel()
+                                Contacts = new List<TelecomModel>
                                 {
-                                    StreetAddressLine = "г Москва, Ленинградский пр-кт, д 78 к 3, кв 12",
-                                    StateCode = new TypeModel()
+                                    new TelecomModel { Use = "WP", Value = "74957503971" },
+                                    new TelecomModel { Value = "https://gp180.mos.ru/" }
+                                },
+                                Address = new AddressModel
+                                {
+                                    StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                                    StateCode = new TypeModel
                                     {
                                         Code = "77",
                                         CodeSystemVersion = "6.3",
                                         DisplayName = "г. Москва"
                                     },
-                                    PostalCode = 125315,
-                                    AOGUID = new Guid("9c3e9392-0324-4d21-9cf5-70076f1b5e15"),
-                                    HOUSEGUID = new Guid("417432da-c526-4158-aa01-fb083797ac5e")
-                                },
-                                ContactPhoneNumber = new TelecomModel()
-                                {
-                                    Value = "+74954241311"
-                                },
-                                Contacts = new List<TelecomModel>()
-                                {
-                                    { new TelecomModel() { Use = "MC", Value = "+79261234588" } },
-                                    { new TelecomModel() { Value = "a.privalov@oblhosp.volgograd.ru" } },
-                                    { new TelecomModel() { Value = "74954241311" } }
-                                },
-                                Name = new NameModel()
-                                {
-                                    Family = "Привалов",
-                                    Given = "Александр",
-                                    Patronymic = "Иванович"
-                                },
-                                RepresentedOrganization = new OrganizationModel()
-                                {
-                                    ID = "1.2.643.5.1.13.13.12.2.77.7973",
-                                    Name = "ГБУЗ \"ГП №180 ДЗМ\" Филиал №1",
-                                    ContactPhoneNumber = new TelecomModel()
-                                    {
-                                        Use = "WP",
-                                        Value = "+74957503971"
-                                    },
-                                    Contacts = new List<TelecomModel>()
-                                    {
-                                        { new TelecomModel() { Use = "WP", Value = "74957503971" } },
-                                        { new TelecomModel() { Value = "https://gp180.mos.ru/" } }
-                                    },
-                                    Address = new AddressModel()
-                                    {
-                                        StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                                        StateCode = new TypeModel()
-                                        {
-                                            Code = "77",
-                                            CodeSystemVersion = "6.3",
-                                            DisplayName = "г. Москва"
-                                        },
-                                        PostalCode = 123592,
-                                        AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
-                                        HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
-                                    }
+                                    PostalCode = 123592,
+                                    AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                                    HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
                                 }
                             }
                         }
                     }
                 },
-                DocumentBody = new DocumentBodyModel()
+                DocumentBody = new DocumentBodyModel
                 {
-                    SentSection = new SentSectionModel()
+                    SentSection = new SentSectionModel
                     {
-                        Code = new TypeModel()
+                        Code = new TypeModel
                         {
                             Code = "SCOPORG",
                             CodeSystemVersion = "1.18",
                             DisplayName = "Цель направления и медицинская организация, куда направлен"
                         },
-                        SentParagraphs = new List<ParagraphModel>()
+                        SentParagraphs = new List<ParagraphModel>
                         {
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Гражданин направляется на медико-социальную экспертизу",
-                                    Content = new List<string>() { "повторно" }
-                                }
+                                Caption = "Гражданин направляется на медико-социальную экспертизу",
+                                Content = new List<string> { "повторно" }
                             },
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Цель направления",
-                                    Content = new List<string>() { "для разработки индивидуальной программы реабилитации инвалида" }
-                                }
+                                Caption = "Цель направления",
+                                Content = new List<string> { "для разработки индивидуальной программы реабилитации инвалида" }
                             },
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Протокол врачебной комиссии медицинской организации, содержащий решение о направлении гражданина на медико-социальную экспертизу",
-                                    Content = new List<string>() { "№ 123 от 20 мая 2018 г." }
-                                }
+                                Caption = "Протокол врачебной комиссии медицинской организации, содержащий решение о направлении гражданина на медико-социальную экспертизу",
+                                Content = new List<string> { "№ 123 от 20 мая 2018 г." }
                             },
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Гражданин по состоянию здоровья не может явиться в бюро (главное бюро, Федеральное бюро) медико-социальной экспертизы",
-                                    Content = new List<string>() { "медико-социальную экспертизу необходимо проводить на дому" }
-                                }
+                                Caption = "Гражданин по состоянию здоровья не может явиться в бюро (главное бюро, Федеральное бюро) медико-социальной экспертизы",
+                                Content = new List<string> { "медико-социальную экспертизу необходимо проводить на дому" }
                             },
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Нуждаемость в оказании паллиативной медицинской помощи",
-                                    Content = new List<string>() { "гражданин нуждается в паллиативной медицинской помощи" }
-                                }
+                                Caption = "Нуждаемость в оказании паллиативной медицинской помощи",
+                                Content = new List<string> { "гражданин нуждается в паллиативной медицинской помощи" }
                             },
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Нахождение на лечении в стационаре в связи с операцией по ампутации  (реампутации)  конечности (конечностей), нуждающийся в первичном протезировании",
-                                    Content = new List<string>() { "гражданин не нуждается в первичном протезировании" }
-                                }
+                                Caption = "Нахождение на лечении в стационаре в связи с операцией по ампутации  (реампутации)  конечности (конечностей), нуждающийся в первичном протезировании",
+                                Content = new List<string> { "гражданин не нуждается в первичном протезировании" }
                             },
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Дата выдачи гражданину направления на медико-социальную экспертизу медицинской организацией",
-                                    Content = new List<string>() { "20 июня 2018 г." }
-                                }
+                                Caption = "Дата выдачи гражданину направления на медико-социальную экспертизу медицинской организацией",
+                                Content = new List<string> { "20 июня 2018 г." }
                             },
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Гражданство",
-                                    Content = new List<string>() { "гражданин Российской Федерации" }
-                                }
+                                Caption = "Гражданство",
+                                Content = new List<string> { "гражданин Российской Федерации" }
                             },
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Гражданин находится",
-                                    Content = new List<string>() { "текст" }
-                                }
+                                Caption = "Гражданин находится",
+                                Content = new List<string> { "текст" }
                             },
+                            new ParagraphModel
                             {
-                                new ParagraphModel()
-                                {
-                                    Caption = "Отношения к воинской обязанности",
-                                    Content = new List<string>() { "гражданин, не состоящий на воинском учёте" }
-                                }
+                                Caption = "Отношения к воинской обязанности",
+                                Content = new List<string> { "гражданин, не состоящий на воинском учёте" }
                             }
                         },
-                        TargetSent = new TargetSentModel()
+                        TargetSent = new TargetSentModel
                         {
-                            SentType = new TypeModel()
+                            SentType = new TypeModel
                             {
                                 Code = "34",
                                 CodeSystemVersion = "4.45",
                                 DisplayName = "Направление на медико-социальную экспертизу"
                             },
-                            PerformerOrganization = new OrganizationModel()
+                            PerformerOrganization = new OrganizationModel
                             {
                                 ID = "1.2.643.5.1.13.13.12.2.77.1270",
                                 Name = "ФКУ \"ГБ МСЭ ФМБА России\"",
-                                ContactPhoneNumber = new TelecomModel()
+                                ContactPhoneNumber = new TelecomModel
                                 {
                                     Use = "WP",
                                     Value = "+74957545117"
                                 },
-                                Address = new AddressModel()
+                                Address = new AddressModel
                                 {
                                     StreetAddressLine = "г Москва, ул Гамалеи, д 13",
-                                    StateCode = new TypeModel()
+                                    StateCode = new TypeModel
                                     {
                                         Code = "77",
                                         CodeSystemVersion = "6.3",
@@ -760,21 +739,21 @@ namespace GenerateMedicalDocumentsTestApp
                                     HOUSEGUID = new Guid("c9d59fb9-91f2-4229-b8a9-55fe602c3c26")
                                 }
                             },
-                            TargetSentType = new TypeModel()
+                            TargetSentType = new TypeModel
                             {
                                 Code = "10",
                                 CodeSystemVersion = "1.5",
                                 DisplayName = "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)"
                             },
-                            SentOrder = new TypeModel()
+                            SentOrder = new TypeModel
                             {
                                 Code = "2",
                                 CodeSystemVersion = "2.1",
                                 DisplayName = "Повторный"
                             },
-                            Protocol = new ProtocolModel()
+                            Protocol = new ProtocolModel
                             {
-                                Protocol = new TypeModel()
+                                Protocol = new TypeModel
                                 {
                                     Code = "4059",
                                     CodeSystemVersion = "1.69",
@@ -788,66 +767,66 @@ namespace GenerateMedicalDocumentsTestApp
                             NeedPrimaryProsthetics = false,
                             SentDate = new DateTime(2021, 06, 20, 16, 10, 00)
                         },
-                        Сitizenship = new TypeModel()
+                        Сitizenship = new TypeModel
                         {
                             Code = "1",
                             CodeSystemVersion = "2.1",
                             DisplayName = "Гражданин Российской Федерации"
                         },
-                        PatientLocationCode = new TypeModel()
+                        PatientLocationCode = new TypeModel
                         {
                             Code = "4",
                             CodeSystemVersion = "1.1",
                             DisplayName = "Иная организация"
                         },
-                        PatientLocation = new OrganizationModel()
-                        {
-                            ID = "1.2.643.5.1.13.13.12.2.77.7973",
-                            Props = new PropsOrganizationModel()
-                            {
-                                OGRN = "1037734008575"
-                            },
-                            Address = new AddressModel()
-                            {
-                                StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                                StateCode = new TypeModel()
-                                {
-                                    Code = "77",
-                                    CodeSystemVersion = "6.3",
-                                    DisplayName = "г. Москва"
-                                },
-                                PostalCode = 123592,
-                                AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
-                                HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
-                            }
-                        },
-                        MilitaryDuty = new TypeModel()
+                        //PatientLocation = new OrganizationModel()
+                        //{
+                        //    ID = "1.2.643.5.1.13.13.12.2.77.7973",
+                        //    Props = new PropsOrganizationModel()
+                        //    {
+                        //        OGRN = "1037734008575"
+                        //    },
+                        //    Address = new AddressModel()
+                        //    {
+                        //        StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                        //        StateCode = new TypeModel()
+                        //        {
+                        //            Code = "77",
+                        //            CodeSystemVersion = "6.3",
+                        //            DisplayName = "г. Москва"
+                        //        },
+                        //        PostalCode = 123592,
+                        //        AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                        //        HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                        //    }
+                        //},
+                        MilitaryDuty = new TypeModel
                         {
                             Code = "4",
                             CodeSystemVersion = "1.2",
                             DisplayName = "Гражданин, не состоящий на воинском учёте"
                         }
                     },
-                    WorkplaceSection = new WorkplaceSectionModel()
+                    WorkplaceSection = new WorkplaceSectionModel
                     {
                         WorkPlaceParagraphs = new List<ParagraphModel>
                         {
-                            new ParagraphModel { Caption = "Основная профессия", Content = new List<string>() { "текст" } },
-                            new ParagraphModel { Caption = "Квалификация", Content = new List<string>() { "текст" } },
-                            new ParagraphModel { Caption = "Стаж", Content = new List<string>() { "текст"} },
-                            new ParagraphModel { Caption = "Выполняемая работа", Content = new List<string>() { "текст" } },
-                            new ParagraphModel { Caption = "Условия труда", Content = new List<string>() { "текст" } },
-                            new ParagraphModel { Caption = "Место работы", Content = new List<string>() { "текст" } },
-                            new ParagraphModel { Caption = "Адрес места работы.", Content = new List<string>() { "текст" } },
+                            new ParagraphModel { Caption = "Основная профессия", Content = new List<string> { "текст" } },
+                            new ParagraphModel { Caption = "Квалификация", Content = new List<string> { "текст" } },
+                            new ParagraphModel { Caption = "Стаж", Content = new List<string> { "текст"} },
+                            new ParagraphModel { Caption = "Выполняемая работа", Content = new List<string> { "текст" } },
+                            new ParagraphModel { Caption = "Условия труда", Content = new List<string> { "текст" } },
+                            new ParagraphModel { Caption = "Место работы", Content = new List<string> { "текст" } },
+                            new ParagraphModel { Caption = "Адрес места работы.", Content = new List<string> { "текст" } },
                         },
-                        WorkActivity = new WorkActivityModel()
+                        WorkActivity = new WorkActivityModel
                         {
-                            Workpalace = new OrganizationModel()
+                            Workpalace = new OrganizationModel
                             {
-                                Address = new AddressModel()
+                                Address = new AddressModel
                                 {
                                     StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                                    StateCode = new TypeModel()
+                                    StateCode = new TypeModel
                                     {
                                         Code = "77",
                                         CodeSystemVersion = "6.3",
@@ -862,44 +841,44 @@ namespace GenerateMedicalDocumentsTestApp
                             MainProfession = "Основная профессия (специальность, должность)",
                             Qualification = "Квалификация (класс, разряд, категория, звание)",
                             WorkExperience = "Стаж работы",
-                            WorkPerformeds = new List<(string Profession, string Speciality, string Position)>()
+                            WorkPerformeds = new List<(string Profession, string Speciality, string Position)>
                             {
                                 ("Профессия", "Специальность", "Должность")
                             },
                             Conditions = "Условия и характер выполняемого труда"
                         }
                     },
-                    EducationSection = new EducationSectionModel()
+                    EducationSection = new EducationSectionModel
                     {
-                        FillingSection = new ParagraphModel()
+                        FillingSection = new ParagraphModel
                         {
                             Caption = "Сведения о получении образования",
-                            Content = new List<string>() { "Организация, адрес, курс, профессия." }
-                        },
-                        Organization = new OrganizationModel()
-                        {
-                            ID = "1.2.643.5.1.13.13.12.4.70.184",
-                            Name = "Томское областное медицинское училище",
-                            Address = new AddressModel()
-                            {
-                                StreetAddressLine = "г Томск, ул Смирнова, д 44",
-                                StateCode = new TypeModel()
-                                {
-                                    Code = "70",
-                                    CodeSystemVersion = "6.3",
-                                    DisplayName = "Томская область"
-                                },
-                                PostalCode = 634027,
-                                AOGUID = new Guid("1564e297-fc5d-453f-8b7e-a90d444e01e7"),
-                                HOUSEGUID = new Guid("4e8ed1a2-13a5-4579-a17d-a692625b5aea")
-                            }
-                        },
-                        Class = "2",
-                        Spetiality = "Стоматология"
+                            Content = new List<string> { "Организация, адрес, курс, профессия." }
+                        }//,
+                        //Organization = new OrganizationModel()
+                        //{
+                        //    ID = "1.2.643.5.1.13.13.12.4.70.184",
+                        //    Name = "Томское областное медицинское училище",
+                        //    Address = new AddressModel()
+                        //    {
+                        //        StreetAddressLine = "г Томск, ул Смирнова, д 44",
+                        //        StateCode = new TypeModel()
+                        //        {
+                        //            Code = "70",
+                        //            CodeSystemVersion = "6.3",
+                        //            DisplayName = "Томская область"
+                        //        },
+                        //        PostalCode = 634027,
+                        //        AOGUID = new Guid("1564e297-fc5d-453f-8b7e-a90d444e01e7"),
+                        //        HOUSEGUID = new Guid("4e8ed1a2-13a5-4579-a17d-a692625b5aea")
+                        //    }
+                        //},
+                        //Class = "2",
+                        //Spetiality = "Стоматология"
                     },
-                    AnamnezSection = new AnamnezSectionModel()
+                    AnamnezSection = new AnamnezSectionModel
                     {
-                        Disability = new DisabilityModel()
+                        Disability = new DisabilityModel
                         {
                             Group = 3,
                             GroupOrder = "Повторно",
@@ -909,28 +888,43 @@ namespace GenerateMedicalDocumentsTestApp
                             DateDisabilityStart = new DateTime(1999, 03, 28),
                             CauseOfDisability = "Общее заболевание"
                         },
-                        DegreeDisability = new DegreeDisabilityModel()
+                        DegreeDisability = new DegreeDisabilityModel
                         {
-                            Section31Text = "60% (на 1 год до 01.01.2019)",
-                            Section31DateTo = new DateTime(2019, 01, 01),
-                            Section31Time = "Один год",
-                            Section31Percent = 60,
-                            Section32Text = "80% (на 1 год до 01.01.2018)",
-                            Section32DateTo = new DateTime(2018, 01, 01),
-                            Section32Time = "Один год",
-                            Section32Percent = 80,
-                            Section33Text = "90% (на 1 год до 01.01.2017)",
-                            Section33DateTo = new DateTime(2017, 01, 01),
-                            Section33Time = "Один год",
-                            Section33Percent = 90
+                            DegreeDisabilities = new List<DegreeDisabilityElementModel>()
+                            {
+                                new DegreeDisabilityElementModel()
+                                {
+                                    ID = "socanam31",
+                                    FullText = "60% (на 1 год до 01.01.2019)",
+                                    DateTo = new DateTime(2019, 01, 01),
+                                    Term = "Один год",
+                                    Percent = 60
+                                },
+                                new DegreeDisabilityElementModel()
+                                {
+                                    ID = "socanam32",
+                                    FullText = "80% (на 1 год до 01.01.2018)",
+                                    DateTo = new DateTime(2018, 01, 01),
+                                    Term = "Один год",
+                                    Percent = 80
+                                },
+                                new DegreeDisabilityElementModel()
+                                {
+                                    ID = "socanam33",
+                                    FullText = "90% (на 1 год до 01.01.2017)",
+                                    DateTo = new DateTime(2017, 01, 01),
+                                    Term = "Один год",
+                                    Percent = 90
+                                }
+                            }
                         },
                         SeenOrganizations = "с 2000  года.",
                         MedicalAnamnez = "Пациентка поступила для дообследования по поводу опухоли с поражением проксимального отдела правой голени и правого коленного сустава. При обследовании по данным морфологии выявлена саркома мягких тканей правой голени низкой степени злокачественности. Учитывая местную распространенность опухолевого процесса пациентке показано хирургическое лечение в объеме удаления опухоли с резекцией проксимального отдела правой большеберцовой кости и эндопротезированием.",
                         LifeAnamnez = "Эпидемиологический анамнез: контактов с инфекционными больными за время обращения не было. В эндемичных районах тех или иных инфекций, загрязнённых радиацией и химикатами территориях, за время обращения не находилась.",
                         ActualDevelopment = "физическое развитие (в отношении детей в возрасте до 3 лет)",
-                        TemporaryDisabilitys = new List<TemporaryDisabilityModel>()
+                        TemporaryDisabilitys = new List<TemporaryDisabilityModel>
                         {
-                            new TemporaryDisabilityModel()
+                            new TemporaryDisabilityModel
                             {
                                 DateStart = new DateTime(2018, 10, 2),
                                 DateFinish = new DateTime(2018, 10, 10),
@@ -938,7 +932,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 CipherMKB = "T23.2",
                                 Diagnosis = "Термический ожог запястья и кисти второй степени"
                             },
-                            new TemporaryDisabilityModel()
+                            new TemporaryDisabilityModel
                             {
                                 DateStart = new DateTime(2018, 05, 1),
                                 DateFinish = new DateTime(2018, 05, 20),
@@ -948,7 +942,7 @@ namespace GenerateMedicalDocumentsTestApp
                             }
                         },
                         CertificateDisabilityNumber = "№ ЭЛН 123456789",
-                        EffectityAction = new List<string>()
+                        EffectityAction = new List<string>
                         {
                             "индивидуальная программа реабилитации инвалида № 123 к протоколу проведения медико-социальной экспертизы № 222 от 20 июля 2018 г.:",
                             "Восстановление нарушенных функций: частичное",
@@ -962,11 +956,11 @@ namespace GenerateMedicalDocumentsTestApp
                         ResultRestorationFunctions = "Частичное",
                         ResultCompensationFunction = "Частичное"
                     },
-                    VitalParametersSection = new VitalParametersSectionModel()
+                    VitalParametersSection = new VitalParametersSectionModel
                     {
-                        VitalParameters = new List<VitalParameterModel>()
+                        VitalParameters = new List<VitalParameterModel>
                         {
-                            new VitalParameterModel()
+                            new VitalParameterModel
                             {
                                 Caption = "Масса тела",
                                 EntryDisplayName = "Масса тела",
@@ -979,7 +973,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 EntryUnit = "гр.",
                                 EntryType = "PQ"
                             },
-                            new VitalParameterModel()
+                            new VitalParameterModel
                             {
                                 Caption = "Масса тела при рождении (в отношении детей в возрасте до 3 лет)",
                                 EntryDisplayName = "Масса тела",
@@ -992,7 +986,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 EntryUnit = "гр.",
                                 EntryType = "PQ"
                             },
-                            new VitalParameterModel()
+                            new VitalParameterModel
                             {
                                 Caption = "Рост",
                                 EntryDisplayName = "Длина тела",
@@ -1005,7 +999,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 EntryUnit = "см",
                                 EntryType = "PQ"
                             },
-                            new VitalParameterModel()
+                            new VitalParameterModel
                             {
                                 Caption = "ИМТ",
                                 EntryDisplayName = "Индекс массы тела",
@@ -1016,7 +1010,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 EntryValue = "32.87",
                                 EntryType = "REAL"
                             },
-                            new VitalParameterModel()
+                            new VitalParameterModel
                             {
                                 Caption = "Суточный объём физиологических отправлений",
                                 EntryDisplayName = "Суточный объём физиологических отправлений",
@@ -1029,7 +1023,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 EntryUnit = "мл",
                                 EntryType = "PQ"
                             },
-                            new VitalParameterModel()
+                            new VitalParameterModel
                             {
                                 Caption = "Объём талии",
                                 EntryDisplayName = "Окружность талии",
@@ -1042,7 +1036,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 EntryUnit = "см",
                                 EntryType = "PQ"
                             },
-                            new VitalParameterModel()
+                            new VitalParameterModel
                             {
                                 Caption = "Объём бёдер",
                                 EntryDisplayName = "Окружность бёдер",
@@ -1058,15 +1052,15 @@ namespace GenerateMedicalDocumentsTestApp
                         },
                         BodyType = "нормостеническое"
                     },
-                    DirectionStateSection = new DirectionStateSectionModel()
+                    DirectionStateSection = new DirectionStateSectionModel
                     {
                         StateText = "Жалоб нет. Физическое развитие нормальное.	Психофизиологическая выносливость в норме.	Эмоциональная устойчивость в норме."
                     },
-                    DiagnosticStudiesSection = new DiagnosticStudiesSectionModel()
+                    DiagnosticStudiesSection = new DiagnosticStudiesSectionModel
                     {
-                        MedicalExaminations = new List<MedicalExaminationModel>()
+                        MedicalExaminations = new List<MedicalExaminationModel>
                         {
-                            new MedicalExaminationModel()
+                            new MedicalExaminationModel
                             {
                                 Date = new DateTime(2021, 05, 01, 16, 10, 00),
                                 Number = "A04.01.001",
@@ -1075,7 +1069,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 ID = "324576",
                                 Code = "174"
                             },
-                            new MedicalExaminationModel()
+                            new MedicalExaminationModel
                             {
                                 Date = new DateTime(2021, 05, 01, 17, 10, 00),
                                 Number = "A06.09.007",
@@ -1084,7 +1078,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 ID = "895543",
                                 Code = "64"
                             },
-                            new MedicalExaminationModel()
+                            new MedicalExaminationModel
                             {
                                 Date = new DateTime(2021, 05, 01, 17, 10 ,00),
                                 Number = "B01.015.001",
@@ -1095,11 +1089,11 @@ namespace GenerateMedicalDocumentsTestApp
                             }
                         }
                     },
-                    DiagnosisSection = new DiagnosisSectionModel()
+                    DiagnosisSection = new DiagnosisSectionModel
                     {
-                        Diagnosis = new List<DiagnosticModel>()
+                        Diagnosis = new List<DiagnosticModel>
                         {
-                            new DiagnosticModel()
+                            new DiagnosticModel
                             {
                                 ID = "C49.2",
                                 Code = "1",
@@ -1107,7 +1101,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 Caption = "Основное заболевание",
                                 Result = "Фибромиксоидная саркома мягких тканей верхней трети правой голени с подрастанием к большеберцовой кости и мягким тканям правого коленного сустава T2bN0M0G1 Стадия: I."
                             },
-                            new DiagnosticModel()
+                            new DiagnosticModel
                             {
                                 ID = "I25",
                                 Code = "3",
@@ -1115,7 +1109,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 Caption = "Сопутствующая патология",
                                 Result = "ИБС, стенокардия напряжения, 3ФК. Постоянная форма мерцательной аритмии, ХСН 2А. 3ФК. Гипертоническая болезнь 2 стадии, АГ 2 степени, риск 4. Ожирение 1 степени."
                             },
-                            new DiagnosticModel()
+                            new DiagnosticModel
                             {
                                 ID = "I25.1",
                                 Code = "7",
@@ -1125,32 +1119,43 @@ namespace GenerateMedicalDocumentsTestApp
                             }
                         }
                     },
-                    ConditionAssessmentSection = new ConditionAssessmentSection()
+                    ConditionAssessmentSection = new ConditionAssessmentSection
                     {
-                        ClinicalPrognosis = new ConditionGrateModel()
+                        ClinicalPrognosis = new ConditionGrateModel
                         {
                             GrateType = "Клинический прогноз",
                             GrateResult = "Относительно благоприятный"
                         },
-                        RehabilitationPotential = new ConditionGrateModel()
+                        RehabilitationPotential = new ConditionGrateModel
                         {
                             GrateType = "Реабилитационный потенциал",
                             GrateResult = "Удовлетворительный"
                         },
-                        RehabilitationPrognosis = new ConditionGrateModel()
+                        RehabilitationPrognosis = new ConditionGrateModel
                         {
                             GrateType = "Реабилитационный прогноз",
                             GrateResult = "Сомнительный (неопределенный)"
                         }
                     },
-                    RecommendationsSection = new RecommendationsSectionModel()
+                    RecommendationsSection = new RecommendationsSectionModel
                     {
                         RecommendedMeasuresReconstructiveSurgery = "отсутствуют",
                         RecommendedMeasuresProstheticsAndOrthotics = "отсутствуют",
                         SpaTreatment = "не требуется",
-                        Medications = new List<MedicationModel>()
+                        Medications = new List<MedicationModel>
                         {
-                            new MedicationModel()
+                            new MedicationModel
+                            {
+                                InternationalName = "Ацетилсалециловая кислота",
+                                DosageForm = "Таблетки",
+                                Dose = "100 мг+75 мг",
+                                KTRUCode = "21.20.10.131-000003-1-00050-0000000000000",
+                                KTRUName = "Стандартизованное_МНН:АЦЕТИЛСАЛИЦИЛОВАЯ КИСЛОТА+КЛОПИДОГРЕЛ Стандартизованная_лекарственная_форма:ТАБЛЕТКИ Стандартизованная_лекарственная_доза:100 мг+75 мг Код_КТРУ:21.20.10.131-000003-1-00050-0000000000000",
+                                DurationAdmission = "1 неделя",
+                                MultiplicityCoursesTreatment = "раз в 3 месяца",
+                                ReceptionFrequency = "100-300 мг/день"
+                            },
+                            new MedicationModel
                             {
                                 InternationalName = "Ацетилсалециловая кислота",
                                 DosageForm = "Таблетки",
@@ -1165,15 +1170,15 @@ namespace GenerateMedicalDocumentsTestApp
                         MedicalDevices = "текст",
                         OtherRecommendatons = "отсутствуют"
                     },
-                    OutsideSpecialMedicalCareSection = new OutsideSpecialMedicalCareSectionModel()
+                    OutsideSpecialMedicalCareSection = new OutsideSpecialMedicalCareSectionModel
                     {
                         Text = "Текст"
                     },
-                    AttachmentDocumentsSection = new AttachmentDocumentsSectionModel()
+                    AttachmentDocumentsSection = new AttachmentDocumentsSectionModel
                     {
-                        AttachmentDocuments = new List<MedicalDocumentModel>()
+                        AttachmentDocuments = new List<MedicalDocumentModel>
                         {
-                            new MedicalDocumentModel()
+                            new MedicalDocumentModel
                             {
                                 Name = "Ультразвуковое исследование мягких тканей (одна анатомическая зона)",
                                 Result = "результат",
@@ -1181,7 +1186,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 ReferenceRoot = "1.2.643.5.1.13.13.12.2.77.8312.100.1.1.51",
                                 ReferenceExtension = "2568973"
                             },
-                            new MedicalDocumentModel()
+                            new MedicalDocumentModel
                             {
                                 Name = "Рентгенография легких",
                                 Result = "результат",
@@ -1194,9 +1199,9 @@ namespace GenerateMedicalDocumentsTestApp
                 }
             };
             
-            JsonSerializerOptions jsonSerializeOption = new JsonSerializerOptions()
+            JsonSerializerOptions jsonSerializeOption = new JsonSerializerOptions
             {
-                Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
                 WriteIndented = true
             };
 
@@ -1204,7 +1209,7 @@ namespace GenerateMedicalDocumentsTestApp
             
             using (FileStream fs = new FileStream(pathToSaveFile, FileMode.Create))
             {
-                await JsonSerializer.SerializeAsync<DirectionToMSEDocumentModel>(fs, documentModel, jsonSerializeOption);
+                await JsonSerializer.SerializeAsync(fs, documentModel, jsonSerializeOption);
             }
             
             return documentModel;
