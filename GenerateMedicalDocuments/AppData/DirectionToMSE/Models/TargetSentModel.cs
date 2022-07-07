@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
 {
@@ -18,7 +19,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// [1..1] Цель направления.
         /// </summary>
-        public TypeModel TargetSentType { get; set; }
+        public List<TypeModel> TargetSentTypes { get; set; }
         /// <summary>
         /// [1..1] Порядок обращения.
         /// </summary>

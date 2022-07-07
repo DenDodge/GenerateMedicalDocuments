@@ -3372,8 +3372,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             performerElement.Add(assignedEntityElement);
             actElement.Add(performerElement);
 
+            actElement.Add(GenerateEntryRelationshipTargetSentElement(targetSentModel.TargetSentTypes));
+            
             actElement.Add(GenerateEntryRelationshipElements(
-                targetSentModel.TargetSentType,
                 targetSentModel.SentOrder,
                 targetSentModel.Protocol,
                 targetSentModel.IsAtHome,
@@ -3385,9 +3386,41 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
+        /// Создает элемент "entryRelationship" со списком целей направлений.
+        /// </summary>
+        /// <param name="targetSentTypes">Список целей направлений.</param>
+        /// <returns>Элемент "entryRelationship" со списком целей направлений.</returns>
+        private static XElement GenerateEntryRelationshipTargetSentElement(List<TypeModel> targetSentTypes)
+        {
+            if (targetSentTypes is null || targetSentTypes.Count == 0)
+            {
+                return null;
+            }
+            
+            var codeAttributes = GetCodeValue("sentTarget");
+            
+            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship");
+            XElement observationElement = new XElement((xmlnsNamespace + "observation"));
+
+            foreach (var targetSentType in targetSentTypes)
+            {
+                XElement codeElement = new XElement(xmlnsNamespace + "code",
+                    GetTypeElementAttributes(
+                        codeValue: targetSentType.Code,
+                        codeSystemValue: codeAttributes.codeSystemValue,
+                        codeSystemVersionValue: targetSentType.CodeSystemVersion,
+                        codeSystemNameValue: codeAttributes.codeSystemNameValue,
+                        displayNameValue: targetSentType.DisplayName));
+                observationElement.Add(codeElement);
+            }
+            
+            entryRelationshipElement.Add(observationElement);
+            return entryRelationshipElement;
+        }
+        
+        /// <summary>
         /// Создает списков элементов "entryRelationship".
         /// </summary>
-        /// <param name="targetSentType">Цель направления.</param>
         /// <param name="sentOrder">Порядок обращения.</param>
         /// <param name="protocol">Протокол врачебной комиссии.</param>
         /// <param name="isAtHome">Экспертиза проводится на дому.</param>
@@ -3396,7 +3429,6 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="sentDate">Дата выдачи направления.</param>
         /// <returns>Список элементов "entryRelationship".</returns>
         private static List<XElement> GenerateEntryRelationshipElements(
-            TypeModel targetSentType = null,
             TypeModel sentOrder = null,
             ProtocolModel protocol = null,
             bool? isAtHome = null,
@@ -3405,13 +3437,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             DateTime? sentDate = null)
         {
             List<XElement> entryRelationshipElements = new List<XElement>();
-
-            if (targetSentType != null)
-            {
-                entryRelationshipElements.Add(GenerateEntryRelationshipElement(
-                    "sentTarget",
-                    targetSentType));
-            }
+            
             if (sentOrder != null)
             {
                 entryRelationshipElements.Add(GenerateEntryRelationshipElement(

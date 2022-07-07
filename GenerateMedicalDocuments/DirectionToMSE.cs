@@ -46,7 +46,7 @@ namespace GenerateMedicalDocuments
         /// </summary>
         /// <param name="xmlDocument">XML файл.</param>
         /// <param name="saveFilePatch">Путь сохранения файла.</param>
-        public void SaveDocument(XDocument xmlDocument, string saveFilePatch)
+        public void SaveXmlDocument(XDocument xmlDocument, string saveFilePatch)
         {
             xmlDocument.Save(saveFilePatch);
         }
