@@ -3799,10 +3799,18 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     {
                         XElement trContentElement = new XElement(xmlnsNamespace + "tr");
 
-                        XElement td1Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateStart.ToString("dd.MM.yyyy"));
-                        trContentElement.Add(td1Element);
-                        XElement td2Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateFinish.ToString("dd.MM.yyyy"));
-                        trContentElement.Add(td2Element);
+                        if (temporaryDisability.DateStart is not null)
+                        {
+                            XElement td1Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateStart?.ToString("dd.MM.yyyy"));
+                            trContentElement.Add(td1Element);
+                        }
+
+                        if (temporaryDisability.DateFinish is not null)
+                        {
+                            XElement td2Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DateFinish?.ToString("dd.MM.yyyy"));
+                            trContentElement.Add(td2Element);
+                        }
+                        
                         XElement td3Element = new XElement(xmlnsNamespace + "td", temporaryDisability.DayCount);
                         trContentElement.Add(td3Element);
                         XElement td4Element = new XElement(xmlnsNamespace + "td", temporaryDisability.CipherMKB);
@@ -4116,10 +4124,26 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             actElement.Add(codeElement);
 
             XElement effectiveTimeElement = new XElement(xmlnsNamespace + "effectiveTime");
-            XElement lowElement = new XElement(xmlnsNamespace + "low",
-                new XAttribute("value", temporaryDisabilityModel.DateStart.ToString("yyyyMMdd")));
-            XElement highElement = new XElement(xmlnsNamespace + "high",
-                new XAttribute("value", temporaryDisabilityModel.DateFinish.ToString("yyyyMMdd")));
+            XElement lowElement = new XElement(xmlnsNamespace + "low");
+            if (temporaryDisabilityModel.DateStart is not null)
+            {
+                lowElement.Add(new XAttribute("value", temporaryDisabilityModel.DateStart?.ToString("yyyyMMdd")));
+            }
+            else
+            {
+                lowElement.Add(new XAttribute("nullFlavor", "NAV"));
+            }
+
+            XElement highElement = new XElement(xmlnsNamespace + "high");
+            if (temporaryDisabilityModel.DateFinish is not null)
+            {
+                highElement.Add(new XAttribute("value", temporaryDisabilityModel.DateFinish?.ToString("yyyyMMdd")));
+            }
+            else
+            {
+                highElement.Add(new XAttribute("nullFlavor", "NAV"));
+            }
+            
             effectiveTimeElement.Add(lowElement);
             effectiveTimeElement.Add(highElement);
             actElement.Add(effectiveTimeElement);
@@ -4180,8 +4204,15 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             observationElement.Add(textElement);
 
             XElement effectiveTimeElement = new XElement(xmlnsNamespace + "effectiveTime");
-            XElement highElement = new XElement(xmlnsNamespace + "high",
-                new XAttribute("value", degreeDisabilityDateTo?.ToString("yyyyMMdd")));
+            XElement highElement = new XElement(xmlnsNamespace + "high");
+            if (degreeDisabilityDateTo is not null)
+            {
+                highElement.Add(new XAttribute("value", degreeDisabilityDateTo?.ToString("yyyyMMdd")));
+            }
+            else
+            {
+                highElement.Add(new XAttribute("nullFlavor", "NAV"));
+            }
             effectiveTimeElement.Add(highElement);
             observationElement.Add(effectiveTimeElement);
 

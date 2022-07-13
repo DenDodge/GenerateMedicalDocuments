@@ -17,8 +17,8 @@ namespace GenerateMedicalDocumentsTestApp
             //var documentModel = await GetDocumentModelOnJson();
 
             DirectionToMSE directionToMSE = new DirectionToMSE();
-            // var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
-            // directionToMSE.SaveDocument(xmlDocument, "xmlDocument.xml");
+            var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
+            directionToMSE.SaveXmlDocument(xmlDocument, "xmlDocument.xml");
 
             directionToMSE.CreationHTMLDocument(documentModel, "htmlDocument.html");
         }
@@ -739,12 +739,16 @@ namespace GenerateMedicalDocumentsTestApp
                                     HOUSEGUID = new Guid("c9d59fb9-91f2-4229-b8a9-55fe602c3c26")
                                 }
                             },
-                            TargetSentType = new TypeModel
+                            TargetSentTypes = new List<TypeModel>
                             {
-                                Code = "10",
-                                CodeSystemVersion = "1.5",
-                                DisplayName = "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)"
-                            },
+                                new TypeModel()
+                                {
+                                    Code = "10",
+                                    CodeSystemVersion = "1.5",
+                                    DisplayName = "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)"
+                                }
+                            }
+                            ,
                             SentOrder = new TypeModel
                             {
                                 Code = "2",
@@ -896,7 +900,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 {
                                     ID = "socanam31",
                                     FullText = "60% (на 1 год до 01.01.2019)",
-                                    DateTo = new DateTime(2019, 01, 01),
+                                    //DateTo = new DateTime(2019, 01, 01),
                                     Term = "Один год",
                                     Percent = 60
                                 },
@@ -926,8 +930,8 @@ namespace GenerateMedicalDocumentsTestApp
                         {
                             new TemporaryDisabilityModel
                             {
-                                DateStart = new DateTime(2018, 10, 2),
-                                DateFinish = new DateTime(2018, 10, 10),
+                                //DateStart = new DateTime(2018, 10, 2),
+                                //DateFinish = new DateTime(2018, 10, 10),
                                 DayCount = "9 дней",
                                 CipherMKB = "T23.2",
                                 Diagnosis = "Термический ожог запястья и кисти второй степени"

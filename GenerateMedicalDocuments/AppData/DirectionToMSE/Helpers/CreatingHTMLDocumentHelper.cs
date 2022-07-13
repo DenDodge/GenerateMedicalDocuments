@@ -952,8 +952,15 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         private void GenerateTemporaryDisabilityeTableRowTable(TemporaryDisabilityModel temporaryDisabilitys)
         {
             this.StreamWriter.WriteLine("                               <tr>");
-            this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DateStart.ToString("dd.MM.yyyy")}</th>");
-            this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DateFinish.ToString("dd.MM.yyyy")}</th>");
+            if (temporaryDisabilitys.DateStart is not null)
+            {
+                this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DateStart?.ToString("dd.MM.yyyy")}</th>");
+            }
+
+            if (temporaryDisabilitys.DateFinish is not null)
+            {
+                this.StreamWriter.WriteLine($"                                   <th class=\"inner\" colspan=\"\">{temporaryDisabilitys.DateFinish?.ToString("dd.MM.yyyy")}</th>");
+            }
             
             if (temporaryDisabilitys.DayCount is not null)
             {
