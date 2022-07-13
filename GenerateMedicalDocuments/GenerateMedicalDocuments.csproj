@@ -4,4 +4,14 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="EasyDocs">
+      <HintPath>bin\Debug\net5.0\EasyDocs.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.IO.Packaging" Version="6.0.0" />
+  </ItemGroup>
+
 </Project>

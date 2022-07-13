@@ -17,10 +17,13 @@ namespace GenerateMedicalDocumentsTestApp
             //var documentModel = await GetDocumentModelOnJson();
 
             DirectionToMSE directionToMSE = new DirectionToMSE();
-            // var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
-            // directionToMSE.SaveDocument(xmlDocument, "xmlDocument.xml");
+            //var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
+            //directionToMSE.SaveXmlDocument(xmlDocument, "xmlDocument.xml");
 
-            directionToMSE.CreationHTMLDocument(documentModel, "htmlDocument.html");
+            //directionToMSE.CreationHTMLDocument(documentModel, "htmlDocument.html");
+            directionToMSE.GeneratePrintForm(
+                "MSETemplate.docx", 
+                "MSE.docx", documentModel);
         }
 
         /// <summary>
@@ -739,11 +742,20 @@ namespace GenerateMedicalDocumentsTestApp
                                     HOUSEGUID = new Guid("c9d59fb9-91f2-4229-b8a9-55fe602c3c26")
                                 }
                             },
-                            TargetSentType = new TypeModel
+                            TargetSentTypes = new List<TypeModel>()
                             {
-                                Code = "10",
-                                CodeSystemVersion = "1.5",
-                                DisplayName = "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)"
+                                new TypeModel()
+                                {
+                                    Code = "10",
+                                    CodeSystemVersion = "1.5",
+                                    DisplayName = "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)"
+                                },
+                                new TypeModel()
+                                {
+                                    Code = "10",
+                                    CodeSystemVersion = "1.5",
+                                    DisplayName = "бла бла бла"
+                                }
                             },
                             SentOrder = new TypeModel
                             {
