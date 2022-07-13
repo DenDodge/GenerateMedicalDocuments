@@ -126,11 +126,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// Дата начала.
         /// </summary>
-        public DateTime DateStart { get; set; }
+        public DateTime? DateStart { get; set; } = null;
+
         /// <summary>
         /// Дата окончания.
         /// </summary>
-        public DateTime DateFinish { get; set; }
+        public DateTime? DateFinish { get; set; } = null;
         /// <summary>
         /// Число дней.
         /// </summary>
