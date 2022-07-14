@@ -46,20 +46,9 @@ namespace GenerateMedicalDocuments
         public void GeneratePrintForm(string templatePath, string outPath, DirectionToMSEDocumentModel documentModel)
         {
             Engine engine = new Engine();
-            var patientFIO =
-                $"{documentModel.RecordTarget.PatientRole.PatientData.Name.Family} {documentModel.RecordTarget.PatientRole.PatientData.Name.Given} {documentModel.RecordTarget.PatientRole.PatientData.Name.Patronymic}";
-            var a = new Dictionary<string, string>()
-            {
-                { "OrganizationName", documentModel.RepresentedCustodianOrganization.Name },
-                { "OrganizationAddress", documentModel.RepresentedCustodianOrganization.Address.StreetAddressLine },
-                { "OrganizationOGRN", " " },
-                { "DocumentNumber", documentModel.DocumentBody.SentSection.TargetSent.Protocol.ProtocolNumber },
-                { "DocumentDate", documentModel.DocumentBody.SentSection.TargetSent.Protocol.ProtocolDate.ToString("dd MMMM yyyy") },
-                { "PatientFIO", patientFIO },
-                { "PatientBirthdate", documentModel.RecordTarget.PatientRole.PatientData.BirthDate.ToString("dd MMMM yyyy") },
-                { "PatientAge", "32" }
-            };
-            var errors = engine.Merge(templatePath, a, outPath);
+            CreatingPrintFormHelper printFormHelper = new CreatingPrintFormHelper();
+            var parameters = printFormHelper.GetDataToParametersList(documentModel);
+            var errors = engine.Merge(templatePath, parameters, outPath);
         }
         
         /// <summary>

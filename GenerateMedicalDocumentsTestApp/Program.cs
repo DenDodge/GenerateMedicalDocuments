@@ -17,12 +17,12 @@ namespace GenerateMedicalDocumentsTestApp
             //var documentModel = await GetDocumentModelOnJson();
 
             DirectionToMSE directionToMSE = new DirectionToMSE();
-            var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
-            directionToMSE.SaveXmlDocument(xmlDocument, "xmlDocument.xml");
+            //var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
+            //directionToMSE.SaveXmlDocument(xmlDocument, "xmlDocument.xml");
 
             //directionToMSE.CreationHTMLDocument(documentModel, "htmlDocument.html");
             directionToMSE.GeneratePrintForm(
-                "MSETemplate.docx", 
+                "D:\\WORK_YAMED\\4_GenerateMedicalDocuments\\GenerateMedicalDocuments\\GenerateMedicalDocuments\\MSETemplate.docx", 
                 "MSE.docx", documentModel);
         }
 
@@ -678,17 +678,17 @@ namespace GenerateMedicalDocumentsTestApp
                             new ParagraphModel
                             {
                                 Caption = "Гражданин по состоянию здоровья не может явиться в бюро (главное бюро, Федеральное бюро) медико-социальной экспертизы",
-                                Content = new List<string> { "медико-социальную экспертизу необходимо проводить на дому" }
+                                Content = new List<string> { "медикосоциальную экспертизу необходимо проводить на дому" }
                             },
                             new ParagraphModel
                             {
                                 Caption = "Нуждаемость в оказании паллиативной медицинской помощи",
-                                Content = new List<string> { "гражданин нуждается в паллиативной медицинской помощи" }
+                                Content = new List<string> { "нуждается в оказании паллиативной медицинской" }
                             },
                             new ParagraphModel
                             {
                                 Caption = "Нахождение на лечении в стационаре в связи с операцией по ампутации  (реампутации)  конечности (конечностей), нуждающийся в первичном протезировании",
-                                Content = new List<string> { "гражданин не нуждается в первичном протезировании" }
+                                Content = new List<string> { "не нуждается в первичном протезировании" }
                             },
                             new ParagraphModel
                             {
