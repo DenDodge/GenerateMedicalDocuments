@@ -19,5 +19,20 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers.MainHelpers
         /// Описание "Нахождение на лечении в стационаре в связи с операцией по ампутации  (реампутации)  конечности (конечностей), нуждающийся в первичном протезировании".
         /// </summary>
         public static string PersonNeedsPrimaryProsthetics = "Нахождение на лечении в стационаре в связи с операцией по ампутации  (реампутации)  конечности (конечностей), нуждающийся в первичном протезировании";
+
+        /// <summary>
+        /// Описание "Гражданство".
+        /// </summary>
+        public static string Citizenship = "Гражданство";
+
+        /// <summary>
+        /// Описание "Цель направления".
+        /// </summary>
+        public static string PurposeOfReferral = "Цель направления";
+
+        /// <summary>
+        /// Описание "Отношения к воинской обязанности".
+        /// </summary>
+        public static string AttitudeTowardsMilitaryService = "Отношения к воинской обязанности";
     }
 }

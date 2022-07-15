@@ -668,7 +668,13 @@ namespace GenerateMedicalDocumentsTestApp
                             new ParagraphModel
                             {
                                 Caption = "Цель направления",
-                                Content = new List<string> { "для разработки индивидуальной программы реабилитации инвалида" }
+                                Content = new List<string>
+                                {
+                                    "Установление группы инвалидности",
+                                    "Установление категории \"ребенок-инвалид\"",
+                                    "Установление срока инвалидности",
+                                    "Определение нуждаемости по состоянию здоровья в постоянном постороннем уходе (помощи, надзоре) отца, матери, жены, родного брата, родной сестры, дедушки, бабушки или усыновителя гражданина, призываемого на военную службу (военнослужащего, проходящего военную службу по контракту)"
+                                }
                             },
                             new ParagraphModel
                             {
@@ -698,7 +704,7 @@ namespace GenerateMedicalDocumentsTestApp
                             new ParagraphModel
                             {
                                 Caption = "Гражданство",
-                                Content = new List<string> { "гражданин Российской Федерации" }
+                                Content = new List<string> { "Гражданин Российской Федерации" }
                             },
                             new ParagraphModel
                             {
@@ -708,7 +714,7 @@ namespace GenerateMedicalDocumentsTestApp
                             new ParagraphModel
                             {
                                 Caption = "Отношения к воинской обязанности",
-                                Content = new List<string> { "гражданин, не состоящий на воинском учёте" }
+                                Content = new List<string> { "Гражданин, не состоящий на воинском учёте" }
                             }
                         },
                         TargetSent = new TargetSentModel
