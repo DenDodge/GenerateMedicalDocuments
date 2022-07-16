@@ -6,6 +6,9 @@ using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 
 namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 {
+    /// <summary>
+    /// Помощник создания печатной формы.
+    /// </summary>
     public class CreatingPrintFormHelper
     {
         #region Private fields
@@ -17,6 +20,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         private Dictionary<string, string> parameters;
 
+        /// <summary>
+        /// Имена параметров.
+        /// </summary>
         private List<string> parametersName;
 
         /// <summary>
@@ -26,11 +32,15 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         
         #endregion
 
+        #region Constructors
+
         public CreatingPrintFormHelper()
         {
             this.InitialParametersNames();
             this.InitialParametersList();
         }
+
+        #endregion
 
         #region Private members
 
@@ -51,7 +61,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "isToHome",
                 "isNeedPaliatMedicalHelp",
                 "isPrimaryProsthetics",
-                // table 5.
+                // begin table 5.
                 "isEstablishingDisabilityGroup", // cell 5.1.
                 "isEstablishingCategoryDisabledChild", // cell 5.2.
                 "isEstablishingCauseDisability", // cell 5.3.
@@ -62,6 +72,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "isDeterminingNeedForHealthReasonsInConstantOutsideCare", // cell 5.8.
                 "isDevelopmentOfAnIndividualProgramForTheRehabilitationOrHabilitationOfDisabledPerson", // cell 5.9.
                 "isDevelopmentOfProgramForRehabilitationOfVictimAsEesultOfAnAccident", // cell 5.10.
+                // end table 5.
                 "PatientFIO",
                 "PatientBirthdate",
                 "PatientAge",
@@ -71,13 +82,26 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "isForeignCitizen",
                 "isStatelessPerson",
                 "isDualCitizenship",
-                // table 10.
+                // begin table 10.
                 "isCitizenInMilitary", // cell 10.1.
                 "isCitizenEnteringMilitaryRegistration", // cell 10.2.
                 "isCitizenNotEegisteredMilitaryButPbligedRegisteredMilitary", // cell 10.3.
                 "isCitizenNotEegisteredMilitary", // cell 10.4.
-                
+                // end table 10.
+                // TODO: need write 11 point parameters.
                 "isBOMZ", // 12 point
+                // TODO: need write 13 point parameters (table)
+                "telephonePatientContacts", // 14.1 point.
+                "emailPatientContacts", // 14.2 point.
+                "patientSNILSNumber", // 15 point (SNILS)
+                "patientInsurancePolicyNumber", // 15 point (insurancePolicy)
+                // begin 16 point.
+                "patientIdentityDocumentName", // 16.1 point.
+                "patientIdentityDocumentSeries", // 16.2 point.
+                "patientIdentityDocumentNumber", // 16.2 point.
+                "patientIdentityDocumentIssueOrgName", // 16.3 point.
+                "patientIdentityDocumentIssueDate", // 16.4 point.
+                // end 16 point.
             };
         }
         
@@ -107,17 +131,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.SetIsToHomeParameter(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 2 point.
             this.SetIsNeedPaliatMedicalHelpParameter(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 3 point.
             this.SetIsPrimaryProstheticsParameter(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 4 point.
-            // 5.1 - 5.10 cells.
-            this.SetPurposeOfReferralParameters(documentModel?.DocumentBody?.SentSection?.SentParagraphs);
-            // TODO: вероятно, нужно будет перенести в общий метод "SetPatienData".
-            this.SetPatientNameParameter(documentModel?.RecordTarget?.PatientRole?.PatientData?.Name); // 6 point.
-            this.SetPatientBirthdateParameter(documentModel?.RecordTarget?.PatientRole?.PatientData?.BirthDate); // 7 point.
-            this.SetPatientAgeParameter(documentModel?.RecordTarget?.PatientRole?.PatientData?.BirthDate); // 7 point.
-            this.SetPatienGenderParameter(documentModel?.RecordTarget?.PatientRole?.PatientData?.Gender); // 8 point.
-            this.SetCitizenshipParameter(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 9 point.
-            this.SetAttitudeTowardsMilitaryServiceParameter(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 10 point.
-            this.SetPatientPermanentAddressParameter(documentModel?.RecordTarget?.PatientRole?.PermanentAddress);
-            
+            this.SetPurposeOfReferralParameters(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 5 point.
+            // TODO: в установке адреса не доделано.
+            this.SetPatientAllDataParameters(documentModel?.RecordTarget?.PatientRole, documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 6 - 16 points.
             
             return this.parameters;
         }
@@ -184,7 +200,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Установка флага в ячейку "Гражданин нуждается в оказании паллиативной медицинской помощи". (3 пункт).
+        /// Устанавливает флаг в ячейку "Гражданин нуждается в оказании паллиативной медицинской помощи". (3 пункт).
         /// </summary>
         /// <param name="paragraphs">Параграфы секции "Направление".</param>
         private void SetIsNeedPaliatMedicalHelpParameter(List<ParagraphModel> paragraphs)
@@ -198,7 +214,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Установка флага в ячейку "Гражданин нуждающийся в первичном протезировании". (4 пункт).
+        /// Устанавливает флаг в ячейку "Гражданин нуждающийся в первичном протезировании". (4 пункт).
         /// </summary>
         /// <param name="paragraphs">Параграфы секции "Направление".</param>
         private void SetIsPrimaryProstheticsParameter(List<ParagraphModel> paragraphs)
@@ -212,7 +228,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Установки флагов в таблице "Цель направления".
+        /// Устанавливает флаги в таблице "Цель направления".
         /// </summary>
         /// <param name="paragraphs">Параграфы секции "Направление".</param>
         private void SetPurposeOfReferralParameters(List<ParagraphModel> paragraphs)
@@ -279,7 +295,36 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 this.parameters["isDevelopmentOfProgramForRehabilitationOfVictimAsEesultOfAnAccident"] = trueFlag;
             }
         }
-        
+
+        /// <summary>
+        /// Устанавливает все данные пациента.
+        /// </summary>
+        /// <param name="patientModel">Модель данных пациента.</param>
+        private void SetPatientAllDataParameters(PatientModel patientModel, List<ParagraphModel> paragraphs)
+        {
+            if (patientModel is not null)
+            {
+                this.SetPatientNameParameter(patientModel.PatientData?.Name); // 6 point.
+                this.SetPatientBirthdateParameter(patientModel.PatientData?.BirthDate); // 7 point.
+                this.SetPatientAgeParameter(patientModel.PatientData?.BirthDate); // 7 point.
+                this.SetPatienGenderParameter(patientModel.PatientData?.Gender); // 8 point.
+                // TODO: сделано только "Лицо без определенного места жительства. В остальном нужно парсить 1 строку - пока не понял как.
+                this.SetPatientPermanentAddressParameter(patientModel.PermanentAddress); // 11 - 13 points.
+                this.SetPatientContactDataParameters(patientModel.ContactPhoneNumber,
+                    patientModel.Contacts); // 14 point.
+                this.SetSNILSAndOMSParameters(patientModel.SNILS, patientModel.InsurancePolicy); // 15 point.
+                this.SetIdentityDocumentParameters(patientModel.IdentityDocument); // 16 point.
+            }
+
+            if (paragraphs is not null && paragraphs.Count != 0)
+            {
+                this.SetCitizenshipParameter(paragraphs); // 9 point.
+                this.SetAttitudeTowardsMilitaryServiceParameter(paragraphs); // 10 point.
+            }
+        }
+
+        #region SetPatientAllDataParameters
+
         /// <summary>
         /// Устаналивает ФИО пациента. (6 пункт).
         /// </summary>
@@ -339,7 +384,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Установка гражданства пациента.
+        /// Устанавливает гражданства пациента.
         /// </summary>
         /// <param name="paragraphs">Параграфы секции "Направление".</param>
         private void SetCitizenshipParameter(List<ParagraphModel> paragraphs)
@@ -412,7 +457,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Установка места жительства пациента.
+        /// Устанавливает место жительства пациента.
         /// </summary>
         /// <param name="permanentAddress">Модель адреса.</param>
         private void SetPatientPermanentAddressParameter(AddressModel permanentAddress)
@@ -423,6 +468,135 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 return;
             }
         }
+
+        /// <summary>
+        /// Устанавливает контактные данные пациента.
+        /// </summary>
+        /// <param name="contactPhoneNumber">Контактный номер телефона.</param>
+        /// <param name="otherContacts">Другие контакты пациента.</param>
+        private void SetPatientContactDataParameters(TelecomModel contactPhoneNumber, List<TelecomModel> otherContacts)
+        {
+            var allContacts = new List<TelecomModel>();
+            if (contactPhoneNumber is null 
+                && (otherContacts is null || otherContacts.Count == 0))
+            {
+                return;
+            }
+
+            if (contactPhoneNumber is not null)
+            {
+                allContacts.Add(contactPhoneNumber);
+            }
+
+            if (otherContacts is not null && otherContacts.Count != 0)
+            {
+                allContacts.AddRange(otherContacts);
+            }
+
+            var telephoneContacts = " ";
+            var emailContacts = " ";
+            foreach (var contact in allContacts)
+            {
+                if (contact.Value.Contains("@"))
+                {
+                    if (!String.IsNullOrWhiteSpace(emailContacts))
+                    {
+                        emailContacts += ", ";
+                    }
+                    emailContacts += contact.Value;
+                }
+                else
+                {
+                    if (!String.IsNullOrWhiteSpace(telephoneContacts))
+                    {
+                        telephoneContacts += ", ";
+                    }
+                    telephoneContacts += contact.Value;
+                }
+            }
+            
+            //string telephoneContacts = string.Join(", ", allContacts.Where(c => !c.Value.Contains("@")));
+            //string emailContacts = string.Join(", ", allContacts.First(c => c.Value.Contains("@")).Value);
+
+            this.parameters["telephonePatientContacts"] = telephoneContacts;
+            this.parameters["emailPatientContacts"] = emailContacts;
+        }
+        
+        /// <summary>
+        /// Устанавливает номер СНИЛС и номер полиса ОМС пациента.
+        /// </summary>
+        /// <param name="SNILSnumber">Номер полиса СНИЛС.</param>
+        /// <param name="insurancePolicyModel">Модель полиса ОМС.</param>
+        private void SetSNILSAndOMSParameters(string SNILSnumber, InsurancePolicyModel insurancePolicyModel)
+        {
+            if (String.IsNullOrWhiteSpace(SNILSnumber) && insurancePolicyModel is null)
+            {
+                return;
+            }
+
+            this.parameters["patientSNILSNumber"] = SNILSnumber;
+
+            var insurancePolicySeriesNumber = " ";
+            if (!String.IsNullOrWhiteSpace(insurancePolicyModel.Series))
+            {
+                insurancePolicySeriesNumber += $"{insurancePolicyModel.Series} ";
+            }
+            if (!String.IsNullOrWhiteSpace(insurancePolicyModel.Number))
+            {
+                insurancePolicySeriesNumber += insurancePolicyModel.Number;
+            }
+
+            this.parameters["patientInsurancePolicyNumber"] = insurancePolicySeriesNumber;
+        }
+
+        /// <summary>
+        /// Устанавливает данные документа удоставеряещего личность пациента.
+        /// </summary>
+        /// <param name="identityDocumentModel">Модель документа удоставеряющего личность.</param>
+        private void SetIdentityDocumentParameters(DocumentModel identityDocumentModel)
+        {
+            if (identityDocumentModel is null)
+            {
+                return;
+            }
+            
+            var identityDocumentName = " ";
+            var identityDocumentSeries = " ";
+            var identityDocumentNumber = " ";
+            var identityDocumentIssueOrgName = " ";
+            var identityDocumentIssueDate = " ";
+
+            if (identityDocumentModel.IdentityCardType is not null
+                || !String.IsNullOrWhiteSpace(identityDocumentModel?.IdentityCardType?.DisplayName))
+            {
+                identityDocumentName = identityDocumentModel.IdentityCardType.DisplayName;
+            }
+
+            if (!String.IsNullOrWhiteSpace(identityDocumentModel.Series))
+            {
+                identityDocumentSeries = identityDocumentModel.Series;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(identityDocumentModel.Number))
+            {
+                identityDocumentNumber = identityDocumentModel.Number;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(identityDocumentModel.IssueOrgName))
+            {
+                identityDocumentIssueOrgName = identityDocumentModel.IssueOrgName;
+            }
+            
+            identityDocumentIssueDate = identityDocumentModel.IssueDate.ToString("dd.MM.yyyy г.");
+            
+            this.parameters["patientIdentityDocumentName"] = identityDocumentName;
+            this.parameters["patientIdentityDocumentSeries"] = identityDocumentSeries;
+            this.parameters["patientIdentityDocumentNumber"] = identityDocumentNumber;
+            this.parameters["patientIdentityDocumentIssueOrgName"] = identityDocumentIssueOrgName;
+            this.parameters["patientIdentityDocumentIssueDate"] = identityDocumentIssueDate;
+        }
+
+        #endregion
         
         #endregion
 

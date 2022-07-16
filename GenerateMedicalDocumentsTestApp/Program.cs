@@ -121,15 +121,15 @@ namespace GenerateMedicalDocumentsTestApp
                             AOGUID = new Guid("d1c8d6db-f1b9-49db-895e-c3a93997da77"),
                             HOUSEGUID = new Guid("6e9eda8d-22d9-481a-bb4f-a5c221c194a4")
                         },
-                        //ContactPhoneNumber = new TelecomModel()
-                        //{
-                        //    Value = "+74954243210"
-                        //},
-                        // Contacts = new List<TelecomModel>()
-                        // {
-                        //     { new TelecomModel() { Value = "+79161234567", Use = "MC" } },
-                        //     { new TelecomModel() { Value = "bogekat@mail.ru" } }
-                        // },
+                        ContactPhoneNumber = new TelecomModel()
+                        {
+                            Value = "+74954243210"
+                        },
+                        Contacts = new List<TelecomModel>()
+                        {
+                            { new TelecomModel() { Value = "+79161234567", Use = "MC" } },
+                            { new TelecomModel() { Value = "bogekat@mail.ru" } }
+                        },
                         PatientData = new PeopleDataModel
                         {
                             Name = new NameModel
