@@ -663,7 +663,7 @@ namespace GenerateMedicalDocumentsTestApp
                             new ParagraphModel
                             {
                                 Caption = "Гражданин направляется на медико-социальную экспертизу",
-                                Content = new List<string> { "повторно" }
+                                Content = new List<string> { "Повторный" }
                             },
                             new ParagraphModel
                             {
@@ -871,7 +871,7 @@ namespace GenerateMedicalDocumentsTestApp
                         FillingSection = new ParagraphModel
                         {
                             Caption = "Сведения о получении образования",
-                            Content = new List<string> { "Организация, адрес, курс, профессия." }
+                            Content = new List<string> { "Организация: бла бла бла, адрес: бла бла бла, курс: бла бла бла, профессия: бла бла бла." }
                         }//,
                         //Organization = new OrganizationModel()
                         //{
@@ -904,7 +904,8 @@ namespace GenerateMedicalDocumentsTestApp
                             GroupText = "3 группа (установлена: повторно, бессрочно)",
                             TimeDisability = "четыре и более лет",
                             DateDisabilityStart = new DateTime(1999, 03, 28),
-                            CauseOfDisability = "Общее заболевание"
+                            DateDisabilityFinish = new DateTime(2018, 05, 10),
+                            CauseOfDisability = "Заболевание, полученное при исполнении иных обязанностей военной службы (служебных обязанностей), связано с аварией на производственном объединении \"Маяк\""
                         },
                         DegreeDisability = new DegreeDisabilityModel
                         {

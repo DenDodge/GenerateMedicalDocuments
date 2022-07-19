@@ -34,5 +34,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers.MainHelpers
         /// Описание "Отношения к воинской обязанности".
         /// </summary>
         public static string AttitudeTowardsMilitaryService = "Отношения к воинской обязанности";
+
+        /// <summary>
+        /// Описание "Гражданин направляется на медико-социальную экспертизу" (первично, повторно).
+        /// </summary>
+        public static string CitizenIsSentToMSE = "Гражданин направляется на медико-социальную экспертизу";
     }
 }

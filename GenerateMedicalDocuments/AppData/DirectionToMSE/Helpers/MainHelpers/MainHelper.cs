@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 
 namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers.MainHelpers
 {
@@ -71,6 +74,55 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers.MainHelpers
                 }
             }
             return null;
+        }
+        
+        /// <summary>
+        /// Получить строку "Фамилия Имя Отчество".
+        /// </summary>
+        /// <param name="nameModel">Модель имени.</param>
+        /// <returns>Строка "Фамилия Имя Отчество".</returns>
+        public static string GetFIO(NameModel nameModel)
+        {
+            if (nameModel is null)
+            {
+                return " ";
+            }
+            
+            string patientFIO = " ";
+            if (!String.IsNullOrWhiteSpace(nameModel.Family))
+            {
+                patientFIO += $"{nameModel.Family} ";
+            }
+
+            if (!String.IsNullOrWhiteSpace(nameModel.Given))
+            {
+                patientFIO += $"{nameModel.Given} ";
+            }
+            
+            if (!String.IsNullOrWhiteSpace(nameModel.Patronymic))
+            {
+                patientFIO += nameModel.Patronymic;
+            }
+
+            return patientFIO;
+        }
+        
+        /// <summary>
+        /// Получить флаг по наименованию и значению параграфа.
+        /// </summary>
+        /// <param name="paragraphs">Параграфы секции.</param>
+        /// <param name="caption">Наименование.</param>
+        /// <param name="content">Значение.</param>
+        /// <returns>Истина - устанавливаем флаг.</returns>
+        public static bool GetFlagParameterInParagraphs(
+            List<ParagraphModel> paragraphs, 
+            string caption, 
+            string content)
+        {
+            var paragraph = paragraphs.FirstOrDefault(p =>
+                p.Caption == caption);
+            
+            return paragraph is null ? false : paragraph.Content.Contains(content);
         }
     }
 }
