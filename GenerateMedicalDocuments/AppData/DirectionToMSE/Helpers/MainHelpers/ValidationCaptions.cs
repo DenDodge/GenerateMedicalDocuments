@@ -39,5 +39,83 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers.MainHelpers
         /// Описание "Гражданин направляется на медико-социальную экспертизу" (первично, повторно).
         /// </summary>
         public static string CitizenIsSentToMSE = "Гражданин направляется на медико-социальную экспертизу";
+
+        #region WorkplaceSection
+
+        /// <summary>
+        /// Описание "Основная информация".
+        /// </summary>
+        public static string WorkplaceMainProfession = "Основная профессия";
+        
+        /// <summary>
+        /// Описание "Квалификация".
+        /// </summary>
+        public static string WorkplaceQualification = "Квалификация";
+        
+        /// <summary>
+        /// Описание "Стаж".
+        /// </summary>
+        public static string WorkplaceExperience = "Стаж";
+        
+        /// <summary>
+        /// Описание "Выполняемая работа".
+        /// </summary>
+        public static string WorkplaceWorkPprogress = "Выполняемая работа";
+        
+        /// <summary>
+        /// Описание "Условия труда".
+        /// </summary>
+        public static string WorkplaceWorkingonditions = "Условия труда";
+        
+        /// <summary>
+        /// Описание "Мето работы".
+        /// </summary>
+        public static string WorkplaceWorkplace = "Место работы";
+        
+        /// <summary>
+        /// Описание "Адрес места работы".
+        /// </summary>
+        public static string WorkplaceWorkAddress = "Адрес места работы";
+
+        #endregion
+        
+        #region Table 27
+
+        /// <summary>
+        /// Описание "Дина тела".
+        /// </summary>
+        public static string Growth = "Длина тела";
+        
+        /// <summary>
+        /// Описание "Дина тела".
+        /// </summary>
+        public static string Weight = "Масса тела";
+        
+        /// <summary>
+        /// Описание "Дина тела".
+        /// </summary>
+        public static string IMT = "Индекс массы тела";
+        
+        /// <summary>
+        /// Описание "Дина тела".
+        /// </summary>
+        public static string BodyType = "Тип телосложения";
+        /// <summary>
+        /// Описание "Дина тела".
+        /// </summary>
+        
+        public static string PhysiologicalFunctions = "Суточный объём физиологических отправлений";
+        
+        /// <summary>
+        /// Описание "Дина тела".
+        /// </summary>
+        public static string Waist = "Окружность талии";
+        
+        /// <summary>
+        /// Описание "Дина тела".
+        /// </summary>
+        public static string Hips = "Окружность бёдер";
+
+        #endregion
     }
 }

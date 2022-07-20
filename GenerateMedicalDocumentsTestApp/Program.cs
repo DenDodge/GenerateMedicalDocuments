@@ -829,13 +829,13 @@ namespace GenerateMedicalDocumentsTestApp
                     {
                         WorkPlaceParagraphs = new List<ParagraphModel>
                         {
-                            new ParagraphModel { Caption = "Основная профессия", Content = new List<string> { "текст" } },
+                            new ParagraphModel { Caption = "Основная профессия", Content = new List<string> { "сука, почему ты не ставишься" } },
                             new ParagraphModel { Caption = "Квалификация", Content = new List<string> { "текст" } },
                             new ParagraphModel { Caption = "Стаж", Content = new List<string> { "текст"} },
                             new ParagraphModel { Caption = "Выполняемая работа", Content = new List<string> { "текст" } },
                             new ParagraphModel { Caption = "Условия труда", Content = new List<string> { "текст" } },
                             new ParagraphModel { Caption = "Место работы", Content = new List<string> { "текст" } },
-                            new ParagraphModel { Caption = "Адрес места работы.", Content = new List<string> { "текст" } },
+                            new ParagraphModel { Caption = "Адрес места работы", Content = new List<string> { "текст" } },
                         },
                         WorkActivity = new WorkActivityModel
                         {
@@ -937,7 +937,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 }
                             }
                         },
-                        SeenOrganizations = "с 2000  года.",
+                        SeenOrganizations = "2000",
                         MedicalAnamnez = "Пациентка поступила для дообследования по поводу опухоли с поражением проксимального отдела правой голени и правого коленного сустава. При обследовании по данным морфологии выявлена саркома мягких тканей правой голени низкой степени злокачественности. Учитывая местную распространенность опухолевого процесса пациентке показано хирургическое лечение в объеме удаления опухоли с резекцией проксимального отдела правой большеберцовой кости и эндопротезированием.",
                         LifeAnamnez = "Эпидемиологический анамнез: контактов с инфекционными больными за время обращения не было. В эндемичных районах тех или иных инфекций, загрязнённых радиацией и химикатами территориях, за время обращения не находилась.",
                         ActualDevelopment = "физическое развитие (в отношении детей в возрасте до 3 лет)",
@@ -950,6 +950,78 @@ namespace GenerateMedicalDocumentsTestApp
                                 DayCount = "9 дней",
                                 CipherMKB = "T23.2",
                                 Diagnosis = "Термический ожог запястья и кисти второй степени"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
                             },
                             new TemporaryDisabilityModel
                             {
@@ -992,19 +1064,19 @@ namespace GenerateMedicalDocumentsTestApp
                                 EntryUnit = "гр.",
                                 EntryType = "PQ"
                             },
-                            new VitalParameterModel
-                            {
-                                Caption = "Масса тела при рождении (в отношении детей в возрасте до 3 лет)",
-                                EntryDisplayName = "Масса тела",
-                                ID = "vv1_11",
-                                Code = "50",
-                                DateMetering = new DateTime(1985, 03, 31),
-                                Value = "4",
-                                EntryValue = "4000",
-                                Unit = "кг",
-                                EntryUnit = "гр.",
-                                EntryType = "PQ"
-                            },
+                            // new VitalParameterModel
+                            // {
+                            //     Caption = "Масса тела при рождении (в отношении детей в возрасте до 3 лет)",
+                            //     EntryDisplayName = "Масса тела",
+                            //     ID = "vv1_11",
+                            //     Code = "50",
+                            //     DateMetering = new DateTime(1985, 03, 31),
+                            //     Value = "4",
+                            //     EntryValue = "4000",
+                            //     Unit = "кг",
+                            //     EntryUnit = "гр.",
+                            //     EntryType = "PQ"
+                            // },
                             new VitalParameterModel
                             {
                                 Caption = "Рост",

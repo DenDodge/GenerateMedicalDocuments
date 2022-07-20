@@ -231,5 +231,24 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers.MainHelpers
         public static string is19_4_17 = "Причины инвалидности, установленные в соответствии с законодательством, действовавшим на момент установления инвалидности (указать)";
 
         #endregion
+
+        #region Table 26
+
+        /// <summary>
+        /// Значение "Полное".
+        /// </summary>
+        public static string IsFull = "Полное";
+        
+        /// <summary>
+        /// Значение "Частичное".
+        /// </summary>
+        public static string IsPartial = "Частичное";
+        
+        /// <summary>
+        /// Значение "Положительные результаты отсутствуют".
+        /// </summary>
+        public static string IsNotResult = "Положительные результаты отсутствуют";
+
+        #endregion
     }
 }

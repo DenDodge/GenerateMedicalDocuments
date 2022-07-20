@@ -145,9 +145,44 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "degreeDisabilityPercent", // 19.5 point.
                 "degreeDisabilityTerm", // 19.6 point.
                 "degreeDisabilityDateTo", // 19.7 point.
-                "educationOrg20_1",
-                "educationOrg20_2",
-                "educationOrg20_3",
+                "educationOrg20_1", // 20.1 point.
+                "educationOrg20_2", // 20.2 point.
+                "educationOrg20_3", // 20.3 point
+                // begin 21 points.
+                "workplaceMainProfession", // 21.1 point.
+                "workplaceQualification", // 21.2 point.
+                "workplaceExperience", // 21.3 point.
+                "workplaceWorkPprogress", // 21.4 point.
+                "workplaceWorkingConditions", // 21.5 point.
+                "workplaceWorkplace", // 21.6 point.
+                "workplaceWorkAddress", // 21.7 point.
+                // end 21 points.
+                "startYear", // 22 point.
+                "medicalAnamnez", // 23 point.
+                "lifeAnamnez", // 24 point.
+                // begin table 25
+                "startDateRow1", "finishDateRow1", "countDaysRow1", "diagnozRow1", // row 1.
+                "startDateRow2", "finishDateRow2", "countDaysRow2", "diagnozRow2", // row 2.
+                "startDateRow3", "finishDateRow3", "countDaysRow3", "diagnozRow3", // row 3.
+                "startDateRow4", "finishDateRow4", "countDaysRow4", "diagnozRow4", // row 4.
+                "startDateRow5", "finishDateRow5", "countDaysRow5", "diagnozRow5", // row 5.
+                "startDateRow6", "finishDateRow6", "countDaysRow6", "diagnozRow6", // row 6.
+                "startDateRow7", "finishDateRow7", "countDaysRow7", "diagnozRow7", // row 7.
+                "startDateRow8", "finishDateRow8", "countDaysRow8", "diagnozRow8", // row 8.
+                "startDateRow9", "finishDateRow9", "countDaysRow9", "diagnozRow9", // row 9.
+                "startDateRow10", "finishDateRow10", "countDaysRow10", "diagnozRow10", // row 10.
+                // end table 25.
+                "isELN", // 25.1 point.
+                "numberELN", // 25.2 point.
+                "IPRANumber", // 26 point.
+                "protocolNumber", // 26 point.
+                "protocolDate", // 26 point.
+                "isresultRestorationFunctions", // 26.1 point.
+                "isFull26-1", "isPartial26-1", "isNotResult26-1", // 26.1.1 - 26.1.3 points.
+                "isresultCompensationFunction", // 26.2 point.
+                "isFull26-2", "isPartial26-2", "isNotResult26-2", // 26.2.2 - 26.2.3 points.
+                "growth", "weight", "IMT",
+                "bodyType", "physiologicalFunctions", "waist", "hips",
                 
             };
         }
@@ -188,7 +223,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.SetPatientAllDataParameters(documentModel?.RecordTarget?.PatientRole, documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 6 - 16 points.
             this.SetGuardianAllDataParameters(documentModel?.RecordTarget?.PatientRole?.Guardian); // 17 point.
             this.SetCitizenIsSentToMSEParameters(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 18 point.
-            this.SetAllDisabilityParameters(documentModel?.DocumentBody?.AnamnezSection, documentModel?.DocumentBody?.EducationSection); // 19 point.
+            this.SetAllDisabilityParameters(documentModel?.DocumentBody?.AnamnezSection, documentModel?.DocumentBody?.EducationSection); // 19 - 20 points.
+            this.SetWorkplaceSectionParameters(documentModel?.DocumentBody?.WorkplaceSection);
+            this.SetAnamnezSectionParameters(documentModel?.DocumentBody?.AnamnezSection);
+            this.SetVitalParametersSectionParameters(documentModel?.DocumentBody?.VitalParametersSection);
             
             return this.parameters;
         }
@@ -356,7 +394,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         #endregion
 
         /// <summary>
-        /// Устанавливает все данные пациента.
+        /// Установить все данные пациента.
         /// </summary>
         /// <param name="patientModel">Модель данных пациента.</param>
         private void SetPatientAllDataParameters(PatientModel patientModel, List<ParagraphModel> paragraphs)
@@ -382,7 +420,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает все данные представителя.
+        /// Установить все данные представителя.
         /// </summary>
         /// <param name="guardianModel">Модель данных представителя.</param>
         private void SetGuardianAllDataParameters(GuardianModel guardianModel)
@@ -402,7 +440,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         #region SetPatientAllDataParameters
 
         /// <summary>
-        /// Устаналивает ФИО пациента. (6 пункт).
+        /// Установить ФИО пациента. (6 пункт).
         /// </summary>
         /// <param name="nameModel">Модель имени.</param>
         private void SetPatientNameParameter(NameModel nameModel)
@@ -411,7 +449,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает дату рождения пациента. (7 пункт).
+        /// Установить дату рождения пациента. (7 пункт).
         /// </summary>
         /// <param name="birthdate">Дата рождения.</param>
         private void SetPatientBirthdateParameter(DateTime? birthdate)
@@ -424,7 +462,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает возраст пациента.
+        /// Установить возраст пациента.
         /// </summary>
         /// <param name="birthdate">Дата рождения.</param>
         private void SetPatientAgeParameter(DateTime? birthdate)
@@ -438,7 +476,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает пол пациента.
+        /// Установить пол пациента.
         /// </summary>
         /// <param name="genderModel">Модель пола пациента.</param>
         private void SetPatienGenderParameter(TypeModel genderModel)
@@ -460,7 +498,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает гражданства пациента.
+        /// Установить гражданства пациента.
         /// </summary>
         /// <param name="paragraphs">Параграфы секции "Направление".</param>
         private void SetPatientCitizenshipParameter(List<ParagraphModel> paragraphs)
@@ -497,7 +535,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает принадлежность пациента к воинской службе.
+        /// Установить принадлежность пациента к воинской службе.
         /// </summary>
         /// <param name="paragraphs">Параграфы секции "Направление".</param>
         private void SetPatientAttitudeTowardsMilitaryServiceParameter(List<ParagraphModel> paragraphs)
@@ -533,7 +571,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает место жительства пациента.
+        /// Установить место жительства пациента.
         /// </summary>
         /// <param name="permanentAddress">Модель адреса.</param>
         private void SetPatientPermanentAddressParameter(AddressModel permanentAddress)
@@ -546,7 +584,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает контактные данные пациента.
+        /// Установить контактные данные пациента.
         /// </summary>
         /// <param name="contactPhoneNumber">Контактный номер телефона.</param>
         /// <param name="otherContacts">Другие контакты пациента.</param>
@@ -599,7 +637,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
         
         /// <summary>
-        /// Устанавливает номер СНИЛС и номер полиса ОМС пациента.
+        /// Установить номер СНИЛС и номер полиса ОМС пациента.
         /// </summary>
         /// <param name="SNILSnumber">Номер полиса СНИЛС.</param>
         /// <param name="insurancePolicyModel">Модель полиса ОМС.</param>
@@ -626,7 +664,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает данные документа удоставеряещего личность пациента.
+        /// Установить данные документа удоставеряещего личность пациента.
         /// </summary>
         /// <param name="identityDocumentModel">Модель документа удоставеряющего личность.</param>
         private void SetPatientIdentityDocumentParameters(DocumentModel identityDocumentModel)
@@ -677,7 +715,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         #region SetGuardianAllDataParameters
 
         /// <summary>
-        /// Устаналивает ФИО представителя.
+        /// Установить ФИО представителя.
         /// </summary>
         /// <param name="nameModel">Модель имени.</param>
         private void SetGuardianNameParameter(NameModel nameModel)
@@ -736,7 +774,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
         
         /// <summary>
-        /// Устанавливает дату рождения представителя.
+        /// Установить дату рождения представителя.
         /// </summary>
         /// <param name="birthdate">Дата рождения.</param>
         private void SetGuardianBirthdateParameter(DateTime? birthdate)
@@ -749,7 +787,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
         
         /// <summary>
-        /// Устанавливает номер СНИЛС представителя.
+        /// Установить номер СНИЛС представителя.
         /// </summary>
         /// <param name="SNILSnumber">Номер полиса СНИЛС.</param>
         private void SetGuardianSNILSParameters(string SNILSnumber)
@@ -763,7 +801,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает данные документа удоставеряещего личность представителя.
+        /// Установить данные документа удоставеряещего личность представителя.
         /// </summary>
         /// <param name="identityDocumentModel">Модель документа удоставеряющего личность.</param>
         private void SetGuardianIdentityDocumentParameters(DocumentModel identityDocumentModel)
@@ -810,7 +848,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
         
         /// <summary>
-        /// Устанавливает данные документа удоставеряещего полномочия представителя.
+        /// Установить данные документа удоставеряещего полномочия представителя.
         /// </summary>
         /// <param name="authorityDocumentModel">Модель документа удоставеряющего полномочия.</param>
         private void SetGuardianAuthorityDocumentParameters(DocumentModel authorityDocumentModel)
@@ -859,7 +897,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         #endregion
 
         /// <summary>
-        /// Устанавливает поле "Гражданин направляется на медико-социальную экспертизу".
+        /// Установить поле "Гражданин направляется на медико-социальную экспертизу".
         /// </summary>
         /// <param name="paragraphs">Параграфы секции "Направление".</param>
         private void SetCitizenIsSentToMSEParameters(List<ParagraphModel> paragraphs)
@@ -882,9 +920,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Установка всех параметров секции "Анамнез" (19 пункт).
+        /// Установить все параметры секции "Анамнез". (19 - 20 пункты).
         /// </summary>
         /// <param name="anamnezSectionModel">Модель секции "Анамнез".</param>
+        /// <param name="educationSectionModel">Модель секции "Образование".</param>
         private void SetAllDisabilityParameters(AnamnezSectionModel anamnezSectionModel, EducationSectionModel educationSectionModel)
         {
             if (anamnezSectionModel is null)
@@ -909,7 +948,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         #region SetAllDisabilityParameters
 
         /// <summary>
-        /// Устанавливает группу инвалидности пациента.
+        /// Установить группу инвалидности пациента.
         /// </summary>
         /// <param name="disabilityModel">Модель инвалидности пациента.</param>
         private void SetDisabilityGroupParameter(DisabilityModel disabilityModel)
@@ -937,7 +976,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устаавливает дату до которой установлена инвалидность.
+        /// Установить дату до которой установлена инвалидность.
         /// </summary>
         /// <param name="dateDisabilityFinish">Дата до которой установлена инвалидность.</param>
         private void SetDateDisabilityFinishParameter(DateTime? dateDisabilityFinish)
@@ -951,7 +990,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает кол-во дней, которое пациент находится на инвалидности.
+        /// Установить кол-во дней, которое пациент находится на инвалидности.
         /// </summary>
         /// <param name="timeDisability">Кол-во дней, которое пациент находится на инвалидности.</param>
         private void SetTimeDisabilityParameter(string timeDisability)
@@ -981,7 +1020,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает причину инвалидности.
+        /// Установить причину инвалидности.
         /// </summary>
         /// <param name="causeOfDisability">Причина инвалидности.</param>
         private void SetCauseOfDisabilityParameter(string causeOfDisability)
@@ -1057,7 +1096,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает степень утраты профессиональной трудоспособности.
+        /// Установить степень утраты профессиональной трудоспособности.
         /// </summary>
         /// <param name="degreeDisabilities">Степень утраты профессиональной трудоспособности.</param>
         private void SetDegreeDisabilityParameter(List<DegreeDisabilityElementModel> degreeDisabilities)
@@ -1099,7 +1138,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устанавливает сведения о получении образования.
+        /// Установить сведения о получении образования.
         /// </summary>
         /// <param name="educationString">Строка сведений об образовании.</param>
         private void SetEducationOrganizationParameters(string educationString)
@@ -1112,6 +1151,271 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         
         #endregion
 
+        /// <summary>
+        /// Установить все параметры секции "Образование". (21 пункт).
+        /// </summary>
+        /// <param name="workplaceSectionModel">Модель секции "Образование".</param>
+        private void SetWorkplaceSectionParameters(WorkplaceSectionModel workplaceSectionModel)
+        {
+            if (workplaceSectionModel is null)
+            {
+                return;
+            }
+
+            foreach (var paragraph in workplaceSectionModel.WorkPlaceParagraphs)
+            {
+                if (paragraph.Caption == ValidationCaptions.WorkplaceMainProfession)
+                {
+                    this.parameters["workplaceMainProfession"] = paragraph.Content.FirstOrDefault();
+                }
+                
+                if (paragraph.Caption == ValidationCaptions.WorkplaceQualification)
+                {
+                    this.parameters["workplaceQualification"] = paragraph.Content.FirstOrDefault();
+                }
+                
+                if (paragraph.Caption == ValidationCaptions.WorkplaceExperience)
+                {
+                    this.parameters["workplaceExperience"] = paragraph.Content.FirstOrDefault();
+                }
+                
+                if (paragraph.Caption == ValidationCaptions.WorkplaceWorkPprogress)
+                {
+                    this.parameters["workplaceWorkPprogress"] = paragraph.Content.FirstOrDefault();
+                }
+                
+                if (paragraph.Caption == ValidationCaptions.WorkplaceWorkingonditions)
+                {
+                    this.parameters["workplaceWorkingConditions"] = paragraph.Content.FirstOrDefault();
+                }
+                
+                if (paragraph.Caption == ValidationCaptions.WorkplaceWorkplace)
+                {
+                    this.parameters["workplaceWorkplace"] = paragraph.Content.FirstOrDefault();
+                }
+                
+                if (paragraph.Caption == ValidationCaptions.WorkplaceWorkAddress)
+                {
+                    this.parameters["workplaceWorkAddress"] = paragraph.Content.FirstOrDefault();
+                }
+            }
+        }
+
+        /// <summary>
+        /// Установить параметры секции "Анамнез".
+        /// </summary>
+        /// <param name="anamnezSectionModel">Модель секции "Анамнез".</param>
+        private void SetAnamnezSectionParameters(AnamnezSectionModel anamnezSectionModel)
+        {
+            if (anamnezSectionModel is null)
+            {
+                return;
+            }
+
+            if (anamnezSectionModel.StartYear is not null)
+            {
+                this.parameters["startYear"] = anamnezSectionModel.StartYear.ToString();
+            }
+
+            if (!String.IsNullOrWhiteSpace(anamnezSectionModel.MedicalAnamnez))
+            {
+                this.parameters["medicalAnamnez"] = anamnezSectionModel.MedicalAnamnez;
+            }
+
+            if (!String.IsNullOrWhiteSpace(anamnezSectionModel.LifeAnamnez))
+            {
+                this.parameters["lifeAnamnez"] = anamnezSectionModel.LifeAnamnez;
+            }
+            
+            this.SetTemporaryDisabilitysParameters(anamnezSectionModel.TemporaryDisabilitys);
+            this.SetElectronicСertificateParameters(anamnezSectionModel.CertificateDisabilityNumber);
+            this.SetIPRAParameters(
+                anamnezSectionModel.IPRANumber,
+                anamnezSectionModel.ProtocolNumber,
+                anamnezSectionModel.ProtocolDate,
+                anamnezSectionModel.ResultRestorationFunctions,
+                anamnezSectionModel.ResultCompensationFunction);
+        }
+
+        #region SetAnamnezSectionParameters
+
+        /// <summary>
+        /// Установить параметры таблицы "Частота и длительность временной нетрудоспособности".
+        /// </summary>
+        /// <param name="temporaryDisabilitys">Список установленных временных нетрудоспособностей.</param>
+        private void SetTemporaryDisabilitysParameters(List<TemporaryDisabilityModel> temporaryDisabilitys)
+        {
+            if (temporaryDisabilitys is null || temporaryDisabilitys.Count == 0)
+            {
+                return;
+            }
+
+            int i = 0;
+            foreach (var temporaryDisability in temporaryDisabilitys)
+            {
+                i++;
+                if (temporaryDisability.DateStart is not null)
+                {
+                    this.parameters[$"startDateRow{i}"] = temporaryDisability.DateStart.Value.ToString("dd.MM.yyyy");
+                }
+                
+                if (temporaryDisability.DateFinish is not null)
+                {
+                    this.parameters[$"finishDateRow{i}"] = temporaryDisability.DateFinish.Value.ToString("dd.MM.yyyy");
+                }
+                
+                if (!String.IsNullOrWhiteSpace(temporaryDisability.DayCount))
+                {
+                    this.parameters[$"countDaysRow{i}"] = temporaryDisability.DayCount;
+                }
+                
+                if (!String.IsNullOrWhiteSpace(temporaryDisability.Diagnosis))
+                {
+                    this.parameters[$"diagnozRow{i}"] = temporaryDisability.Diagnosis;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Установить номер электронного листка нетрудоспособности.
+        /// </summary>
+        /// <param name="electronicCertificateNumber">Номера электронного листка нетрудоспособности</param>
+        private void SetElectronicСertificateParameters(string electronicCertificateNumber)
+        {
+            if (String.IsNullOrWhiteSpace(electronicCertificateNumber))
+            {
+                return;
+            }
+
+            this.parameters["isELN"] = trueFlag;
+            this.parameters["numberELN"] = electronicCertificateNumber;
+        }
+
+        /// <summary>
+        /// Установить результат проведенных мероприятий медицинской реабилитации.
+        /// </summary>
+        /// <param name="IPRANumber">Номер ИПРА.</param>
+        /// <param name="protocolNumber">Номер протокола.</param>
+        /// <param name="protocolDate">Дата протокола.</param>
+        /// <param name="resultRestorationFunctions">Результат восстановления нарушенных функций.</param>
+        /// <param name="resultCompensationFunction">Результат достижения компетенций утраченных либо отсутствующих функций.</param>
+        private void SetIPRAParameters(
+            string IPRANumber, 
+            string protocolNumber, 
+            DateTime? protocolDate,
+            string resultRestorationFunctions, 
+            string resultCompensationFunction)
+        {
+            if (!String.IsNullOrWhiteSpace(IPRANumber))
+            {
+                this.parameters[nameof(IPRANumber)] = IPRANumber;
+            }
+
+            if (!String.IsNullOrWhiteSpace(protocolNumber))
+            {
+                this.parameters[nameof(protocolNumber)] = protocolNumber;
+            }
+
+            if (protocolDate is not null)
+            {
+                this.parameters[nameof(protocolDate)] = protocolDate.Value.ToString("dd.MM.yyyy");
+            }
+
+            if (!String.IsNullOrWhiteSpace(resultRestorationFunctions))
+            {
+                this.parameters[$"is{nameof(resultRestorationFunctions)}"] = trueFlag;
+                 if (resultRestorationFunctions == ValidationContents.IsFull)
+                 {
+                     this.parameters["isFull26-1"] = trueFlag;
+                 }
+                
+                 if (resultRestorationFunctions == ValidationContents.IsPartial)
+                 {
+                     this.parameters["isPartial26-1"] = trueFlag;
+                 }
+                
+                 if (resultRestorationFunctions == ValidationContents.IsNotResult)
+                 {
+                     this.parameters["isNotResult26-1"] = trueFlag;
+                 }
+            }
+            
+            if (!String.IsNullOrWhiteSpace(resultCompensationFunction))
+            {
+                this.parameters[$"is{nameof(resultCompensationFunction)}"] = trueFlag;
+                 if (resultCompensationFunction == ValidationContents.IsFull)
+                 {
+                     this.parameters["isFull26-2"] = trueFlag;
+                 }
+                
+                 if (resultCompensationFunction == ValidationContents.IsPartial)
+                 {
+                     this.parameters["isPartial26-2"] = trueFlag;
+                 }
+                
+                 if (resultCompensationFunction == ValidationContents.IsNotResult)
+                 {
+                     this.parameters["isNotResult26-2"] = trueFlag;
+                 }
+            }
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Устанавливает параметры секции "Ватальных параметров".
+        /// </summary>
+        /// <param name="vitalParametersSectionModel">Модель секции "Витальные параметры".</param>
+        private void SetVitalParametersSectionParameters(VitalParametersSectionModel vitalParametersSectionModel)
+        {
+            if (vitalParametersSectionModel is null)
+            {
+                return;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(vitalParametersSectionModel.BodyType))
+            {
+                this.parameters["bodyType"] = vitalParametersSectionModel.BodyType;
+            }
+            if (vitalParametersSectionModel.VitalParameters is null || vitalParametersSectionModel.VitalParameters.Count == 0)
+            {
+                return;
+            }
+
+            foreach (var vitalParameter in vitalParametersSectionModel.VitalParameters)
+            {
+                if (vitalParameter.EntryDisplayName == ValidationCaptions.Growth)
+                {
+                    this.parameters["growth"] = $"{vitalParameter.Value} {vitalParameter.Unit}";
+                }
+                
+                if (vitalParameter.EntryDisplayName == ValidationCaptions.Weight)
+                {
+                    this.parameters["weight"] = $"{vitalParameter.Value} {vitalParameter.Unit}";
+                }
+                
+                if (vitalParameter.EntryDisplayName == ValidationCaptions.IMT)
+                {
+                    this.parameters["IMT"] = $"{vitalParameter.Value} {vitalParameter.Unit}";
+                }
+                
+                if (vitalParameter.EntryDisplayName == ValidationCaptions.PhysiologicalFunctions)
+                {
+                    this.parameters["physiologicalFunctions"] = $"{vitalParameter.Value} {vitalParameter.Unit}";
+                }
+                
+                if (vitalParameter.EntryDisplayName == ValidationCaptions.Waist)
+                {
+                    this.parameters["waist"] = $"{vitalParameter.Value} {vitalParameter.Unit}";
+                }
+                
+                if (vitalParameter.EntryDisplayName == ValidationCaptions.Hips)
+                {
+                    this.parameters["hips"] = $"{vitalParameter.Value} {vitalParameter.Unit}";
+                }
+            }
+        }
+        
         #endregion
 
         #region Helpers methods
