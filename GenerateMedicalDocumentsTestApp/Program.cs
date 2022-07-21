@@ -119,7 +119,14 @@ namespace GenerateMedicalDocumentsTestApp
                             },
                             PostalCode = 123181,
                             AOGUID = new Guid("d1c8d6db-f1b9-49db-895e-c3a93997da77"),
-                            HOUSEGUID = new Guid("6e9eda8d-22d9-481a-bb4f-a5c221c194a4")
+                            HOUSEGUID = new Guid("6e9eda8d-22d9-481a-bb4f-a5c221c194a4"),
+                            Nation = "Российская Федерация",
+                            SubjectOfRussianFediration = "Субъект",
+                            District = "Район",
+                            LocalityName = "Наименование населенного пункта",
+                            Street = "Улица",
+                            House = "Дом",
+                            Apartment = "Квартира"
                         },
                         ContactPhoneNumber = new TelecomModel()
                         {
@@ -793,31 +800,31 @@ namespace GenerateMedicalDocumentsTestApp
                         },
                         PatientLocationCode = new TypeModel
                         {
-                            Code = "4",
+                            Code = "5",
                             CodeSystemVersion = "1.1",
                             DisplayName = "Иная организация"
                         },
-                        //PatientLocation = new OrganizationModel()
-                        //{
-                        //    ID = "1.2.643.5.1.13.13.12.2.77.7973",
-                        //    Props = new PropsOrganizationModel()
-                        //    {
-                        //        OGRN = "1037734008575"
-                        //    },
-                        //    Address = new AddressModel()
-                        //    {
-                        //        StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                        //        StateCode = new TypeModel()
-                        //        {
-                        //            Code = "77",
-                        //            CodeSystemVersion = "6.3",
-                        //            DisplayName = "г. Москва"
-                        //        },
-                        //        PostalCode = 123592,
-                        //        AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
-                        //        HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
-                        //    }
-                        //},
+                        PatientLocation = new OrganizationModel()
+                        {
+                            ID = "1.2.643.5.1.13.13.12.2.77.7973",
+                            Props = new PropsOrganizationModel()
+                            {
+                                OGRN = "1037734008575"
+                            },
+                            Address = new AddressModel()
+                            {
+                                StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                                StateCode = new TypeModel()
+                                {
+                                    Code = "77",
+                                    CodeSystemVersion = "6.3",
+                                    DisplayName = "г. Москва"
+                                },
+                                PostalCode = 123592,
+                                AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                                HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                            }
+                        },
                         MilitaryDuty = new TypeModel
                         {
                             Code = "4",
@@ -915,7 +922,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 {
                                     ID = "socanam31",
                                     FullText = "60% (на 1 год до 01.01.2019)",
-                                    //DateTo = new DateTime(2019, 01, 01),
+                                    DateTo = new DateTime(2019, 01, 01),
                                     Term = "Один год",
                                     Percent = 60
                                 },

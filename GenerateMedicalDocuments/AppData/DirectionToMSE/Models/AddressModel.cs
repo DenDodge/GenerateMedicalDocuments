@@ -35,5 +35,44 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// [1..1] Глобальный уникальный идентификатор дома.
         /// </summary>
         public Guid? HOUSEGUID { get; set; }
+
+        #region Other fields from print form
+
+        /// <summary>
+        /// Государство.
+        /// </summary>
+        public string Nation { get; set; } = null;
+
+        /// <summary>
+        /// Субъект Российской Федерации.
+        /// </summary>
+        public string SubjectOfRussianFediration { get; set; } = null;
+
+        /// <summary>
+        /// Район.
+        /// </summary>
+        public string District { get; set; } = null;
+
+        /// <summary>
+        /// Наименование населенного пункта.
+        /// </summary>
+        public string LocalityName { get; set; } = null;
+
+        /// <summary>
+        /// Улица.
+        /// </summary>
+        public string Street { get; set; } = null;
+
+        /// <summary>
+        /// Дом.
+        /// </summary>
+        public string House { get; set; } = null;
+
+        /// <summary>
+        /// Квартира.
+        /// </summary>
+        public string Apartment { get; set; } = null;
+
+        #endregion
     }
 }

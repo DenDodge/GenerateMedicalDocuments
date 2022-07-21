@@ -89,9 +89,24 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "isCitizenNotEegisteredMilitaryButPbligedRegisteredMilitary", // cell 10.3.
                 "isCitizenNotEegisteredMilitary", // cell 10.4.
                 // end table 10.
-                // TODO: need write 11 point parameters.
-                "isBOMZ", // 12 point
-                // TODO: need write 13 point parameters (table)
+                // start 11 points.
+                "patientCurrentAddressNation", // 11.1 point.
+                "patientCurrentAddressPostalCode", // 11.2 point.
+                "patientCurrentAddressSubject", // 11.3 point.
+                "patientCurrentAddressDistrict", // 11.4 point.
+                "patientCurrentAddressLocalityName", // 11.5 point.
+                "patientCurrentAddressStreet", // 11.6 point.
+                "patientCurrentAddressHouse", // 11.7 point.
+                "patientCurrentAddressApartment", // 11.8 point.
+                // end 11 points.
+                "isBOMZ", // 12 point.
+                // start 13 table
+                "patientInMedicalOrganization", "addressMedicalOrganization", "OGRNMedicalOrganization", // 13.1 cells.
+                "patientInSocialOrganization", "addressSocialOrganization", "OGRNSocialOrganization", // 13.2 cells.
+                "patientInCorrectionOrganization", "addressCorrectionOrganization", "OGRNCorrectionOrganization", // 13.3 cells.
+                "patientInOtherOrganization", "addressOtherOrganization", "OGRNOtherOrganization", // 13.4 cells.
+                "patientInHome", // 13.5 cell.
+                // end 13 table.
                 "telephonePatientContacts", // 14.1 point.
                 "emailPatientContacts", // 14.2 point.
                 "patientSNILSNumber", // 15 point (SNILS)
@@ -145,6 +160,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "degreeDisabilityPercent", // 19.5 point.
                 "degreeDisabilityTerm", // 19.6 point.
                 "degreeDisabilityDateTo", // 19.7 point.
+                "otherdegreeDisabilities", // 19.8 point.
                 "educationOrg20_1", // 20.1 point.
                 "educationOrg20_2", // 20.2 point.
                 "educationOrg20_3", // 20.3 point
@@ -181,9 +197,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "isFull26-1", "isPartial26-1", "isNotResult26-1", // 26.1.1 - 26.1.3 points.
                 "isresultCompensationFunction", // 26.2 point.
                 "isFull26-2", "isPartial26-2", "isNotResult26-2", // 26.2.2 - 26.2.3 points.
-                "growth", "weight", "IMT",
-                "bodyType", "physiologicalFunctions", "waist", "hips",
-                
+                "growth", "weight", "IMT", // 27.1 - 27.3 points.
+                "bodyType", "physiologicalFunctions", "waist", "hips", // 27.4 - 27.6 points.
+                "directionState", // 28 point.
             };
         }
         
@@ -219,14 +235,15 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.SetIsNeedPaliatMedicalHelpParameter(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 3 point.
             this.SetIsPrimaryProstheticsParameter(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 4 point.
             this.SetPurposeOfReferralParameters(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 5 point.
-            // TODO: в установке адреса не доделано.
             this.SetPatientAllDataParameters(documentModel?.RecordTarget?.PatientRole, documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 6 - 16 points.
+            this.SetPatienLocationParameters(documentModel?.DocumentBody?.SentSection?.PatientLocationCode?.Code, documentModel?.DocumentBody?.SentSection?.PatientLocation); // 13 points.
             this.SetGuardianAllDataParameters(documentModel?.RecordTarget?.PatientRole?.Guardian); // 17 point.
             this.SetCitizenIsSentToMSEParameters(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 18 point.
             this.SetAllDisabilityParameters(documentModel?.DocumentBody?.AnamnezSection, documentModel?.DocumentBody?.EducationSection); // 19 - 20 points.
             this.SetWorkplaceSectionParameters(documentModel?.DocumentBody?.WorkplaceSection);
             this.SetAnamnezSectionParameters(documentModel?.DocumentBody?.AnamnezSection);
             this.SetVitalParametersSectionParameters(documentModel?.DocumentBody?.VitalParametersSection);
+            this.SetDirectionStateSectionParameters(documentModel?.DocumentBody?.DirectionStateSection);
             
             return this.parameters;
         }
@@ -276,7 +293,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             if (protocolDate is not null)
             {
-                this.parameters["DocumentDate"] = protocolDate?.ToString("dd MMMM yyyy");
+                this.parameters["DocumentDate"] = protocolDate.Value.ToString("dd MMMM yyyy");
             }
         }
 
@@ -397,6 +414,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// Установить все данные пациента.
         /// </summary>
         /// <param name="patientModel">Модель данных пациента.</param>
+        /// <param name="paragraphs">Список парграфов секции "Направление".</param>
         private void SetPatientAllDataParameters(PatientModel patientModel, List<ParagraphModel> paragraphs)
         {
             if (patientModel is not null)
@@ -405,8 +423,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 this.SetPatientBirthdateParameter(patientModel.PatientData?.BirthDate); // 7 point.
                 this.SetPatientAgeParameter(patientModel.PatientData?.BirthDate); // 7 point.
                 this.SetPatienGenderParameter(patientModel.PatientData?.Gender); // 8 point.
-                // TODO: сделано только "Лицо без определенного места жительства. В остальном нужно парсить 1 строку - пока не понял как.
-                this.SetPatientPermanentAddressParameter(patientModel.PermanentAddress); // 11 - 13 points.
+                this.SetPatientAddressParameter(patientModel.PermanentAddress, patientModel.ActualAddress); // 11 - 12 points.
                 this.SetPatientContactDataParameters(patientModel.ContactPhoneNumber, patientModel.Contacts); // 14 point.
                 this.SetPatientSNILSAndOMSParameters(patientModel.SNILS, patientModel.InsurancePolicy); // 15 point.
                 this.SetPatientIdentityDocumentParameters(patientModel.IdentityDocument); // 16 point.
@@ -458,7 +475,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 return;
             }
-            this.parameters["PatientBirthdate"] = birthdate?.ToString("dd MMMM yyyy");
+            this.parameters["PatientBirthdate"] = birthdate.Value.ToString("dd MMMM yyyy");
         }
 
         /// <summary>
@@ -530,7 +547,6 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             if (isStatelessPerson)
             {
                 this.parameters["isStatelessPerson"] = trueFlag;
-                return;
             }
         }
 
@@ -566,23 +582,123 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             if (isCitizenNotEegisteredMilitary)
             {
                 this.parameters["isCitizenNotEegisteredMilitary"] = trueFlag;
-                return;
             }
         }
 
         /// <summary>
         /// Установить место жительства пациента.
         /// </summary>
-        /// <param name="permanentAddress">Модель адреса.</param>
-        private void SetPatientPermanentAddressParameter(AddressModel permanentAddress)
+        /// <param name="permanentAddress">Модель адреса регистрации.</param>
+        /// <param name="actualAddress">Модель адреса проживания.</param>
+        private void SetPatientAddressParameter(AddressModel permanentAddress, AddressModel actualAddress)
         {
-            if (permanentAddress is null)
+            if (permanentAddress is null && actualAddress is null)
             {
                 this.parameters["isBOMZ"] = trueFlag;
                 return;
             }
+
+            AddressModel currentAddress;
+            if (actualAddress is not null)
+            {
+                currentAddress = actualAddress;
+            }
+            else
+            {
+                currentAddress = permanentAddress;
+            }
+
+            if (!String.IsNullOrWhiteSpace(currentAddress.Nation))
+            {
+                this.parameters["patientCurrentAddressNation"] = currentAddress.Nation;
+            }
+            
+            if (currentAddress.PostalCode is not null)
+            {
+                this.parameters["patientCurrentAddressPostalCode"] = currentAddress.PostalCode.ToString();
+            }
+            
+            if (!String.IsNullOrWhiteSpace(currentAddress.SubjectOfRussianFediration))
+            {
+                this.parameters["patientCurrentAddressSubject"] = currentAddress.SubjectOfRussianFediration;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(currentAddress.District))
+            {
+                this.parameters["patientCurrentAddressDistrict"] = currentAddress.District;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(currentAddress.LocalityName))
+            {
+                this.parameters["patientCurrentAddressLocalityName"] = currentAddress.LocalityName;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(currentAddress.Street))
+            {
+                this.parameters["patientCurrentAddressStreet"] = currentAddress.Street;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(currentAddress.House))
+            {
+                this.parameters["patientCurrentAddressHouse"] = currentAddress.House;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(currentAddress.Apartment))
+            {
+                this.parameters["patientCurrentAddressApartment"] = currentAddress.Apartment;
+            }
         }
 
+        /// <summary>
+        /// Установить место нахождения пациента.
+        /// </summary>
+        /// <param name="codeLocation">Код места нахождения.</param>
+        /// <param name="organizationLocation">Организация местонахождения.</param>
+        private void SetPatienLocationParameters(string codeLocation, OrganizationModel organizationLocation)
+        {
+            if (String.IsNullOrWhiteSpace(codeLocation) || organizationLocation is null)
+            {
+                return;
+            }
+
+            string organizationType = "";
+            if (codeLocation == "1")
+            {
+                this.parameters["patientInMedicalOrganization"] = trueFlag;
+                organizationType = "Medical";
+            }
+            if (codeLocation == "2")
+            {
+                this.parameters["patientInSocialOrganization"] = trueFlag;
+                organizationType = "Social";
+            }
+            if (codeLocation == "3")
+            {
+                this.parameters["patientInCorrectionOrganization"] = trueFlag;
+                organizationType = "Correction";
+            }
+            if (codeLocation == "4")
+            {
+                this.parameters["patientInOtherOrganization"] = trueFlag;
+                organizationType = "Other";
+            }
+            if (codeLocation == "5")
+            {
+                this.parameters["patientInHome"] = trueFlag;
+                return;
+            }
+
+            if (!String.IsNullOrWhiteSpace(organizationLocation.Props?.OGRN))
+            {
+                this.parameters[$"OGRN{organizationType}Organization"] = organizationLocation.Props.OGRN;
+            }
+
+            if (!String.IsNullOrWhiteSpace(organizationLocation.Address?.StreetAddressLine))
+            {
+                this.parameters[$"address{organizationType}Organization"] = organizationLocation.Address.StreetAddressLine;
+            }
+        }
+        
         /// <summary>
         /// Установить контактные данные пациента.
         /// </summary>
@@ -678,10 +794,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             var identityDocumentSeries = " ";
             var identityDocumentNumber = " ";
             var identityDocumentIssueOrgName = " ";
-            var identityDocumentIssueDate = " ";
 
             if (identityDocumentModel.IdentityCardType is not null
-                || !String.IsNullOrWhiteSpace(identityDocumentModel?.IdentityCardType?.DisplayName))
+                || !String.IsNullOrWhiteSpace(identityDocumentModel.IdentityCardType?.DisplayName))
             {
                 identityDocumentName = identityDocumentModel.IdentityCardType.DisplayName;
             }
@@ -701,7 +816,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 identityDocumentIssueOrgName = identityDocumentModel.IssueOrgName;
             }
             
-            identityDocumentIssueDate = identityDocumentModel.IssueDate.ToString("dd.MM.yyyy г.");
+            var identityDocumentIssueDate = identityDocumentModel.IssueDate.ToString("dd.MM.yyyy г.");
             
             this.parameters["patientIdentityDocumentName"] = identityDocumentName;
             this.parameters["patientIdentityDocumentSeries"] = identityDocumentSeries;
@@ -783,7 +898,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 return;
             }
-            this.parameters["guardianBirthdate"] = birthdate?.ToString("dd MMMM yyyy");
+            this.parameters["guardianBirthdate"] = birthdate.Value.ToString("dd MMMM yyyy");
         }
         
         /// <summary>
@@ -815,10 +930,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             var identityDocumentSeries = " ";
             var identityDocumentNumber = " ";
             var identityDocumentIssueOrgName = " ";
-            var identityDocumentIssueDate = " ";
 
             if (identityDocumentModel.IdentityCardType is not null
-                || !String.IsNullOrWhiteSpace(identityDocumentModel?.IdentityCardType?.DisplayName))
+                || !String.IsNullOrWhiteSpace(identityDocumentModel.IdentityCardType?.DisplayName))
             {
                 identityDocumentName = identityDocumentModel.IdentityCardType.DisplayName;
             }
@@ -838,7 +952,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 identityDocumentIssueOrgName = identityDocumentModel.IssueOrgName;
             }
             
-            identityDocumentIssueDate = identityDocumentModel.IssueDate.ToString("dd.MM.yyyy г.");
+            var identityDocumentIssueDate = identityDocumentModel.IssueDate.ToString("dd.MM.yyyy г.");
             
             this.parameters["guardianIdentityDocumentName"] = identityDocumentName;
             this.parameters["guardianIdentityDocumentSeries"] = identityDocumentSeries;
@@ -862,10 +976,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             var authorityDocumentSeries = " ";
             var authorityDocumentNumber = " ";
             var authorityDocumentIssueOrgName = " ";
-            var authorityDocumentIssueDate = " ";
 
             if (authorityDocumentModel.IdentityCardType is not null
-                || !String.IsNullOrWhiteSpace(authorityDocumentModel?.IdentityCardType?.DisplayName))
+                || !String.IsNullOrWhiteSpace(authorityDocumentModel.IdentityCardType?.DisplayName))
             {
                 authorityDocumentName = authorityDocumentModel.IdentityCardType.DisplayName;
             }
@@ -885,7 +998,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 authorityDocumentIssueOrgName = authorityDocumentModel.IssueOrgName;
             }
             
-            authorityDocumentIssueDate = authorityDocumentModel.IssueDate.ToString("dd.MM.yyyy г.");
+            var authorityDocumentIssueDate = authorityDocumentModel.IssueDate.ToString("dd.MM.yyyy г.");
             
             this.parameters["guardianAuthorityDocumentName"] = authorityDocumentName;
             this.parameters["guardianAuthorityDocumentSeries"] = authorityDocumentSeries;
@@ -915,7 +1028,6 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             if (isRepeated)
             {
                 this.parameters["isRepeatedSent"] = trueFlag;
-                return;
             }
         }
 
@@ -931,18 +1043,18 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 return;
             }
             
-            this.SetDisabilityGroupParameter(anamnezSectionModel?.Disability); // 19.1 point.
-            this.SetDateDisabilityFinishParameter(anamnezSectionModel?.Disability?.DateDisabilityFinish); // 19.2 point.
-            this.SetTimeDisabilityParameter(anamnezSectionModel?.Disability?.TimeDisability); // 19.3 point.
-            this.SetCauseOfDisabilityParameter(anamnezSectionModel?.Disability?.CauseOfDisability); // 19.4 point.
-            this.SetDegreeDisabilityParameter(anamnezSectionModel?.DegreeDisability?.DegreeDisabilities); // 19.5 point.
+            this.SetDisabilityGroupParameter(anamnezSectionModel.Disability); // 19.1 point.
+            this.SetDateDisabilityFinishParameter(anamnezSectionModel.Disability?.DateDisabilityFinish); // 19.2 point.
+            this.SetTimeDisabilityParameter(anamnezSectionModel.Disability?.TimeDisability); // 19.3 point.
+            this.SetCauseOfDisabilityParameter(anamnezSectionModel.Disability?.CauseOfDisability); // 19.4 point.
+            this.SetDegreeDisabilityParameter(anamnezSectionModel.DegreeDisability?.DegreeDisabilities); // 19.5 - 19.8 points.
 
             if (educationSectionModel is null)
             {
                 return;
             }
             
-            this.SetEducationOrganizationParameters(educationSectionModel?.FillingSection?.Content[0]); // 20 point.
+            this.SetEducationOrganizationParameters(educationSectionModel.FillingSection?.Content[0]); // 20 point.
         }
 
         #region SetAllDisabilityParameters
@@ -1106,35 +1218,42 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 return;
             }
 
-            DegreeDisabilityElementModel maxDisabilityElementModel = degreeDisabilities.First();
-            foreach (var degreeDisability in degreeDisabilities)
+            // установка на момент направления
+            var firstdegreeDisabilityElement = degreeDisabilities[0];
+            
+            if (firstdegreeDisabilityElement.Percent is not null)
             {
-                if (maxDisabilityElementModel is not null &&
-                    maxDisabilityElementModel.Percent < degreeDisability.Percent)
+                this.parameters["degreeDisabilityPercent"] = $"{firstdegreeDisabilityElement.Percent} %";
+            }
+            
+            if (!String.IsNullOrWhiteSpace(firstdegreeDisabilityElement.Term))
+            {
+                this.parameters["degreeDisabilityTerm"] = firstdegreeDisabilityElement.Term;
+            }
+            
+            if (firstdegreeDisabilityElement.DateTo is not null)
+            {
+                this.parameters["degreeDisabilityDateTo"] = firstdegreeDisabilityElement.DateTo.Value.ToString("dd.MM.yyyy");
+            }
+
+            string otherdegreeDisabilities = " ";
+            for (int i = 1; i <= degreeDisabilities.Count - 1; i++)
+            {
+                var degreeDisability = degreeDisabilities[i];
+                if (degreeDisability.Percent is not null)
                 {
-                    maxDisabilityElementModel = degreeDisability;
+                    otherdegreeDisabilities += $"{degreeDisability.Percent.ToString()} % ";
                 }
+
+                if (degreeDisability.DateTo is not null)
+                {
+                    otherdegreeDisabilities += $"до {degreeDisability.DateTo.Value.ToString("dd.MM.yyyy г. ")}";
+                }
+
+                otherdegreeDisabilities += "; ";
             }
 
-            if (maxDisabilityElementModel is null)
-            {
-                return;
-            }
-
-            if (maxDisabilityElementModel.Percent is not null)
-            {
-                this.parameters["degreeDisabilityPercent"] = $"{maxDisabilityElementModel.Percent} %";
-            }
-
-            if (!String.IsNullOrWhiteSpace(maxDisabilityElementModel.Term))
-            {
-                this.parameters["degreeDisabilityTerm"] = maxDisabilityElementModel.Term;
-            }
-
-            if (maxDisabilityElementModel.DateTo is not null)
-            {
-                this.parameters["degreeDisabilityDateTo"] = maxDisabilityElementModel.DateTo.Value.ToString("dd.MM.yyyy");
-            }
+            this.parameters["otherdegreeDisabilities"] = otherdegreeDisabilities;
         }
 
         /// <summary>
@@ -1152,9 +1271,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         #endregion
 
         /// <summary>
-        /// Установить все параметры секции "Образование". (21 пункт).
+        /// Установить все параметры секции "Сведения о трудовой деятельности". (21 пункт).
         /// </summary>
-        /// <param name="workplaceSectionModel">Модель секции "Образование".</param>
+        /// <param name="workplaceSectionModel">Модель секции "Трудовая деятельность".</param>
         private void SetWorkplaceSectionParameters(WorkplaceSectionModel workplaceSectionModel)
         {
             if (workplaceSectionModel is null)
@@ -1363,7 +1482,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         #endregion
 
         /// <summary>
-        /// Устанавливает параметры секции "Ватальных параметров".
+        /// Установить параметры секции "Ватальных параметров".
         /// </summary>
         /// <param name="vitalParametersSectionModel">Модель секции "Витальные параметры".</param>
         private void SetVitalParametersSectionParameters(VitalParametersSectionModel vitalParametersSectionModel)
@@ -1414,6 +1533,21 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     this.parameters["hips"] = $"{vitalParameter.Value} {vitalParameter.Unit}";
                 }
             }
+        }
+
+        /// <summary>
+        /// Установить параметры секции "Состояние здоровья при направлении на МСЭ".
+        /// </summary>
+        /// <param name="directionStateSectionModel">Модель секции "Состояние при направлении".</param>
+        private void SetDirectionStateSectionParameters(DirectionStateSectionModel directionStateSectionModel)
+        {
+            if (directionStateSectionModel is null || 
+                String.IsNullOrWhiteSpace(directionStateSectionModel.StateText))
+            {
+                return;
+            }
+
+            this.parameters["directionState"] = directionStateSectionModel.StateText;
         }
         
         #endregion
