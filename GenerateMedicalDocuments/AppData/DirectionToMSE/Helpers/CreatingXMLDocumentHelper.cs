@@ -2050,7 +2050,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         /// <param name="conditionAssessmentSection">Модель секции "Объектизированная оцента состояния".</param>
         /// <returns>Элемент "component" секции "Объектизированная оцента состояния".</returns>
-        private static XElement GenerateConditionAssessmentSectionElement(ConditionAssessmentSection conditionAssessmentSection)
+        private static XElement GenerateConditionAssessmentSectionElement(ConditionAssessmentSectionModel conditionAssessmentSection)
         {
             if (conditionAssessmentSection == null)
             {
@@ -2116,7 +2116,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         /// <param name="conditionAssessmentSection">Модель секции "Объектизированная оцента состояния".</param>
         /// <returns>Табличную часть секции "Объектизированная оцента состояния".</returns>
-        private static XElement GenerateTableConditionAssessmentSection(ConditionAssessmentSection conditionAssessmentSection)
+        private static XElement GenerateTableConditionAssessmentSection(ConditionAssessmentSectionModel conditionAssessmentSection)
         {
             if (conditionAssessmentSection == null)
             {

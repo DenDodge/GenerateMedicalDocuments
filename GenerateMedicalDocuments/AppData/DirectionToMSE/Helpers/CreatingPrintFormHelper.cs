@@ -200,6 +200,34 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "growth", "weight", "IMT", // 27.1 - 27.3 points.
                 "bodyType", "physiologicalFunctions", "waist", "hips", // 27.4 - 27.6 points.
                 "directionState", // 28 point.
+                // begin 29 table.
+                "dateExamination1", "codeExamination1", "nameExamination1", "resultExamination1", // 29.1 row.
+                "dateExamination2", "codeExamination2", "nameExamination2", "resultExamination2", // 29.2 row.
+                "dateExamination3", "codeExamination3", "nameExamination3", "resultExamination3", // 29.3 row.
+                "dateExamination4", "codeExamination4", "nameExamination4", "resultExamination4", // 29.4 row.
+                "dateExamination5", "codeExamination5", "nameExamination5", "resultExamination5", // 29.5 row.
+                "dateExamination6", "codeExamination6", "nameExamination6", "resultExamination6", // 29.6 row.
+                "dateExamination7", "codeExamination7", "nameExamination7", "resultExamination7", // 29.7 row.
+                "dateExamination8", "codeExamination8", "nameExamination8", "resultExamination8", // 29.8 row.
+                "dateExamination9", "codeExamination9", "nameExamination9", "resultExamination9", // 29.9 row.
+                "dateExamination10", "codeExamination10", "nameExamination10", "resultExamination10", // 29.10 row.
+                // end 29 table.
+                // begin 30 points.
+                "mainDiagnosis",
+                "codeMainDiagnosis",
+                "complicationMainDiagnosis",
+                "otherDiagnosis",
+                "codesOtherDiagnosis",
+                "complicationOtherDiagnosis",
+                // end 30 points.
+                "clinicalPrognosis", // 31 point.
+                "rehabilitationPotential", // 32 point.
+                "rehabilitationPrognosis", // 33 point.
+                "medications", // 34.1 point.
+                "recommendedMeasuresReconstructiveSurgery", // 35 point.
+                "recommendedMeasuresProstheticsAndOrthotics", // 36 point.
+                "spaTreatment", // 37 point.
+                "otherRecommendatons", // 38 point.
             };
         }
         
@@ -240,10 +268,14 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.SetGuardianAllDataParameters(documentModel?.RecordTarget?.PatientRole?.Guardian); // 17 point.
             this.SetCitizenIsSentToMSEParameters(documentModel?.DocumentBody?.SentSection?.SentParagraphs); // 18 point.
             this.SetAllDisabilityParameters(documentModel?.DocumentBody?.AnamnezSection, documentModel?.DocumentBody?.EducationSection); // 19 - 20 points.
-            this.SetWorkplaceSectionParameters(documentModel?.DocumentBody?.WorkplaceSection);
-            this.SetAnamnezSectionParameters(documentModel?.DocumentBody?.AnamnezSection);
-            this.SetVitalParametersSectionParameters(documentModel?.DocumentBody?.VitalParametersSection);
-            this.SetDirectionStateSectionParameters(documentModel?.DocumentBody?.DirectionStateSection);
+            this.SetWorkplaceSectionParameters(documentModel?.DocumentBody?.WorkplaceSection); // 21 point.
+            this.SetAnamnezSectionParameters(documentModel?.DocumentBody?.AnamnezSection); // 22 - 26 points.
+            this.SetVitalParametersSectionParameters(documentModel?.DocumentBody?.VitalParametersSection); // 27 points.
+            this.SetDirectionStateSectionParameters(documentModel?.DocumentBody?.DirectionStateSection); // 28 point.
+            this.SetDiagnosticStudiesSectionParameters(documentModel?.DocumentBody?.DiagnosticStudiesSection); // 29 points.
+            this.SetDiagnosisParameters(documentModel?.DocumentBody?.DiagnosisSection); // 30 points.
+            this.SetConditionAssessment(documentModel?.DocumentBody?.ConditionAssessmentSection); // 31 - 33 points.
+            this.SetRecommendationsParameters(documentModel?.DocumentBody?.RecommendationsSection); // 34 - 38 points.
             
             return this.parameters;
         }
@@ -1333,27 +1365,27 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             if (anamnezSectionModel.StartYear is not null)
             {
-                this.parameters["startYear"] = anamnezSectionModel.StartYear.ToString();
+                this.parameters["startYear"] = anamnezSectionModel.StartYear.ToString(); // 22 point.
             }
 
             if (!String.IsNullOrWhiteSpace(anamnezSectionModel.MedicalAnamnez))
             {
-                this.parameters["medicalAnamnez"] = anamnezSectionModel.MedicalAnamnez;
+                this.parameters["medicalAnamnez"] = anamnezSectionModel.MedicalAnamnez; // 23 point.
             }
 
             if (!String.IsNullOrWhiteSpace(anamnezSectionModel.LifeAnamnez))
             {
-                this.parameters["lifeAnamnez"] = anamnezSectionModel.LifeAnamnez;
+                this.parameters["lifeAnamnez"] = anamnezSectionModel.LifeAnamnez; // 24 point.
             }
             
-            this.SetTemporaryDisabilitysParameters(anamnezSectionModel.TemporaryDisabilitys);
-            this.SetElectronicСertificateParameters(anamnezSectionModel.CertificateDisabilityNumber);
+            this.SetTemporaryDisabilitysParameters(anamnezSectionModel.TemporaryDisabilitys); // 25 table.
+            this.SetElectronicСertificateParameters(anamnezSectionModel.CertificateDisabilityNumber); // 25.1 - 25.2 points.
             this.SetIPRAParameters(
                 anamnezSectionModel.IPRANumber,
                 anamnezSectionModel.ProtocolNumber,
                 anamnezSectionModel.ProtocolDate,
                 anamnezSectionModel.ResultRestorationFunctions,
-                anamnezSectionModel.ResultCompensationFunction);
+                anamnezSectionModel.ResultCompensationFunction); // 26 points.
         }
 
         #region SetAnamnezSectionParameters
@@ -1548,6 +1580,181 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             }
 
             this.parameters["directionState"] = directionStateSectionModel.StateText;
+        }
+
+        /// <summary>
+        /// Уcтановить параметры в таблице "Сведения о медицинских обследованиях". (29 table).
+        /// </summary>
+        /// <param name="diagnosticStudiesSectionModel">Модель сведений о медицинских обследованиях.</param>
+        private void SetDiagnosticStudiesSectionParameters(DiagnosticStudiesSectionModel diagnosticStudiesSectionModel)
+        {
+            if (diagnosticStudiesSectionModel is null 
+                || diagnosticStudiesSectionModel.MedicalExaminations is null 
+                || diagnosticStudiesSectionModel.MedicalExaminations.Count == 0)
+            {
+                return;
+            }
+
+            for (int i = 1; i <= diagnosticStudiesSectionModel.MedicalExaminations.Count; i++)
+            {
+                var medicalExamination = diagnosticStudiesSectionModel.MedicalExaminations[i-1];
+                this.parameters[$"dateExamination{i}"] = medicalExamination.Date.ToString("dd.MM.yyyy");
+                if (!String.IsNullOrWhiteSpace(medicalExamination.Code))
+                {
+                    this.parameters[$"codeExamination{i}"] = medicalExamination.Code;
+                }
+
+                if (!String.IsNullOrWhiteSpace(medicalExamination.Name))
+                {
+                    this.parameters[$"nameExamination{i}"] = medicalExamination.Name;
+                }
+
+                if (!String.IsNullOrWhiteSpace(medicalExamination.Result))
+                {
+                    this.parameters[$"resultExamination{i}"] = medicalExamination.Result;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Установить диагнозы при направлении на МСЭ. (30 points).
+        /// </summary>
+        /// <param name="diagnosisSectionModel">Модель диагнозов.</param>
+        private void SetDiagnosisParameters(DiagnosisSectionModel diagnosisSectionModel)
+        {
+            if (diagnosisSectionModel is null
+                || diagnosisSectionModel.Diagnosis is null
+                || diagnosisSectionModel.Diagnosis.Count == 0)
+            {
+                return;
+            }
+
+            var mainDiagnosis = " ";
+            var codeMainDiagnosis = " ";
+            var complicationMainDiagnosis = " ";
+
+            var otherDiagnosis = " ";
+            var codesOtherDiagnosis = " ";
+            var complicationOtherDiagnosis = " ";
+            
+            foreach (var diagnosis in diagnosisSectionModel.Diagnosis)
+            {
+                if (diagnosis.Code == "1")
+                {
+                    mainDiagnosis = diagnosis.Name;
+                    codeMainDiagnosis = diagnosis.ID;
+                }
+
+                if (diagnosis.Code == "2")
+                {
+                    complicationMainDiagnosis = $"{diagnosis.Name}({diagnosis.ID})";
+                }
+
+                if (diagnosis.Code == "3")
+                {
+                    if (!String.IsNullOrWhiteSpace(otherDiagnosis))
+                    {
+                        otherDiagnosis += ", ";
+                    }
+
+                    otherDiagnosis += diagnosis.Name;
+                    
+                    if (!String.IsNullOrWhiteSpace(codesOtherDiagnosis))
+                    {
+                        codesOtherDiagnosis += ", ";
+                    }
+
+                    codesOtherDiagnosis += diagnosis.ID;
+                }
+
+                if (diagnosis.Code == "7")
+                {
+                    if (!String.IsNullOrWhiteSpace(complicationOtherDiagnosis))
+                    {
+                        complicationOtherDiagnosis += ", ";
+                    }
+
+                    complicationOtherDiagnosis += $"{diagnosis.Name}({diagnosis.ID})";
+                }
+            }
+
+            this.parameters[nameof(mainDiagnosis)] = mainDiagnosis;
+            this.parameters[nameof(codeMainDiagnosis)] = codeMainDiagnosis;
+            this.parameters[nameof(complicationMainDiagnosis)] = complicationMainDiagnosis;
+
+            this.parameters[nameof(otherDiagnosis)] = otherDiagnosis;
+            this.parameters[nameof(codesOtherDiagnosis)] = codesOtherDiagnosis;
+            this.parameters[nameof(complicationOtherDiagnosis)] = complicationOtherDiagnosis;
+        }
+
+        /// <summary>
+        /// Установить прогнозы и потенциалы. (31 - 33 points).
+        /// </summary>
+        /// <param name="conditionAssessmentSectionModel">Модель секции объективной оценки.</param>
+        private void SetConditionAssessment(ConditionAssessmentSectionModel conditionAssessmentSectionModel)
+        {
+            if (conditionAssessmentSectionModel is null)
+            {
+                return;
+            }
+
+            if (!String.IsNullOrWhiteSpace(conditionAssessmentSectionModel.ClinicalPrognosis.GrateResult))
+            {
+                this.parameters["clinicalPrognosis"] = conditionAssessmentSectionModel.ClinicalPrognosis.GrateResult;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(conditionAssessmentSectionModel.RehabilitationPotential.GrateResult))
+            {
+                this.parameters["rehabilitationPotential"] =
+                    conditionAssessmentSectionModel.RehabilitationPotential.GrateResult;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(conditionAssessmentSectionModel.RehabilitationPrognosis.GrateResult))
+            {
+                this.parameters["rehabilitationPrognosis"] =
+                    conditionAssessmentSectionModel.RehabilitationPrognosis.GrateResult;
+            }
+        }
+
+        /// <summary>
+        /// Устновить параметры рекомендации. (34 - 38 points).
+        /// </summary>
+        /// <param name="recommendationsSectionModel">Модель секции "Рекомендации".</param>
+        private void SetRecommendationsParameters(RecommendationsSectionModel recommendationsSectionModel)
+        {
+            if (recommendationsSectionModel is null)
+            {
+                return;
+            }
+
+            if (recommendationsSectionModel.Medications is not null
+                && recommendationsSectionModel.Medications.Count != 0)
+            {
+                // TODO: сделать список и вывести.
+                this.parameters["medications"] = " ";
+            }
+            
+            if (!String.IsNullOrWhiteSpace(recommendationsSectionModel.RecommendedMeasuresReconstructiveSurgery))
+            {
+                this.parameters["recommendedMeasuresReconstructiveSurgery"] =
+                    recommendationsSectionModel.RecommendedMeasuresReconstructiveSurgery;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(recommendationsSectionModel.RecommendedMeasuresProstheticsAndOrthotics))
+            {
+                this.parameters["recommendedMeasuresProstheticsAndOrthotics"] =
+                    recommendationsSectionModel.RecommendedMeasuresProstheticsAndOrthotics;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(recommendationsSectionModel.SpaTreatment))
+            {
+                this.parameters["spaTreatment"] = recommendationsSectionModel.SpaTreatment;
+            }
+            
+            if (!String.IsNullOrWhiteSpace(recommendationsSectionModel.OtherRecommendatons))
+            {
+                this.parameters["otherRecommendatons"] = recommendationsSectionModel.OtherRecommendatons;
+            }
         }
         
         #endregion

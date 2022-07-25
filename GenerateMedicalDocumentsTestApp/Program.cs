@@ -1217,7 +1217,7 @@ namespace GenerateMedicalDocumentsTestApp
                             }
                         }
                     },
-                    ConditionAssessmentSection = new ConditionAssessmentSection
+                    ConditionAssessmentSection = new ConditionAssessmentSectionModel
                     {
                         ClinicalPrognosis = new ConditionGrateModel
                         {

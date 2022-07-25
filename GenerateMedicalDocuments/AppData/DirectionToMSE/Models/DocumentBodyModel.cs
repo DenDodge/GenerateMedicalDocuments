@@ -40,7 +40,7 @@
         /// <summary>
         /// [1..1] СЕКЦИЯ: ОБЪЕКТИВИЗИРОВАННАЯ ОЦЕНКА СОСТОЯНИЯ.
         /// </summary>
-        public ConditionAssessmentSection ConditionAssessmentSection { get; set; }
+        public ConditionAssessmentSectionModel ConditionAssessmentSection { get; set; }
         /// <summary>
         /// [1..1] СЕКЦИЯ: РЕКОМЕНДАЦИИ.
         /// </summary>

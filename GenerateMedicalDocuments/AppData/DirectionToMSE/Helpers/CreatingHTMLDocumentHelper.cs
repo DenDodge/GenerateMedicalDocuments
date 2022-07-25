@@ -1208,7 +1208,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// Создает секцию "Объектизированная оценка состояния".
         /// </summary>
         /// <param name="conditionAssessmentSectionModel">Модель секции "Объектизированная оценка состояния".</param>
-        private void GenerateConditionAssessmentSection(ConditionAssessmentSection conditionAssessmentSectionModel)
+        private void GenerateConditionAssessmentSection(ConditionAssessmentSectionModel conditionAssessmentSectionModel)
         {
             if (conditionAssessmentSectionModel is null)
             {
@@ -1232,7 +1232,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// Создает таблицу секции "Объектизированная оценка состояния".
         /// </summary>
         /// <param name="conditionAssessmentSectionModel">Модель секции "Объектизированная оценка состояния".</param>
-        private void GenerateConditionAssessmentSectionTable(ConditionAssessmentSection conditionAssessmentSectionModel)
+        private void GenerateConditionAssessmentSectionTable(ConditionAssessmentSectionModel conditionAssessmentSectionModel)
         {
             if (conditionAssessmentSectionModel is null)
             {
