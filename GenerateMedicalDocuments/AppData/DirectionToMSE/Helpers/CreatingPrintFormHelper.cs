@@ -228,6 +228,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 "recommendedMeasuresProstheticsAndOrthotics", // 36 point.
                 "spaTreatment", // 37 point.
                 "otherRecommendatons", // 38 point.
+                "createDocumentDate" // 39 point.
             };
         }
         
@@ -276,6 +277,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.SetDiagnosisParameters(documentModel?.DocumentBody?.DiagnosisSection); // 30 points.
             this.SetConditionAssessment(documentModel?.DocumentBody?.ConditionAssessmentSection); // 31 - 33 points.
             this.SetRecommendationsParameters(documentModel?.DocumentBody?.RecommendationsSection); // 34 - 38 points.
+            this.SetCreateDateParameter(documentModel?.CreateDate);
             
             return this.parameters;
         }
@@ -1717,7 +1719,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         }
 
         /// <summary>
-        /// Устновить параметры рекомендации. (34 - 38 points).
+        /// Установить параметры рекомендации. (34 - 38 points).
         /// </summary>
         /// <param name="recommendationsSectionModel">Модель секции "Рекомендации".</param>
         private void SetRecommendationsParameters(RecommendationsSectionModel recommendationsSectionModel)
@@ -1730,8 +1732,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             if (recommendationsSectionModel.Medications is not null
                 && recommendationsSectionModel.Medications.Count != 0)
             {
+                var medicationsString = " ";
+                for (int i = 1; i <= recommendationsSectionModel.Medications.Count; i++)
+                {
+                    var medication = recommendationsSectionModel.Medications[i - 1];
+                    medicationsString += $"{i}. {medication.InternationalName} (" +
+                                         $"Форма:{medication.DosageForm}({medication.Dose}) " +
+                                         $"Продолжительность приема:{medication.DurationAdmission} по {medication.ReceptionFrequency}" +
+                                         "); ";
+                }
                 // TODO: сделать список и вывести.
-                this.parameters["medications"] = " ";
+                this.parameters["medications"] = medicationsString;
             }
             
             if (!String.IsNullOrWhiteSpace(recommendationsSectionModel.RecommendedMeasuresReconstructiveSurgery))
@@ -1755,6 +1766,20 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 this.parameters["otherRecommendatons"] = recommendationsSectionModel.OtherRecommendatons;
             }
+        }
+
+        /// <summary>
+        /// Установить дату создания документа. (39 point).
+        /// </summary>
+        /// <param name="createDocumentDate">Дата создания документа.</param>
+        private void SetCreateDateParameter(DateTime? createDocumentDate)
+        {
+            if (createDocumentDate is null)
+            {
+                return;
+            }
+
+            this.parameters["createDocumentDate"] = createDocumentDate.Value.ToString("dd.MM.yyyy");
         }
         
         #endregion
