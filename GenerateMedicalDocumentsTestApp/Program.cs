@@ -909,7 +909,11 @@ namespace GenerateMedicalDocumentsTestApp
                             GroupOrder = "Повторно",
                             GroupTime = "бессрочно",
                             GroupText = "3 группа (установлена: повторно, бессрочно)",
-                            TimeDisability = "четыре и более лет",
+                            TimeDisability = new TimeDisabilityModel()
+                            {
+                                Code = "2",
+                                Disability = "четыре и более лет"
+                            },
                             DateDisabilityStart = new DateTime(1999, 03, 28),
                             DateDisabilityFinish = new DateTime(2018, 05, 10),
                             CauseOfDisability = "Заболевание, полученное при исполнении иных обязанностей военной службы (служебных обязанностей), связано с аварией на производственном объединении \"Маяк\""
@@ -1051,8 +1055,16 @@ namespace GenerateMedicalDocumentsTestApp
                         ProtocolNumber = "123",
                         ProtocolDate = new DateTime(2018, 10, 01),
                         Results = "результаты",
-                        ResultRestorationFunctions = "Частичное",
-                        ResultCompensationFunction = "Частичное"
+                        ResultRestorationFunctions = new ResultFunctionModel()
+                        {
+                            Code = "2",
+                            Result = "Частичное"
+                        },
+                        ResultCompensationFunction = new ResultFunctionModel()
+                        {
+                            Code = "2",
+                            Result = "Положительный результат отсутствует"
+                        }
                     },
                     VitalParametersSection = new VitalParametersSectionModel
                     {

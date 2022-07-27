@@ -72,11 +72,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// Результаты и эффективность проведенных мероприятий медицинской реабилитации, Восстановление нарушенных функций.
         /// </summary>
-        public string ResultRestorationFunctions { get; set; } = null;
+        public ResultFunctionModel ResultRestorationFunctions { get; set; } = null;
         /// <summary>
         /// Результаты и эффективность проведенных мероприятий медицинской реабилитации, Достижение компенсации утраченных либо отсутствующих функций.
         /// </summary>
-        public string ResultCompensationFunction { get; set; } = null;
+        public ResultFunctionModel ResultCompensationFunction { get; set; } = null;
     }
 
     /// <summary>
@@ -103,7 +103,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// Находится на инвалидности на момент направления.
         /// </summary>
-        public string TimeDisability { get; set; }
+        public TimeDisabilityModel TimeDisability { get; set; }
         /// <summary>
         /// Дата установления инвалидности.
         /// </summary>
@@ -152,5 +152,35 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
     public class DegreeDisabilityModel
     {
         public List<DegreeDisabilityElementModel> DegreeDisabilities { get; set; } = null;
+    }
+
+    /// <summary>
+    /// Модель результата и эффективности проводимых мероприятий.
+    /// </summary>
+    public class ResultFunctionModel
+    {
+        /// <summary>
+        /// Код.
+        /// </summary>
+        public string Code { get; set; }
+        /// <summary>
+        /// Результат.
+        /// </summary>
+        public string Result { get; set; }
+    }
+
+    /// <summary>
+    /// Модель параметра "Находится на инвалидности в момент направления".
+    /// </summary>
+    public class TimeDisabilityModel
+    {
+        /// <summary>
+        /// Код.
+        /// </summary>
+        public string Code { get; set; }
+        /// <summary>
+        /// Группа инвалидности.
+        /// </summary>
+        public string Disability { get; set; }
     }
 }

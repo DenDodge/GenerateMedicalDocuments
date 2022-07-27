@@ -1079,7 +1079,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             
             this.SetDisabilityGroupParameter(anamnezSectionModel.Disability); // 19.1 point.
             this.SetDateDisabilityFinishParameter(anamnezSectionModel.Disability?.DateDisabilityFinish); // 19.2 point.
-            this.SetTimeDisabilityParameter(anamnezSectionModel.Disability?.TimeDisability); // 19.3 point.
+            this.SetTimeDisabilityParameter(anamnezSectionModel.Disability?.TimeDisability?.Disability); // 19.3 point.
             this.SetCauseOfDisabilityParameter(anamnezSectionModel.Disability?.CauseOfDisability); // 19.4 point.
             this.SetDegreeDisabilityParameter(anamnezSectionModel.DegreeDisability?.DegreeDisabilities); // 19.5 - 19.8 points.
 
@@ -1386,8 +1386,8 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 anamnezSectionModel.IPRANumber,
                 anamnezSectionModel.ProtocolNumber,
                 anamnezSectionModel.ProtocolDate,
-                anamnezSectionModel.ResultRestorationFunctions,
-                anamnezSectionModel.ResultCompensationFunction); // 26 points.
+                anamnezSectionModel.ResultRestorationFunctions.Result,
+                anamnezSectionModel.ResultCompensationFunction.Result); // 26 points.
         }
 
         #region SetAnamnezSectionParameters
