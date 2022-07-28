@@ -15,7 +15,7 @@ namespace GenerateMedicalDocumentsTestApp
         {
             var documentModel = await GetDocumentModel();
             //var documentModel = await GetDocumentModelOnJson();
-
+            // тестирование
             DirectionToMSE directionToMSE = new DirectionToMSE();
             var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
             directionToMSE.SaveXmlDocument(xmlDocument, "xmlDocument.xml");
