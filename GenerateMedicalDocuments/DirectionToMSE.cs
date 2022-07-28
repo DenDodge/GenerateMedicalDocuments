@@ -1,4 +1,6 @@
-﻿using System.Xml.Linq;
+﻿using System.Collections.Generic;
+using System.Xml.Linq;
+using EasyDox;
 using GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers;
 using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 
@@ -39,6 +41,14 @@ namespace GenerateMedicalDocuments
 
             CreatingHTMLDocumentHelper creatingHtmlDocumentHelper = new CreatingHTMLDocumentHelper(savePatch);
             creatingHtmlDocumentHelper.CreateHTMLDocument(documentModel);
+        }
+
+        public void GeneratePrintForm(string templatePath, string outPath, DirectionToMSEDocumentModel documentModel)
+        {
+            Engine engine = new Engine();
+            CreatingPrintFormHelper printFormHelper = new CreatingPrintFormHelper();
+            var parameters = printFormHelper.GetDataToParametersList(documentModel);
+            var errors = engine.Merge(templatePath, parameters, outPath);
         }
         
         /// <summary>

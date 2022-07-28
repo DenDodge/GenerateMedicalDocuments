@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers.MainHelpers;
 using GenerateMedicalDocuments.AppData.DirectionToMSE.Models;
 
 namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
@@ -436,7 +437,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <param name="birthday">Дата рождения.</param>
         private void GeneratePatientInfoTableDataBirtday(DateTime birthday)
         {
-            var age = this.GetPatientAge(birthday);
+            var age = MainHelper.GetPatientAge(birthday);
             
             this.StreamWriter.Write("               <td class=\"outer\">"); // 4 tabs.
             this.StreamWriter.Write($"{birthday.ToString("dd.MM.yyyy")} ({age})");
@@ -581,75 +582,6 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         
         #endregion
 
-        /// <summary>
-        /// Получить возраст пациента.
-        /// </summary>
-        /// <param name="birthday">Дата рождения.</param>
-        /// <returns>Возраст пациента.</returns>
-        private string GetPatientAge(DateTime birthday)
-        {
-            var age = DateTime.Now.Year - birthday.Year;
-            if (DateTime.Now.DayOfYear < birthday.DayOfYear) age++;
-
-            return $"{age} {this.GetAgeDeclination(age)}";
-        }
-
-        /// <summary>
-        /// Получить склонение возраста.
-        /// </summary>
-        /// <param name="age">Возраст.</param>
-        /// <returns>Склонение возраста.</returns>
-        private string GetAgeDeclination(int age)
-        {
-            if (age > 100)
-            {
-                age = age % 100;
-            }
-            if (age >= 0 && age <= 20)
-            {
-                if (age == 0)
-                {
-                    return "лет";
-                }
-                else if (age == 1)
-                {
-                    return "год";
-                }
-                else if (age >= 2 && age <= 4)
-                {
-                    return "года";
-                }
-                else if (age >= 5 && age <= 20)
-                {
-                    return "лет";
-                }
-            }
-            else if (age > 20)
-            {
-                string str;
-                str = age.ToString();
-                string n = str[str.Length - 1].ToString();
-                int m = Convert.ToInt32(n);
-                if (m == 0)
-                {
-                    return "лет";
-                }
-                else if (m == 1)
-                {
-                    return "год";
-                }
-                else if (m >= 2 && m <= 4)
-                {
-                    return "года";
-                }
-                else
-                {
-                    return "лет";
-                }
-            }
-            return null;
-        }
-        
         /// <summary>
         /// Открывает тег строки в таблице "Информация о пациенте".
         /// </summary>
@@ -1276,7 +1208,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// Создает секцию "Объектизированная оценка состояния".
         /// </summary>
         /// <param name="conditionAssessmentSectionModel">Модель секции "Объектизированная оценка состояния".</param>
-        private void GenerateConditionAssessmentSection(ConditionAssessmentSection conditionAssessmentSectionModel)
+        private void GenerateConditionAssessmentSection(ConditionAssessmentSectionModel conditionAssessmentSectionModel)
         {
             if (conditionAssessmentSectionModel is null)
             {
@@ -1300,7 +1232,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// Создает таблицу секции "Объектизированная оценка состояния".
         /// </summary>
         /// <param name="conditionAssessmentSectionModel">Модель секции "Объектизированная оценка состояния".</param>
-        private void GenerateConditionAssessmentSectionTable(ConditionAssessmentSection conditionAssessmentSectionModel)
+        private void GenerateConditionAssessmentSectionTable(ConditionAssessmentSectionModel conditionAssessmentSectionModel)
         {
             if (conditionAssessmentSectionModel is null)
             {

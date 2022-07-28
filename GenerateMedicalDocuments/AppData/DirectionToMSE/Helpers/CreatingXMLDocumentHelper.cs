@@ -2050,7 +2050,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         /// <param name="conditionAssessmentSection">Модель секции "Объектизированная оцента состояния".</param>
         /// <returns>Элемент "component" секции "Объектизированная оцента состояния".</returns>
-        private static XElement GenerateConditionAssessmentSectionElement(ConditionAssessmentSection conditionAssessmentSection)
+        private static XElement GenerateConditionAssessmentSectionElement(ConditionAssessmentSectionModel conditionAssessmentSection)
         {
             if (conditionAssessmentSection == null)
             {
@@ -2116,7 +2116,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         /// <param name="conditionAssessmentSection">Модель секции "Объектизированная оцента состояния".</param>
         /// <returns>Табличную часть секции "Объектизированная оцента состояния".</returns>
-        private static XElement GenerateTableConditionAssessmentSection(ConditionAssessmentSection conditionAssessmentSection)
+        private static XElement GenerateTableConditionAssessmentSection(ConditionAssessmentSectionModel conditionAssessmentSection)
         {
             if (conditionAssessmentSection == null)
             {
@@ -4027,11 +4027,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 var valueModel = new ValueElementModel()
                 {
                     Type = "CD",
-                    Code = "2",
+                    Code = anamnezSectionModel.ResultRestorationFunctions.Code,
                     CodeSystem = "1.2.643.5.1.13.13.11.1475",
                     CodeSystemVersion = "2.1",
                     CodeSystemName = "Результаты индивидуальной программы реабилитации инвалидов",
-                    DisplayName = anamnezSectionModel.ResultRestorationFunctions
+                    DisplayName = anamnezSectionModel.ResultRestorationFunctions.Result
                 };
                 entryElements.Add(GenerateCodingElementAnamnezSection(codeModel, valueModel:valueModel));
             }
@@ -4049,11 +4049,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 var valueModel = new ValueElementModel()
                 {
                     Type = "CD",
-                    Code = "2",
+                    Code = anamnezSectionModel.ResultCompensationFunction.Code,
                     CodeSystem = "1.2.643.5.1.13.13.11.1475",
                     CodeSystemVersion = "2.1",
                     CodeSystemName = "Результаты индивидуальной программы реабилитации инвалидов",
-                    DisplayName = anamnezSectionModel.ResultCompensationFunction
+                    DisplayName = anamnezSectionModel.ResultCompensationFunction.Result
                 };
                 entryElements.Add(GenerateCodingElementAnamnezSection(codeModel, valueModel: valueModel));
             }
@@ -4334,12 +4334,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             ValueElementModel timeDisabilityValue = new ValueElementModel()
             {
                 Type = "CD",
-                Code = "4",
+                Code = disabilityModel.TimeDisability.Code,
                 CodeSystem = "1.2.643.5.1.13.13.11.1490",
                 CodeSystemVersion = "1.1",
                 CodeSystemName =
                     "Период, в течение которого гражданин находился на инвалидности на дату направления на медико - социальную экспертизу",
-                DisplayName = disabilityModel.TimeDisability
+                DisplayName = disabilityModel.TimeDisability.Disability
             };
             observationElement.Add(GenerateEntryRelationshipDisabilityElement("timeDisabilityAnamnez", valueModel: timeDisabilityValue));
 

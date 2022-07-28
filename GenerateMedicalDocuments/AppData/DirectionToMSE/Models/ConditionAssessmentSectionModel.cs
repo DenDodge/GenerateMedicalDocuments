@@ -3,7 +3,7 @@
     /// <summary>
     /// Модель [1..1] СЕКЦИЯ: ОБЪЕКТИВИЗИРОВАННАЯ ОЦЕНКА СОСТОЯНИЯ.
     /// </summary>
-    public class ConditionAssessmentSection
+    public class ConditionAssessmentSectionModel
     {
         /// <summary>
         /// Клинический прогноз.

@@ -17,10 +17,13 @@ namespace GenerateMedicalDocumentsTestApp
             //var documentModel = await GetDocumentModelOnJson();
 
             DirectionToMSE directionToMSE = new DirectionToMSE();
-            var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
-            directionToMSE.SaveXmlDocument(xmlDocument, "xmlDocument.xml");
+            //var xmlDocument = directionToMSE.GetDirectionToMSEDocumentXML(documentModel);
+            //directionToMSE.SaveXmlDocument(xmlDocument, "xmlDocument.xml");
 
-            directionToMSE.CreationHTMLDocument(documentModel, "htmlDocument.html");
+            //directionToMSE.CreationHTMLDocument(documentModel, "htmlDocument.html");
+            directionToMSE.GeneratePrintForm(
+                "D:\\WORK_YAMED\\4_GenerateMedicalDocuments\\GenerateMedicalDocuments\\GenerateMedicalDocuments\\MSETemplate.docx", 
+                "MSE.docx", documentModel);
         }
 
         /// <summary>
@@ -116,17 +119,24 @@ namespace GenerateMedicalDocumentsTestApp
                             },
                             PostalCode = 123181,
                             AOGUID = new Guid("d1c8d6db-f1b9-49db-895e-c3a93997da77"),
-                            HOUSEGUID = new Guid("6e9eda8d-22d9-481a-bb4f-a5c221c194a4")
+                            HOUSEGUID = new Guid("6e9eda8d-22d9-481a-bb4f-a5c221c194a4"),
+                            Nation = "Российская Федерация",
+                            SubjectOfRussianFediration = "Субъект",
+                            District = "Район",
+                            LocalityName = "Наименование населенного пункта",
+                            Street = "Улица",
+                            House = "Дом",
+                            Apartment = "Квартира"
                         },
-                        //ContactPhoneNumber = new TelecomModel()
-                        //{
-                        //    Value = "+74954243210"
-                        //},
-                        // Contacts = new List<TelecomModel>()
-                        // {
-                        //     { new TelecomModel() { Value = "+79161234567", Use = "MC" } },
-                        //     { new TelecomModel() { Value = "bogekat@mail.ru" } }
-                        // },
+                        ContactPhoneNumber = new TelecomModel()
+                        {
+                            Value = "+74954243210"
+                        },
+                        Contacts = new List<TelecomModel>()
+                        {
+                            { new TelecomModel() { Value = "+79161234567", Use = "MC" } },
+                            { new TelecomModel() { Value = "bogekat@mail.ru" } }
+                        },
                         PatientData = new PeopleDataModel
                         {
                             Name = new NameModel
@@ -660,12 +670,18 @@ namespace GenerateMedicalDocumentsTestApp
                             new ParagraphModel
                             {
                                 Caption = "Гражданин направляется на медико-социальную экспертизу",
-                                Content = new List<string> { "повторно" }
+                                Content = new List<string> { "Повторный" }
                             },
                             new ParagraphModel
                             {
                                 Caption = "Цель направления",
-                                Content = new List<string> { "для разработки индивидуальной программы реабилитации инвалида" }
+                                Content = new List<string>
+                                {
+                                    "Установление группы инвалидности",
+                                    "Установление категории \"ребенок-инвалид\"",
+                                    "Установление срока инвалидности",
+                                    "Определение нуждаемости по состоянию здоровья в постоянном постороннем уходе (помощи, надзоре) отца, матери, жены, родного брата, родной сестры, дедушки, бабушки или усыновителя гражданина, призываемого на военную службу (военнослужащего, проходящего военную службу по контракту)"
+                                }
                             },
                             new ParagraphModel
                             {
@@ -675,17 +691,17 @@ namespace GenerateMedicalDocumentsTestApp
                             new ParagraphModel
                             {
                                 Caption = "Гражданин по состоянию здоровья не может явиться в бюро (главное бюро, Федеральное бюро) медико-социальной экспертизы",
-                                Content = new List<string> { "медико-социальную экспертизу необходимо проводить на дому" }
+                                Content = new List<string> { "медикосоциальную экспертизу необходимо проводить на дому" }
                             },
                             new ParagraphModel
                             {
                                 Caption = "Нуждаемость в оказании паллиативной медицинской помощи",
-                                Content = new List<string> { "гражданин нуждается в паллиативной медицинской помощи" }
+                                Content = new List<string> { "нуждается в оказании паллиативной медицинской" }
                             },
                             new ParagraphModel
                             {
                                 Caption = "Нахождение на лечении в стационаре в связи с операцией по ампутации  (реампутации)  конечности (конечностей), нуждающийся в первичном протезировании",
-                                Content = new List<string> { "гражданин не нуждается в первичном протезировании" }
+                                Content = new List<string> { "не нуждается в первичном протезировании" }
                             },
                             new ParagraphModel
                             {
@@ -695,7 +711,7 @@ namespace GenerateMedicalDocumentsTestApp
                             new ParagraphModel
                             {
                                 Caption = "Гражданство",
-                                Content = new List<string> { "гражданин Российской Федерации" }
+                                Content = new List<string> { "Гражданин Российской Федерации" }
                             },
                             new ParagraphModel
                             {
@@ -705,7 +721,7 @@ namespace GenerateMedicalDocumentsTestApp
                             new ParagraphModel
                             {
                                 Caption = "Отношения к воинской обязанности",
-                                Content = new List<string> { "гражданин, не состоящий на воинском учёте" }
+                                Content = new List<string> { "Гражданин, не состоящий на воинском учёте" }
                             }
                         },
                         TargetSent = new TargetSentModel
@@ -746,9 +762,14 @@ namespace GenerateMedicalDocumentsTestApp
                                     Code = "10",
                                     CodeSystemVersion = "1.5",
                                     DisplayName = "Разработка индивидуальной программы реабилитации или абилитации инвалида (ребенка-инвалида)"
+                                },
+                                new TypeModel()
+                                {
+                                    Code = "10",
+                                    CodeSystemVersion = "1.5",
+                                    DisplayName = "бла бла бла"
                                 }
-                            }
-                            ,
+                            },
                             SentOrder = new TypeModel
                             {
                                 Code = "2",
@@ -779,31 +800,31 @@ namespace GenerateMedicalDocumentsTestApp
                         },
                         PatientLocationCode = new TypeModel
                         {
-                            Code = "4",
+                            Code = "5",
                             CodeSystemVersion = "1.1",
                             DisplayName = "Иная организация"
                         },
-                        //PatientLocation = new OrganizationModel()
-                        //{
-                        //    ID = "1.2.643.5.1.13.13.12.2.77.7973",
-                        //    Props = new PropsOrganizationModel()
-                        //    {
-                        //        OGRN = "1037734008575"
-                        //    },
-                        //    Address = new AddressModel()
-                        //    {
-                        //        StreetAddressLine = "г Москва, ул Кулакова, д 23",
-                        //        StateCode = new TypeModel()
-                        //        {
-                        //            Code = "77",
-                        //            CodeSystemVersion = "6.3",
-                        //            DisplayName = "г. Москва"
-                        //        },
-                        //        PostalCode = 123592,
-                        //        AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
-                        //        HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
-                        //    }
-                        //},
+                        PatientLocation = new OrganizationModel()
+                        {
+                            ID = "1.2.643.5.1.13.13.12.2.77.7973",
+                            Props = new PropsOrganizationModel()
+                            {
+                                OGRN = "1037734008575"
+                            },
+                            Address = new AddressModel()
+                            {
+                                StreetAddressLine = "г Москва, ул Кулакова, д 23",
+                                StateCode = new TypeModel()
+                                {
+                                    Code = "77",
+                                    CodeSystemVersion = "6.3",
+                                    DisplayName = "г. Москва"
+                                },
+                                PostalCode = 123592,
+                                AOGUID = new Guid("13952531-8e6d-4540-b249-814478b00c6b"),
+                                HOUSEGUID = new Guid("f9816342-0e35-47b6-87c7-379340011ff3")
+                            }
+                        },
                         MilitaryDuty = new TypeModel
                         {
                             Code = "4",
@@ -815,13 +836,13 @@ namespace GenerateMedicalDocumentsTestApp
                     {
                         WorkPlaceParagraphs = new List<ParagraphModel>
                         {
-                            new ParagraphModel { Caption = "Основная профессия", Content = new List<string> { "текст" } },
+                            new ParagraphModel { Caption = "Основная профессия", Content = new List<string> { "сука, почему ты не ставишься" } },
                             new ParagraphModel { Caption = "Квалификация", Content = new List<string> { "текст" } },
                             new ParagraphModel { Caption = "Стаж", Content = new List<string> { "текст"} },
                             new ParagraphModel { Caption = "Выполняемая работа", Content = new List<string> { "текст" } },
                             new ParagraphModel { Caption = "Условия труда", Content = new List<string> { "текст" } },
                             new ParagraphModel { Caption = "Место работы", Content = new List<string> { "текст" } },
-                            new ParagraphModel { Caption = "Адрес места работы.", Content = new List<string> { "текст" } },
+                            new ParagraphModel { Caption = "Адрес места работы", Content = new List<string> { "текст" } },
                         },
                         WorkActivity = new WorkActivityModel
                         {
@@ -857,7 +878,7 @@ namespace GenerateMedicalDocumentsTestApp
                         FillingSection = new ParagraphModel
                         {
                             Caption = "Сведения о получении образования",
-                            Content = new List<string> { "Организация, адрес, курс, профессия." }
+                            Content = new List<string> { "Организация: бла бла бла, адрес: бла бла бла, курс: бла бла бла, профессия: бла бла бла." }
                         }//,
                         //Organization = new OrganizationModel()
                         //{
@@ -888,9 +909,14 @@ namespace GenerateMedicalDocumentsTestApp
                             GroupOrder = "Повторно",
                             GroupTime = "бессрочно",
                             GroupText = "3 группа (установлена: повторно, бессрочно)",
-                            TimeDisability = "четыре и более лет",
+                            TimeDisability = new TimeDisabilityModel()
+                            {
+                                Code = "2",
+                                Disability = "четыре и более лет"
+                            },
                             DateDisabilityStart = new DateTime(1999, 03, 28),
-                            CauseOfDisability = "Общее заболевание"
+                            DateDisabilityFinish = new DateTime(2018, 05, 10),
+                            CauseOfDisability = "Заболевание, полученное при исполнении иных обязанностей военной службы (служебных обязанностей), связано с аварией на производственном объединении \"Маяк\""
                         },
                         DegreeDisability = new DegreeDisabilityModel
                         {
@@ -900,7 +926,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 {
                                     ID = "socanam31",
                                     FullText = "60% (на 1 год до 01.01.2019)",
-                                    //DateTo = new DateTime(2019, 01, 01),
+                                    DateTo = new DateTime(2019, 01, 01),
                                     Term = "Один год",
                                     Percent = 60
                                 },
@@ -922,7 +948,7 @@ namespace GenerateMedicalDocumentsTestApp
                                 }
                             }
                         },
-                        SeenOrganizations = "с 2000  года.",
+                        SeenOrganizations = "2000",
                         MedicalAnamnez = "Пациентка поступила для дообследования по поводу опухоли с поражением проксимального отдела правой голени и правого коленного сустава. При обследовании по данным морфологии выявлена саркома мягких тканей правой голени низкой степени злокачественности. Учитывая местную распространенность опухолевого процесса пациентке показано хирургическое лечение в объеме удаления опухоли с резекцией проксимального отдела правой большеберцовой кости и эндопротезированием.",
                         LifeAnamnez = "Эпидемиологический анамнез: контактов с инфекционными больными за время обращения не было. В эндемичных районах тех или иных инфекций, загрязнённых радиацией и химикатами территориях, за время обращения не находилась.",
                         ActualDevelopment = "физическое развитие (в отношении детей в возрасте до 3 лет)",
@@ -935,6 +961,78 @@ namespace GenerateMedicalDocumentsTestApp
                                 DayCount = "9 дней",
                                 CipherMKB = "T23.2",
                                 Diagnosis = "Термический ожог запястья и кисти второй степени"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
+                            },
+                            new TemporaryDisabilityModel
+                            {
+                                DateStart = new DateTime(2018, 05, 1),
+                                DateFinish = new DateTime(2018, 05, 20),
+                                DayCount = "20 дней",
+                                CipherMKB = "I25.1",
+                                Diagnosis = "Атеросклеротическая болезнь сердца"
                             },
                             new TemporaryDisabilityModel
                             {
@@ -957,8 +1055,16 @@ namespace GenerateMedicalDocumentsTestApp
                         ProtocolNumber = "123",
                         ProtocolDate = new DateTime(2018, 10, 01),
                         Results = "результаты",
-                        ResultRestorationFunctions = "Частичное",
-                        ResultCompensationFunction = "Частичное"
+                        ResultRestorationFunctions = new ResultFunctionModel()
+                        {
+                            Code = "2",
+                            Result = "Частичное"
+                        },
+                        ResultCompensationFunction = new ResultFunctionModel()
+                        {
+                            Code = "2",
+                            Result = "Положительный результат отсутствует"
+                        }
                     },
                     VitalParametersSection = new VitalParametersSectionModel
                     {
@@ -977,19 +1083,19 @@ namespace GenerateMedicalDocumentsTestApp
                                 EntryUnit = "гр.",
                                 EntryType = "PQ"
                             },
-                            new VitalParameterModel
-                            {
-                                Caption = "Масса тела при рождении (в отношении детей в возрасте до 3 лет)",
-                                EntryDisplayName = "Масса тела",
-                                ID = "vv1_11",
-                                Code = "50",
-                                DateMetering = new DateTime(1985, 03, 31),
-                                Value = "4",
-                                EntryValue = "4000",
-                                Unit = "кг",
-                                EntryUnit = "гр.",
-                                EntryType = "PQ"
-                            },
+                            // new VitalParameterModel
+                            // {
+                            //     Caption = "Масса тела при рождении (в отношении детей в возрасте до 3 лет)",
+                            //     EntryDisplayName = "Масса тела",
+                            //     ID = "vv1_11",
+                            //     Code = "50",
+                            //     DateMetering = new DateTime(1985, 03, 31),
+                            //     Value = "4",
+                            //     EntryValue = "4000",
+                            //     Unit = "кг",
+                            //     EntryUnit = "гр.",
+                            //     EntryType = "PQ"
+                            // },
                             new VitalParameterModel
                             {
                                 Caption = "Рост",
@@ -1123,7 +1229,7 @@ namespace GenerateMedicalDocumentsTestApp
                             }
                         }
                     },
-                    ConditionAssessmentSection = new ConditionAssessmentSection
+                    ConditionAssessmentSection = new ConditionAssessmentSectionModel
                     {
                         ClinicalPrognosis = new ConditionGrateModel
                         {

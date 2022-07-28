@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateMedicalDocuments", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GenerateMedicalDocumentsTestApp", "GenerateMedicalDocumentsTestApp\GenerateMedicalDocumentsTestApp.csproj", "{A0CD0930-A709-4AC8-881F-9D9B780E7513}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceTestApp", "ServiceTestApp\ServiceTestApp.csproj", "{BD7931AA-2842-4863-9B32-9449F4D7C9B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceTestApp", "ServiceTestApp\ServiceTestApp.csproj", "{BD7931AA-2842-4863-9B32-9449F4D7C9B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
