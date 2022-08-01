@@ -3917,29 +3917,31 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     }
                 }
 
-                XElement certificateDisabilityNumberComponentElement = new XElement(xmlnsNamespace + "component",
-                    new XAttribute("typeCode", "COMP"));
-                XElement certificateDisabilityNumberObservationElement = new XElement(xmlnsNamespace + "observation",
-                    new XAttribute("classCode", "OBS"),
-                    new XAttribute("moodCode", "EVN"));
+                if (anamnezSectionModel.CertificateDisabilityNumber != null) {
+                    XElement certificateDisabilityNumberComponentElement = new XElement(xmlnsNamespace + "component",
+                        new XAttribute("typeCode", "COMP"));
+                    XElement certificateDisabilityNumberObservationElement = new XElement(xmlnsNamespace + "observation",
+                        new XAttribute("classCode", "OBS"),
+                        new XAttribute("moodCode", "EVN"));
 
-                var codeValue = GetCodeValue("certificateDisabilityNumberAnamnez");
-                XElement certificateDisabilityNumberCodeElement = new XElement(xmlnsNamespace + "code",
-                    GetTypeElementAttributes(
-                        codeValue: codeValue.codeValue,
-                        codeSystemValue: codeValue.codeSystemValue,
-                        codeSystemVersionValue: codeValue.codeSystemVersionValue,
-                        codeSystemNameValue: codeValue.codeSystemNameValue,
-                        displayNameValue: codeValue.displayNameValue));
-                certificateDisabilityNumberObservationElement.Add(certificateDisabilityNumberCodeElement);
+                    var codeValue = GetCodeValue("certificateDisabilityNumberAnamnez");
+                    XElement certificateDisabilityNumberCodeElement = new XElement(xmlnsNamespace + "code",
+                        GetTypeElementAttributes(
+                            codeValue: codeValue.codeValue,
+                            codeSystemValue: codeValue.codeSystemValue,
+                            codeSystemVersionValue: codeValue.codeSystemVersionValue,
+                            codeSystemNameValue: codeValue.codeSystemNameValue,
+                            displayNameValue: codeValue.displayNameValue));
+                    certificateDisabilityNumberObservationElement.Add(certificateDisabilityNumberCodeElement);
 
-                XElement certificateDisabilityNumberValueElement = new XElement(xmlnsNamespace + "value",
-                    new XAttribute(xsiNamespace + "type", "INT"),
-                    new XAttribute("value", GetNumbersFromString(anamnezSectionModel.CertificateDisabilityNumber)));
-                certificateDisabilityNumberObservationElement.Add(certificateDisabilityNumberValueElement);
+                    XElement certificateDisabilityNumberValueElement = new XElement(xmlnsNamespace + "value",
+                        new XAttribute(xsiNamespace + "type", "INT"),
+                        new XAttribute("value", GetNumbersFromString(anamnezSectionModel.CertificateDisabilityNumber)));
+                    certificateDisabilityNumberObservationElement.Add(certificateDisabilityNumberValueElement);
 
-                certificateDisabilityNumberComponentElement.Add(certificateDisabilityNumberObservationElement);
-                temporaryDisabilitysOrganizerElement.Add(certificateDisabilityNumberComponentElement);
+                    certificateDisabilityNumberComponentElement.Add(certificateDisabilityNumberObservationElement);
+                    temporaryDisabilitysOrganizerElement.Add(certificateDisabilityNumberComponentElement);
+                }
 
                 temporaryDisabilitysEntryElement.Add(temporaryDisabilitysOrganizerElement);
                 entryElements.Add(temporaryDisabilitysEntryElement);
