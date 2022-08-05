@@ -4287,15 +4287,18 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             originalTextElement.Add(referenceElement);
             codeElement.Add(originalTextElement);
 
-            XElement qualifierElement = new XElement(xmlnsNamespace + "qualifier");
-            XElement qualifierValueElement = new XElement(xmlnsNamespace + "value",
-                new XAttribute("code", 2),
-                new XAttribute("codeSystem", "1.2.643.5.1.13.13.11.1041"),
-                new XAttribute("codeSystemVersion", "1.1"),
-                new XAttribute("codeSystemName", "Тип установления инвалидности (впервые, повторно)"),
-                new XAttribute("displayName", disabilityModel.GroupOrder));
-            qualifierElement.Add(qualifierValueElement);
-            codeElement.Add(qualifierElement);
+            if (disabilityModel.GroupOrder != null) 
+            {
+                XElement qualifierElement = new XElement(xmlnsNamespace + "qualifier");
+                XElement qualifierValueElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute("code", 2),
+                    new XAttribute("codeSystem", "1.2.643.5.1.13.13.11.1041"),
+                    new XAttribute("codeSystemVersion", "1.1"),
+                    new XAttribute("codeSystemName", "Тип установления инвалидности (впервые, повторно)"),
+                    new XAttribute("displayName", disabilityModel.GroupOrder));
+                qualifierElement.Add(qualifierValueElement);
+                codeElement.Add(qualifierElement);
+            }
 
             observationElement.Add(codeElement);
 
