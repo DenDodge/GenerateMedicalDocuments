@@ -1080,7 +1080,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             this.SetDisabilityGroupParameter(anamnezSectionModel.Disability); // 19.1 point.
             this.SetDateDisabilityFinishParameter(anamnezSectionModel.Disability?.DateDisabilityFinish); // 19.2 point.
             this.SetTimeDisabilityParameter(anamnezSectionModel.Disability?.TimeDisability?.Disability); // 19.3 point.
-            this.SetCauseOfDisabilityParameter(anamnezSectionModel.Disability?.CauseOfDisability); // 19.4 point.
+            this.SetCauseOfDisabilityParameter(anamnezSectionModel.Disability?.CauseOfDisability.DisplayName); // 19.4 point.
             this.SetDegreeDisabilityParameter(anamnezSectionModel.DegreeDisability?.DegreeDisabilities); // 19.5 - 19.8 points.
 
             if (educationSectionModel is null)
@@ -1104,7 +1104,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 return;
             }
 
-            switch (disabilityModel.Group)
+            switch (disabilityModel.Group.Code)
             {
                 case 1:
                     this.parameters["isFirstGroup"] = trueFlag;
@@ -1260,9 +1260,9 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 this.parameters["degreeDisabilityPercent"] = $"{firstdegreeDisabilityElement.Percent} %";
             }
             
-            if (!String.IsNullOrWhiteSpace(firstdegreeDisabilityElement.Term))
+            if (!String.IsNullOrWhiteSpace(firstdegreeDisabilityElement.Term.DisplayName))
             {
-                this.parameters["degreeDisabilityTerm"] = firstdegreeDisabilityElement.Term;
+                this.parameters["degreeDisabilityTerm"] = firstdegreeDisabilityElement.Term.DisplayName;
             }
             
             if (firstdegreeDisabilityElement.DateTo is not null)

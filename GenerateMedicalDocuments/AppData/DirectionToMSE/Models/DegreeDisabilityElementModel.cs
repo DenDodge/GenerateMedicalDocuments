@@ -22,10 +22,25 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// Срок.
         /// </summary>
-        public string Term { get; set; } = null;
+        public TermModel Term { get; set; } = null;
         /// <summary>
         /// Процент.
         /// </summary>
         public int? Percent { get; set; } = null;
+    }
+
+    /// <summary>
+    /// Модель параметра "Срок, на который установлена степень утраты профессиональной трудоспособности".
+    /// </summary>
+    public class TermModel
+    {
+        /// <summary>
+        /// Код
+        /// </summary>
+        public string Code { get; set; }
+        /// <summary>
+        /// Срок, на который установлена степень утраты профессиональной трудоспособности
+        /// </summary>
+        public string DisplayName { get; set; }
     }
 }

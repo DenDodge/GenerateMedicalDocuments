@@ -3677,7 +3677,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 disabilityParagraphElement.Add("Находился на инвалидности на момент направления: ");
 
                 XElement disabilityContentElement2 = new XElement(xmlnsNamespace + "content",
-                    new XAttribute("ID", "socanam34"), anamnezSectionModel.Disability.TimeDisability);
+                    new XAttribute("ID", "socanam34"), anamnezSectionModel.Disability.TimeDisability.Disability);
                 disabilityParagraphElement.Add(disabilityContentElement2);
                 disabilityParagraphElement.Add(NewLineElement);
 
@@ -4180,7 +4180,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// <returns>Элемент "entry" степени утраты профессиональной трудоспособности.</returns>
         private static XElement GenerateDegreeDisabilityElement(
             DateTime? degreeDisabilityDateTo, 
-            string degreeDisabilityTime, 
+            TermModel degreeDisabilityTime, 
             int? degreeDisabilityPercent,
             string socanomeNumber)
         {
@@ -4241,12 +4241,12 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
 
             XElement entryRelationshipValueElement = new XElement(xmlnsNamespace + "value",
                 new XAttribute(xsiNamespace + "type", "CD"),
-                new XAttribute("code", "2"),
+                new XAttribute("code", degreeDisabilityTime.Code),
                 new XAttribute("codeSystem", "1.2.643.5.1.13.13.99.2.325"),
                 new XAttribute("codeSystemVersion", "1.2"),
                 new XAttribute("codeSystemName",
                     "Срок, на который установлена степень утраты профессиональной трудоспособности"),
-                new XAttribute("displayName", degreeDisabilityTime));
+                new XAttribute("displayName", degreeDisabilityTime.DisplayName));
             observationEntryRelationshipElement.Add(entryRelationshipValueElement);
 
             entryRelationshipElement.Add(observationEntryRelationshipElement);
@@ -4275,11 +4275,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             #region code element
 
             XElement codeElement = new XElement(xmlnsNamespace + "code",
-                new XAttribute("code", "3"),
+                new XAttribute("code", disabilityModel.Group.Code),
                 new XAttribute("codeSystem", "1.2.643.5.1.13.13.11.1053"),
                 new XAttribute("codeSystemVersion", "3.3"),
                 new XAttribute("codeSystemName", "Группы инвалидности"),
-                new XAttribute("displayName", $"{disabilityModel.Group} группа"));
+                new XAttribute("displayName", disabilityModel.Group.DisplayName));
 
             XElement originalTextElement = new XElement(xmlnsNamespace + "originalText");
             XElement referenceElement = new XElement(xmlnsNamespace + "reference",
@@ -4291,11 +4291,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 XElement qualifierElement = new XElement(xmlnsNamespace + "qualifier");
                 XElement qualifierValueElement = new XElement(xmlnsNamespace + "value",
-                    new XAttribute("code", 2),
+                    new XAttribute("code", disabilityModel.GroupOrder.Code),
                     new XAttribute("codeSystem", "1.2.643.5.1.13.13.11.1041"),
                     new XAttribute("codeSystemVersion", "1.1"),
                     new XAttribute("codeSystemName", "Тип установления инвалидности (впервые, повторно)"),
-                    new XAttribute("displayName", disabilityModel.GroupOrder));
+                    new XAttribute("displayName", disabilityModel.GroupOrder.DisplayName));
                 qualifierElement.Add(qualifierValueElement);
                 codeElement.Add(qualifierElement);
             }
@@ -4328,11 +4328,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             ValueElementModel groopTimeValue = new ValueElementModel()
             {
                 Type = "CD",
-                Code = "6",
+                Code = disabilityModel.GroupTime.Code,
                 CodeSystem = "1.2.643.5.1.13.13.99.2.358",
                 CodeSystemVersion = "1.3",
                 CodeSystemName = "Срок, на который установлена инвалидность",
-                DisplayName = disabilityModel.GroupTime
+                DisplayName = disabilityModel.GroupTime.DisplayName
             };
             observationElement.Add(GenerateEntryRelationshipDisabilityElement("groopTimeAnamnez", valueModel: groopTimeValue));
 
@@ -4352,11 +4352,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             {
                 CodeElementModel codeValue = new CodeElementModel()
                 {
-                    Code = "4",
+                    Code = disabilityModel.CauseOfDisability.Code,
                     CodeSystem = "1.2.643.5.1.13.13.11.1474",
                     CodeSystemVersion = "2.2",
                     CodeSystemName = "Причины инвалидности",
-                    DisplayName = disabilityModel.CauseOfDisability
+                    DisplayName = disabilityModel.CauseOfDisability.DisplayName
                 };
                 observationElement.Add(GenerateEntryRelationshipDisabilityElement("groopTimeAnamnez", codeModel: codeValue));
             }

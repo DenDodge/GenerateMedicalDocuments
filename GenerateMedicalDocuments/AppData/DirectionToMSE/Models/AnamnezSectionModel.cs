@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 
 namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
 {
@@ -87,7 +88,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// Группа инвалидности.
         /// </summary>
-        public int? Group { get; set; } = null;
+        public GroupModel Group { get; set; } = null;
         /// <summary>
         /// Группа инвалидности (полный текст).
         /// </summary>
@@ -95,11 +96,11 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// Порядок установления инвалидности.
         /// </summary>
-        public string GroupOrder { get; set; } = null;
+        public GroupOrderModel GroupOrder { get; set; } = null;
         /// <summary>
         /// Срок, на который установлена степень утраты профессиональной трудоспособности.
         /// </summary>
-        public string GroupTime { get; set; } = null;
+        public GroupTimeModel GroupTime { get; set; } = null;
         /// <summary>
         /// Находится на инвалидности на момент направления.
         /// </summary>
@@ -115,7 +116,7 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// <summary>
         /// Причина инвалидности.
         /// </summary>
-        public string CauseOfDisability { get; set; } = null;
+        public CauseOfDisabilityModel CauseOfDisability { get; set; } = null;
     }
 
     /// <summary>
@@ -182,5 +183,65 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Models
         /// Группа инвалидности.
         /// </summary>
         public string Disability { get; set; }
+    }
+
+    /// <summary>
+    /// Модель параметра "Группы инвалидности"
+    /// </summary>
+    public class GroupModel
+    {
+        /// <summary>
+        /// Код
+        /// </summary>
+        public int Code { set; get; }
+        /// <summary>
+        /// Группа инвалидности
+        /// </summary>
+        public string DisplayName { get; set; }
+    }
+
+    /// <summary>
+    /// Модель параметра "Тип установления инвалидности (впервые, повторно)"
+    /// </summary>
+    public class GroupOrderModel
+    {
+        /// <summary>
+        /// Код
+        /// </summary>
+        public string Code { set; get; }
+        /// <summary>
+        /// Установление инвалидности (впервые, повторно)
+        /// </summary>
+        public string DisplayName { get; set; }
+    }
+
+    /// <summary>
+    /// Модель параметра "Срок, на который установлена инвалидность"
+    /// </summary>
+    public class GroupTimeModel
+    {
+        /// <summary>
+        /// Код
+        /// </summary>
+        public string Code { set; get; }
+        /// <summary>
+        /// Срок, на который установлена инвалидность
+        /// </summary>
+        public string DisplayName { get; set; }
+    }
+
+    /// <summary>
+    /// Модель параметра "Причины инвалидности"
+    /// </summary>
+    public class CauseOfDisabilityModel
+    {
+        /// <summary>
+        /// Код
+        /// </summary>
+        public string Code { set; get; }
+        /// <summary>
+        /// Причина инвалидности
+        /// </summary>
+        public string DisplayName { get; set; }
     }
 }
