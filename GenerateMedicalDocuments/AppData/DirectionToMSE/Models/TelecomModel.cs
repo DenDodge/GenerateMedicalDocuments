@@ -13,5 +13,10 @@
         /// Значение атрибута "telecom".
         /// </summary>
         public string Use { get; set; } = null;
+
+        /// <summary>
+        /// Значение элемента "telecom value=":" ".
+        /// </summary>
+        public string ValueAttr { get; set; } = null;
     }
 }

@@ -495,7 +495,15 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 useAttribute = new XAttribute("use", telecomModel.Use);
             }
 
-            XAttribute valueAttribute = new XAttribute("value", GetTelecomValue(telecomModel.Value));
+            XAttribute valueAttribute = null;
+            if (telecomModel.ValueAttr is null)
+            {
+                valueAttribute = new XAttribute("value", GetTelecomValue(telecomModel.Value));
+            }
+            else
+            {
+                valueAttribute = new XAttribute("value", telecomModel.ValueAttr + telecomModel.Value);
+            }
             
             if(isOrgnization)
             {
@@ -739,7 +747,10 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 organizationElement.Add(nameElement);
             }
 
-            organizationElement.Add(GenerateTelecomElement(organizationModel.ContactPhoneNumber, true));
+            if (organizationModel.ContactPhoneNumber != null)
+            {
+                organizationElement.Add(GenerateTelecomElement(organizationModel.ContactPhoneNumber, true));
+            }
 
             if (organizationModel.Contacts != null)
             {
@@ -1819,13 +1830,13 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 new XAttribute(xsiNamespace + "type", "ST"), result);
             observationElement.Add(valueElement);
 
-            XElement referenceElement;
-            if (id is not null)
-            {
-                referenceElement = new XElement(xmlnsNamespace + "reference",
+            XElement referenceElement = new XElement(xmlnsNamespace + "reference",
                     new XAttribute("typeCode", "REFR"));
 
-                XElement externalDocument = new XElement(xmlnsNamespace + "externalDocument",
+            XElement externalDocument = null;
+            if (id is not null)
+            {
+                externalDocument = new XElement(xmlnsNamespace + "externalDocument",
                     new XAttribute("classCode", "DOCCLIN"),
                     new XAttribute("moodCode", "EVN"));
 
@@ -1834,14 +1845,17 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                     new XAttribute("extension", id));
                 externalDocument.Add(idElement);
 
-                referenceElement.Add(externalDocument);
             }
             else
             {
-                referenceElement = new XElement(xmlnsNamespace + "reference",
+                externalDocument = new XElement(xmlnsNamespace + "externalDocument",
+                    new XAttribute("classCode", "DOCCLIN"),
+                    new XAttribute("moodCode", "EVN"),
                     new XAttribute("nullFlavor", "NI"));
+
             }
-            
+            referenceElement.Add(externalDocument);
+
             observationElement.Add(referenceElement);
 
             entryRelationshipElement.Add(observationElement);
@@ -3372,8 +3386,16 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
             performerElement.Add(assignedEntityElement);
             actElement.Add(performerElement);
 
-            actElement.Add(GenerateEntryRelationshipTargetSentElement(targetSentModel.TargetSentTypes));
+
+            if (targetSentModel.TargetSentTypes is not null && targetSentModel.TargetSentTypes.Count != 0)
+            {
+                foreach (var targetSentType in targetSentModel.TargetSentTypes)
+                {
+                    actElement.Add(GenerateEntryRelationshipTargetSentElement(targetSentType));
+                }
+            }
             
+                
             actElement.Add(GenerateEntryRelationshipElements(
                 targetSentModel.SentOrder,
                 targetSentModel.Protocol,
@@ -3390,29 +3412,27 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
         /// </summary>
         /// <param name="targetSentTypes">Список целей направлений.</param>
         /// <returns>Элемент "entryRelationship" со списком целей направлений.</returns>
-        private static XElement GenerateEntryRelationshipTargetSentElement(List<TypeModel> targetSentTypes)
-        {
-            if (targetSentTypes is null || targetSentTypes.Count == 0)
-            {
-                return null;
-            }
-            
+        private static XElement GenerateEntryRelationshipTargetSentElement(TypeModel targetSentType)
+        {            
             var codeAttributes = GetCodeValue("sentTarget");
             
-            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship");
-            XElement observationElement = new XElement((xmlnsNamespace + "observation"));
+            XElement entryRelationshipElement = new XElement(xmlnsNamespace + "entryRelationship",
+                    new XAttribute("typeCode", "SUBJ"),
+                    new XAttribute("inversionInd", "true"));
 
-            foreach (var targetSentType in targetSentTypes)
-            {
-                XElement codeElement = new XElement(xmlnsNamespace + "code",
-                    GetTypeElementAttributes(
-                        codeValue: targetSentType.Code,
-                        codeSystemValue: codeAttributes.codeSystemValue,
-                        codeSystemVersionValue: targetSentType.CodeSystemVersion,
-                        codeSystemNameValue: codeAttributes.codeSystemNameValue,
-                        displayNameValue: targetSentType.DisplayName));
-                observationElement.Add(codeElement);
-            }
+            XElement observationElement = new XElement(xmlnsNamespace + "observation",
+                new XAttribute("classCode", "OBS"),
+                new XAttribute("moodCode", "EVN"));
+
+
+            XElement codeElement = new XElement(xmlnsNamespace + "code",
+                GetTypeElementAttributes(
+                    codeValue: targetSentType.Code,
+                    codeSystemValue: codeAttributes.codeSystemValue,
+                    codeSystemVersionValue: targetSentType.CodeSystemVersion,
+                    codeSystemNameValue: codeAttributes.codeSystemNameValue,
+                    displayNameValue: targetSentType.DisplayName));
+            observationElement.Add(codeElement);
             
             entryRelationshipElement.Add(observationElement);
             return entryRelationshipElement;
