@@ -2628,8 +2628,18 @@ namespace GenerateMedicalDocuments.AppData.DirectionToMSE.Helpers
                 new XAttribute("displayName", displayName));
             observationElement.Add(codeElement);
 
-            XElement valueElement = new XElement(xmlnsNamespace + "value",
-                new XAttribute(xsiNamespace + "type", "ST"), value);
+            XElement valueElement = null;
+            if (value is not null)
+            {
+                valueElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", "ST"), value);
+            }
+            else
+            {
+                valueElement = new XElement(xmlnsNamespace + "value",
+                    new XAttribute(xsiNamespace + "type", "ST"),
+                    new XAttribute("nullFlavor", "NA"));
+            }
             observationElement.Add(valueElement);
 
             entryRelationshipElement.Add(observationElement);
